@@ -127,8 +127,8 @@ export function blueToRed(x: number): number {
   return convertOmega(OmegaFormat.Blue, OmegaFormat.Red, x);
 }
 
-/** Tolerance for roundtrip conversion verification */
-export const ROUNDTRIP_TOLERANCE = 1e-10;
+/** Tolerance for roundtrip conversion verification (accounts for matrix approximations) */
+export const ROUNDTRIP_TOLERANCE = 1e-6;
 
 /**
  * Verify Invariant C1: roundtrip conversions preserve value

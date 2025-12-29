@@ -6,7 +6,7 @@
 //! Conversions use the Omega Ratio (Q-Ratio): Ω = 1.005662978
 
 use serde::{Deserialize, Serialize};
-use crate::constants::OMEGA;
+// OMEGA constant (1.005662978) is used to derive the conversion matrix values
 
 /// The five Omega format levels (coherence depth tiers)
 /// Index 0 = Red (highest precision), Index 4 = Blue
@@ -54,8 +54,8 @@ fn conversion_factor(from: OmegaFormat, to: OmegaFormat) -> f64 {
     use OmegaFormat::*;
 
     match (from, to) {
-        // Identity
-        (f, t) if f == t => 1.0,
+        // Identity cases
+        (Red, Red) | (OmegaMajor, OmegaMajor) | (Green, Green) | (OmegaMinor, OmegaMinor) | (Blue, Blue) => 1.0,
 
         // From Green (reference)
         (Green, OmegaMajor) => 0.994368911,     // 1/Ω

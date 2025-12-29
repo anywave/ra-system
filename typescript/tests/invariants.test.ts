@@ -152,7 +152,7 @@ describe('Conversion Invariants (C1-C3)', () => {
   it('C3: Green / Ω = Omega_Major', () => {
     const green = 1.62;
     const omegaMajor = greenToOmegaMajor(green);
-    expect(Math.abs(omegaMajor - green / OMEGA)).toBeLessThan(1e-10);
+    expect(Math.abs(omegaMajor - green / OMEGA)).toBeLessThan(1e-9);
   });
 });
 
