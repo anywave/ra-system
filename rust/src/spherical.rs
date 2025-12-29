@@ -8,7 +8,7 @@
 
 use serde::{Deserialize, Serialize};
 use crate::constants::ANKH;
-use crate::repitans::Repitan;
+use crate::repitans::{Repitan, repitan_from_theta};
 use crate::rac::RacLevel;
 use crate::omega::OmegaFormat;
 

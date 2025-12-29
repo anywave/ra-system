@@ -21,7 +21,6 @@ from ra_system.constants import ANKH, GREEN_PHI
 from ra_system.rac import RacLevel, rac_value_normalized
 from ra_system.repitans import Repitan
 
-
 COHERENCE_FLOOR: Final[float] = GREEN_PHI / ANKH
 """Coherence floor: φ_green / Ankh ≈ 0.3183"""
 

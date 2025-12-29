@@ -4,8 +4,6 @@ Integration tests for Ra System invariants.
 Tests all 17 invariants from ra_integration_spec.md Section 6.
 """
 
-import pytest
-
 from ra_system.constants import (
     ANKH,
     BLUE_PI,
@@ -29,7 +27,6 @@ from ra_system.gates import (
 )
 from ra_system.omega import (
     OmegaFormat,
-    all_omega_formats,
     green_to_omega_major,
     green_to_omega_minor,
     harmonic_from_omega,
@@ -58,7 +55,6 @@ from ra_system.spherical import (
     theta_from_repitan,
     verify_omega_indices,
 )
-
 
 # =============================================================================
 # Constant Invariants (I1-I6)

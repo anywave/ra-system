@@ -10,8 +10,6 @@ Conversions use the Omega Ratio (Q-Ratio): Ω = 1.005662978
 from enum import IntEnum
 from typing import Final
 
-from ra_system.constants import OMEGA
-
 
 class OmegaFormat(IntEnum):
     """The five Omega format levels (coherence depth tiers)."""
