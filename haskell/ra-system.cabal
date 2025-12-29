@@ -1,0 +1,60 @@
+cabal-version:      3.0
+name:               ra-system
+version:            0.1.0.0
+synopsis:           Ra System mathematical framework - Haskell bindings
+description:        Type-safe Haskell bindings for the Ra System mathematical constants
+                    derived from "The Rods of Amon Ra" by Wesley H. Bateman.
+                    .
+                    Provides:
+                    .
+                    * Typed constants with newtype wrappers (Ankh, Hunab, etc.)
+                    * Repitan type with smart constructor (1-27)
+                    * RacLevel ADT with Enum/Bounded instances
+                    * OmegaFormat conversions
+                    * Access gating logic per ACSP specification
+license:            Apache-2.0
+license-file:       LICENSE
+author:             Anywave
+maintainer:         alex@anywavecreations.com
+category:           Math
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+data-files:         ../data/ra_constants_v2.json
+
+source-repository head
+  type:     git
+  location: https://github.com/anywave/ra-system.git
+
+common warnings
+    ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates
+                 -Wincomplete-uni-patterns -Wmissing-export-lists
+                 -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+
+library
+    import:           warnings
+    exposed-modules:  Ra
+                    , Ra.Constants
+                    , Ra.Repitans
+                    , Ra.Rac
+                    , Ra.Omega
+                    , Ra.Spherical
+                    , Ra.Gates
+    build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
+                    , aeson >=2.0 && <3.0
+                    , bytestring >=0.11 && <0.13
+                    , text >=2.0 && <3.0
+                    , containers >=0.6 && <0.8
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+test-suite ra-system-test
+    import:           warnings
+    default-language: Haskell2010
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Spec.hs
+    build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
+                    , ra-system
+                    , QuickCheck >=2.14 && <2.16
+                    , hspec >=2.10 && <2.12
+                    , hspec-quickcheck >=2.0 && <2.1
