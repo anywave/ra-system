@@ -95,7 +95,8 @@ impl Repitan {
 pub fn repitan_from_theta(theta: f64) -> Repitan {
     let normalized = theta.rem_euclid(360.0) / 360.0;
     let n = (normalized * 27.0).round() as i32;
-    let n = n.clamp(1, 27);
+    // n=0 means theta was at 360° (or 0°), which maps to Repitan 27
+    let n = if n == 0 { 27 } else { n.clamp(1, 27) };
     Repitan(n as u8)
 }
 
