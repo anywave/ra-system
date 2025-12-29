@@ -17,8 +17,8 @@
 //! use ra_core::{ANKH, Repitan, RacLevel, OmegaFormat};
 //! use ra_core::gates::access_level;
 //!
-//! // Check access at 80% coherence for RAC1
-//! let result = access_level(0.8, RacLevel::RAC1);
+//! // Check access at 80% coherence for RAC6 (lower threshold)
+//! let result = access_level(0.8, RacLevel::RAC6);
 //! assert!(result.is_full_access());
 //!
 //! // Create a validated Repitan

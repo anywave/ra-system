@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 {-|
 Module      : Ra.Omega
 Description : OmegaFormat enum + conversion functions
@@ -40,10 +42,13 @@ module Ra.Omega
     , roundtripTolerance
     ) where
 
+import GHC.Generics (Generic)
+import Control.DeepSeq (NFData)
+
 -- | The five Omega format levels (coherence depth tiers)
 -- Index 0 = Red (highest precision), Index 4 = Blue
 data OmegaFormat = Red | OmegaMajor | Green | OmegaMinor | Blue
-    deriving (Eq, Ord, Enum, Bounded, Show, Read)
+    deriving (Eq, Ord, Enum, Bounded, Show, Read, Generic, NFData)
 
 -- | Omega Ratio (Q-Ratio): 1.005662978
 omega :: Double
@@ -94,6 +99,9 @@ conversionFactor from to = case (from, to) of
     -- Blue/Omega Minor
     (Blue, OmegaMinor)  -> 1.005309630
     (OmegaMinor, Blue)  -> 0.994718414
+
+    -- Catch-all (should never be reached if all pairs are covered)
+    _ -> error "conversionFactor: unexpected format pair"
 
 -- | Green to Omega Major: x / Ω
 greenToOmegaMajor :: Double -> Double

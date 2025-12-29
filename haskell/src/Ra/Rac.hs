@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DeriveAnyClass #-}
 {-|
 Module      : Ra.Rac
 Description : RacLevel ADT (RAC1..RAC6) with Enum, Bounded
@@ -17,6 +19,9 @@ module Ra.Rac
     , racValue
     , racValueMeters
     , racValueNormalized
+      -- * Smart Constructors
+    , mkRacValue
+    , deriveRac1
       -- * All RACs
     , allRacLevels
     , racByLevel
@@ -27,12 +32,14 @@ module Ra.Rac
     , isValidRacValue
     ) where
 
+import GHC.Generics (Generic)
+import Control.DeepSeq (NFData)
 import Ra.Constants (Ankh(..), ankh)
 
 -- | The six Resonant Access Constant levels
 -- RAC1 is highest access (least restricted), RAC6 is lowest (most restricted)
 data RacLevel = RAC1 | RAC2 | RAC3 | RAC4 | RAC5 | RAC6
-    deriving (Eq, Ord, Enum, Bounded, Show, Read)
+    deriving (Eq, Ord, Enum, Bounded, Show, Read, Generic, NFData)
 
 -- | RAC value in Red Rams (must be 0 < x < 1)
 newtype RacValue = RacValue { unRacValue :: Double }
