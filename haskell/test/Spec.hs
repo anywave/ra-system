@@ -18,6 +18,7 @@ import Ra.Rac
 import Ra.Omega
 import Ra.Spherical
 import Ra.Gates
+import Ra.Identity
 
 main :: IO ()
 main = hspec $ do
@@ -137,6 +138,51 @@ main = hspec $ do
             let raw = 2.54469  -- Half of Ankh
             abs (denormalizeRadius (normalizeRadius raw) - raw) `shouldSatisfy` (< 1e-10)
 
+    describe "Identity Properties (Null Emergence Boundary)" $ do
+        it "I1: Null emergence at exact balance point" $ do
+            -- When phi^n * harmonic == delta, we get NullEmergence
+            let depth = WindowDepth 0
+                harmonic = 1.0
+                delta = AnkhDelta 1.0  -- Exactly equals phi^0 * 1.0
+                eps = NullEpsilon 1e-9
+            evaluateIdentity depth harmonic delta eps `shouldBe` NullEmergence
+
+        it "I2: Active emergence when identity violated" $ do
+            -- When phi^n * harmonic /= delta, we get ActiveEmergence
+            let depth = WindowDepth 1
+                harmonic = 1.0
+                delta = AnkhDelta 0.5  -- Does not equal phi^1 * 1.0 = 1.62
+                eps = NullEpsilon 1e-9
+            isActiveEmergence (evaluateIdentity depth harmonic delta eps) `shouldBe` True
+
+        it "I3: noRelation True below coherenceFloor" $ do
+            noRelation 0.0 `shouldBe` True
+            noRelation (Ra.Identity.coherenceFloor - 0.001) `shouldBe` True
+            noRelation Ra.Identity.coherenceFloor `shouldBe` False
+
+        it "I4: Cancellation operator equals subtraction" $ do
+            (5.0 ⊣⊢ 3.0) `shouldBe` 2.0
+            (3.0 ⊣⊢ 5.0) `shouldBe` (-2.0)
+            (1.0 ⊣⊢ 1.0) `shouldBe` 0.0
+
+        it "I5: phiTerm 0 = 1.0" $ do
+            phiTerm (WindowDepth 0) `shouldBe` 1.0
+
+        it "I6: phiTerm grows with depth" $ do
+            phiTerm (WindowDepth 1) `shouldSatisfy` (> phiTerm (WindowDepth 0))
+            phiTerm (WindowDepth 2) `shouldSatisfy` (> phiTerm (WindowDepth 1))
+            phiTerm (WindowDepth 3) `shouldSatisfy` (> phiTerm (WindowDepth 2))
+
+        it "I7: invAnkh * ankh = 1" $ do
+            abs (invAnkh * unAnkh ankh - 1.0) `shouldSatisfy` (< 1e-10)
+
+        it "I8: coherenceFloor = phi / ankh" $ do
+            let expected = unGreenPhi greenPhi / unAnkh ankh
+            abs (Ra.Identity.coherenceFloor - expected) `shouldSatisfy` (< 1e-10)
+
+        prop "cancellation is subtraction" prop_cancellation_is_subtraction
+        prop "phiTerm positive for non-negative depth" prop_phiTerm_positive
+
 -- QuickCheck Generators
 
 instance Arbitrary Repitan where
@@ -195,3 +241,11 @@ prop_access_alpha_range coherence rac =
     coherence >= 0 && coherence <= 1 ==>
         let alpha = accessAlpha $ accessLevel coherence rac
         in alpha >= 0 && alpha <= 1
+
+-- | Cancellation operator is equivalent to subtraction
+prop_cancellation_is_subtraction :: Double -> Double -> Bool
+prop_cancellation_is_subtraction a b = (a ⊣⊢ b) == (a - b)
+
+-- | phiTerm is always positive for non-negative depth
+prop_phiTerm_positive :: NonNegative Int -> Bool
+prop_phiTerm_positive (NonNegative n) = phiTerm (WindowDepth n) > 0

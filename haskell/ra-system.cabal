@@ -42,6 +42,7 @@ library
                     , Ra.Biometric
                     , Ra.Temporal
                     , Ra.Emergence
+                    , Ra.Identity
     build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
