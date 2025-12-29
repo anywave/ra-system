@@ -17,8 +17,9 @@ import Ra.Repitans
 import Ra.Rac
 import Ra.Omega
 import Ra.Spherical
-import Ra.Gates
+import Ra.Gates hiding (coherenceFloor)
 import Ra.Identity
+import qualified Ra.Gates as Gates
 
 main :: IO ()
 main = hspec $ do
@@ -88,8 +89,8 @@ main = hspec $ do
         prop "R2: 0 < Repitan(n) ≤ 1 for all n ∈ [1, 27]" prop_repitan_range
 
         it "R3: Coherence bounds are [0, 1]" $ do
-            coherenceFloor `shouldSatisfy` (>= 0)
-            coherenceFloor `shouldSatisfy` (< 1)
+            Gates.coherenceFloor `shouldSatisfy` (>= 0)
+            Gates.coherenceFloor `shouldSatisfy` (< 1)
             coherenceCeiling `shouldBe` 1.0
 
         it "R4: Omega format index ∈ {0, 1, 2, 3, 4}" $ do
@@ -126,7 +127,7 @@ main = hspec $ do
         prop "access result alpha is in [0, 1]" prop_access_alpha_range
 
         it "coherence floor is φ_green / Ankh" $ do
-            abs (coherenceFloor - unGreenPhi greenPhi / unAnkh ankh) `shouldSatisfy` (< 1e-10)
+            abs (Gates.coherenceFloor - unGreenPhi greenPhi / unAnkh ankh) `shouldSatisfy` (< 1e-10)
 
     describe "Spherical Properties" $ do
         it "theta/repitan roundtrip" $ do
