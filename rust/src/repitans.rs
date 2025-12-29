@@ -28,7 +28,7 @@ impl Repitan {
     /// # Errors
     /// Returns `RepitanError::InvalidIndex` if n is not in [1, 27]
     pub fn new(n: i32) -> Result<Self, RepitanError> {
-        if n >= 1 && n <= 27 {
+        if (1..=27).contains(&n) {
             Ok(Repitan(n as u8))
         } else {
             Err(RepitanError::InvalidIndex(n))
@@ -103,8 +103,8 @@ pub fn repitan_from_theta(theta: f64) -> Repitan {
 /// All 27 Repitans in order
 pub fn all_repitans() -> [Repitan; 27] {
     let mut arr = [Repitan(1); 27];
-    for i in 0..27 {
-        arr[i] = Repitan((i + 1) as u8);
+    for (i, item) in arr.iter_mut().enumerate() {
+        *item = Repitan((i + 1) as u8);
     }
     arr
 }
@@ -113,7 +113,7 @@ pub fn all_repitans() -> [Repitan; 27] {
 pub fn verify_repitan_invariant() -> bool {
     (1..=27).all(|n| {
         let r = Repitan::new(n).unwrap();
-        (r.value() - f64::from(n as i32) / 27.0).abs() < 1e-10
+        (r.value() - f64::from(n) / 27.0).abs() < 1e-10
     })
 }
 

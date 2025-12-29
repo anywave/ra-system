@@ -24,6 +24,7 @@ pub const FINE_STRUCTURE: f64 = 0.0013717421;
 
 // Pi variants (chromatic)
 /// Red Pi: Standard π = 3.14159265
+#[allow(clippy::approx_constant)]
 pub const RED_PI: f64 = 3.14159265;
 /// Green Pi: 3.14754099
 pub const GREEN_PI: f64 = 3.14754099;

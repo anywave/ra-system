@@ -216,7 +216,7 @@ mod tests {
             for c in [0.0, 0.2, 0.4, 0.5, 0.6, 0.8, 1.0] {
                 let result = access_level(c, level);
                 let alpha = result.alpha();
-                assert!(alpha >= 0.0 && alpha <= 1.0, "Alpha must be in [0, 1]");
+                assert!((0.0..=1.0).contains(&alpha), "Alpha must be in [0, 1]");
             }
         }
     }

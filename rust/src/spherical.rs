@@ -33,7 +33,7 @@ impl RaCoordinate {
         harmonic: OmegaFormat,
         radius: f64,
     ) -> Option<Self> {
-        if radius >= 0.0 && radius <= 1.0 {
+        if (0.0..=1.0).contains(&radius) {
             Some(RaCoordinate { theta, phi, harmonic, radius })
         } else {
             None
