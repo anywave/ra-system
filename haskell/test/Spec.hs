@@ -35,16 +35,15 @@ main = hspec $ do
             abs (unHBar hBar - computed) `shouldSatisfy` (< 0.0001)
 
         it "I4: Repitan(n) = n / 27 for all n ∈ [1, 27]" $
-            all checkRepitan [1..27] `shouldBe` True
-          where
-            checkRepitan n = case repitan n of
-                Just r -> abs (repitanValue r - fromIntegral n / 27) < 1e-10
-                Nothing -> False
+            let checkRepitan n = case repitan n of
+                    Just r -> abs (repitanValue r - fromIntegral n / 27) < 1e-10
+                    Nothing -> False
+            in all checkRepitan [1..27] `shouldBe` True
 
-        it "I5: T.O.N.(m) = m × 0.027 for all m ∈ [0, 36]" $ do
+        it "I5: T.O.N.(m) = m × 0.027 for all m ∈ [0, 36]" $
             -- T.O.N. values are implicitly tested through Repitan relationship
             let tonValue m = fromIntegral m * 0.027
-            all (\m -> tonValue m >= 0 && tonValue m < 1) [0..35] `shouldBe` True
+            in all (\m -> tonValue m >= 0 && tonValue m < 1) [0..35] `shouldBe` True
 
         it "I6: Fine Structure = Repitan(1)² = 0.0013717421" $ do
             let r1 = repitanValue firstRepitan
@@ -59,9 +58,8 @@ main = hspec $ do
             unGreenPi greenPi `shouldSatisfy` (< unBluePi bluePi)
 
         it "O3: For all n: 0 < Repitan(n) ≤ 1" $
-            all checkRepitanRange allRepitans `shouldBe` True
-          where
-            checkRepitanRange r = let v = repitanValue r in v > 0 && v <= 1
+            let checkRepitanRange r = let v = repitanValue r in v > 0 && v <= 1
+            in all checkRepitanRange allRepitans `shouldBe` True
 
         it "O4: Omega format indices are 0-4" $ do
             harmonicFromOmega Red `shouldBe` 0
@@ -80,9 +78,8 @@ main = hspec $ do
 
     describe "Range Invariants (R1-R4)" $ do
         it "R1: 0 < RAC(i) < 1 for all i ∈ [1, 6]" $
-            all checkRacRange allRacLevels `shouldBe` True
-          where
-            checkRacRange level = isValidRacValue $ unRacValue $ racValue level
+            let checkRacRange level = isValidRacValue $ unRacValue $ racValue level
+            in all checkRacRange allRacLevels `shouldBe` True
 
         prop "R2: 0 < Repitan(n) ≤ 1 for all n ∈ [1, 27]" prop_repitan_range
 
