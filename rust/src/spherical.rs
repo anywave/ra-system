@@ -8,7 +8,7 @@
 
 use serde::{Deserialize, Serialize};
 use crate::constants::ANKH;
-use crate::repitans::{Repitan, repitan_from_theta};
+use crate::repitans::Repitan;
 use crate::rac::RacLevel;
 use crate::omega::OmegaFormat;
 
@@ -117,6 +117,7 @@ pub fn verify_omega_indices() -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::repitans::repitan_from_theta;
 
     #[test]
     fn test_coordinate_creation() {

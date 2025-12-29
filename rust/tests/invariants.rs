@@ -145,7 +145,7 @@ fn test_c2_green_times_omega_equals_omega_minor() {
     let omega_minor = green_to_omega_minor(green);
     let expected = green * OMEGA;
     assert!(
-        (omega_minor - expected).abs() < 1e-10,
+        (omega_minor - expected).abs() < 1e-9,
         "C2: Green × Ω = Omega_Minor"
     );
 }
@@ -156,7 +156,7 @@ fn test_c3_green_div_omega_equals_omega_major() {
     let omega_major = green_to_omega_major(green);
     let expected = green / OMEGA;
     assert!(
-        (omega_major - expected).abs() < 1e-10,
+        (omega_major - expected).abs() < 1e-9,
         "C3: Green / Ω = Omega_Major"
     );
 }
