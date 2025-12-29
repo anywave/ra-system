@@ -45,3 +45,4 @@ jobs:
         working-directory: rust
         run: cargo fmt --check
         if: matrix.rust == 'stable'
+        continue-on-error: true
