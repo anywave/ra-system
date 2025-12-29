@@ -18,7 +18,10 @@ import Ra.Rac
 import Ra.Omega
 import Ra.Spherical
 import Ra.Gates hiding (coherenceFloor)
-import Ra.Identity
+import Ra.Identity hiding (Potential, FluxCoherence)
+import qualified Ra.Identity as Id
+import Ra.Emergence (classifyEmergence, isNoRelation, isFull, isDark, isPartial, EmergenceResult(..))
+import Ra.Scalar (Inversion(..))
 import qualified Ra.Gates as Gates
 
 main :: IO ()
@@ -158,8 +161,8 @@ main = hspec $ do
 
         it "I3: noRelation True below coherenceFloor" $ do
             noRelation 0.0 `shouldBe` True
-            noRelation (Ra.Identity.coherenceFloor - 0.001) `shouldBe` True
-            noRelation Ra.Identity.coherenceFloor `shouldBe` False
+            noRelation (Id.coherenceFloor - 0.001) `shouldBe` True
+            noRelation Id.coherenceFloor `shouldBe` False
 
         it "I4: Cancellation operator equals subtraction" $ do
             (5.0 ⊣⊢ 3.0) `shouldBe` 2.0
@@ -179,10 +182,47 @@ main = hspec $ do
 
         it "I8: coherenceFloor = phi / ankh" $ do
             let expected = unGreenPhi greenPhi / unAnkh ankh
-            abs (Ra.Identity.coherenceFloor - expected) `shouldSatisfy` (< 1e-10)
+            abs (Id.coherenceFloor - expected) `shouldSatisfy` (< 1e-10)
 
         prop "cancellation is subtraction" prop_cancellation_is_subtraction
         prop "phiTerm positive for non-negative depth" prop_phiTerm_positive
+
+        it "I9: checkEmergencePermitted returns NullEmergence for zero coherence" $ do
+            let result = checkEmergencePermitted 0.0
+                           (WindowDepth 0) 1.0
+                           (Id.Potential 0.5) (Id.FluxCoherence 0.5) (HarmonicWeight 1.0)
+                           (NullEpsilon 1e-9)
+            result `shouldBe` NullEmergence
+
+    describe "Emergence Properties (NoRelation)" $ do
+        it "E1: coherence = 0 returns NoRelation" $ do
+            classifyEmergence 0.0 Normal `shouldBe` NoRelation
+
+        it "E2: coherence < coherenceFloor returns NoRelation" $ do
+            isNoRelation (classifyEmergence 0.1 Normal) `shouldBe` True
+            isNoRelation (classifyEmergence 0.2 Normal) `shouldBe` True
+            isNoRelation (classifyEmergence 0.31 Normal) `shouldBe` True
+
+        it "E3: coherence >= coherenceFloor does not return NoRelation" $ do
+            isNoRelation (classifyEmergence 0.35 Normal) `shouldBe` False
+            isNoRelation (classifyEmergence 0.5 Normal) `shouldBe` False
+            isNoRelation (classifyEmergence 1.0 Normal) `shouldBe` False
+
+        it "E4: coherence >= 0.85 returns Full" $ do
+            isFull (classifyEmergence 0.85 Normal) `shouldBe` True
+            isFull (classifyEmergence 0.90 Normal) `shouldBe` True
+            isFull (classifyEmergence 1.0 Normal) `shouldBe` True
+
+        it "E5: coherence in [coherenceFloor, 0.40) returns Dark" $ do
+            isDark (classifyEmergence 0.35 Normal) `shouldBe` True
+            isDark (classifyEmergence 0.39 Normal) `shouldBe` True
+
+        it "E6: coherence in [0.40, 0.85) returns Partial" $ do
+            isPartial (classifyEmergence 0.40 Normal) `shouldBe` True
+            isPartial (classifyEmergence 0.60 Normal) `shouldBe` True
+            isPartial (classifyEmergence 0.84 Normal) `shouldBe` True
+
+        prop "E7: classifyEmergence respects coherenceFloor boundary" prop_norelation_boundary
 
 -- QuickCheck Generators
 
@@ -250,3 +290,11 @@ prop_cancellation_is_subtraction a b = (a ⊣⊢ b) == (a - b)
 -- | phiTerm is always positive for non-negative depth
 prop_phiTerm_positive :: NonNegative Int -> Bool
 prop_phiTerm_positive (NonNegative n) = phiTerm (WindowDepth n) > 0
+
+-- | classifyEmergence returns NoRelation iff coherence < coherenceFloor
+prop_norelation_boundary :: Double -> Property
+prop_norelation_boundary coh =
+    coh >= 0 && coh <= 1 ==>
+        if coh < Id.coherenceFloor
+            then isNoRelation (classifyEmergence coh Normal)
+            else not (isNoRelation (classifyEmergence coh Normal))

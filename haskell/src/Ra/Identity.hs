@@ -45,6 +45,7 @@ module Ra.Identity
   , ankhBalance
   , evaluateIdentity
   , noRelation
+  , checkEmergencePermitted
 
     -- * Predicates
   , isNullEmergence
@@ -168,6 +169,23 @@ evaluateIdentity depth harmonic (AnkhDelta delta) (NullEpsilon eps) =
 -- field interaction - they exist outside the emergence domain
 noRelation :: Double -> Bool
 noRelation coh = coh < coherenceFloor
+
+-- | Combined check: first tests relational substrate, then identity balance
+-- Returns NullEmergence if:
+--   1. Coherence is below floor (no relational substrate), OR
+--   2. Identity equation is satisfied (field balanced)
+checkEmergencePermitted
+  :: Double           -- ^ Coherence value
+  -> WindowDepth      -- ^ Window depth for phi scaling
+  -> Double           -- ^ Harmonic value H_{l,m}
+  -> Potential        -- ^ Scalar potential
+  -> FluxCoherence    -- ^ Flux coherence
+  -> HarmonicWeight   -- ^ Harmonic weight
+  -> NullEpsilon      -- ^ Epsilon threshold
+  -> IdentityResult
+checkEmergencePermitted coh depth harmonic pot flux hw eps
+  | noRelation coh = NullEmergence
+  | otherwise      = evaluateIdentity depth harmonic (ankhBalance pot flux hw) eps
 
 -- ---------------------------------------------------------------------
 -- Predicates

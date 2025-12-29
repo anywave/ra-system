@@ -21,6 +21,8 @@ module Ra.Emergence
 
     -- * Types
   , ContentForm(..)
+  , PartialForm(..)
+  , EmergenceResult(..)
   , EmergentContent(..)
   , EmergenceScore(..)
   , Potential(..)
@@ -31,6 +33,13 @@ module Ra.Emergence
   , temporalModifier
   , selectContentForm
   , evaluateEmergence
+  , classifyEmergence
+
+    -- * Predicates
+  , isNoRelation
+  , isDark
+  , isPartial
+  , isFull
 
     -- * Invariants
   , scoreInvariant
@@ -38,8 +47,10 @@ module Ra.Emergence
   ) where
 
 import GHC.Generics (Generic)
+import Control.DeepSeq (NFData)
 import Ra.Scalar (Inversion(..))
 import Ra.Temporal (AlignmentMultiplier(..), WindowPhase(..))
+import Ra.Identity (coherenceFloor, noRelation)
 
 -- | Emergence algorithm parameters
 data EmergenceParams = EmergenceParams
@@ -70,6 +81,31 @@ data ContentForm
   | FormShadow    -- ^ Inverted/complement form
   | FormNone      -- ^ No content
   deriving (Show, Eq, Ord, Generic)
+
+instance NFData ContentForm
+
+-- | Partial content forms for degraded emergence
+data PartialForm
+  = Preview     -- ^ First N characters/frames
+  | Summary     -- ^ AI-generated summary
+  | Blur        -- ^ Degraded/obscured version
+  | Pointer     -- ^ Just the ID, no content
+  deriving (Show, Eq, Ord, Generic)
+
+instance NFData PartialForm
+
+-- | High-level emergence classification result
+-- Order of evaluation: NoRelation → Blocked → Dark → Partial → Full
+data EmergenceResult
+  = NoRelation              -- ^ No relational substrate (coh < coherenceFloor)
+  | Dark                    -- ^ Field exists but unreachable (coh < 0.40)
+  | Partial !PartialForm !Double  -- ^ Partial alignment with form and alpha
+  | Full                    -- ^ Full alignment (coh >= 0.85)
+  | Shadow                  -- ^ Inverted state
+  | Blocked                 -- ^ Consent denied (future)
+  deriving (Show, Eq, Generic)
+
+instance NFData EmergenceResult
 
 -- | Emergence score ∈ [0, 1]
 newtype EmergenceScore = EmergenceScore { unScore :: Double }
@@ -166,6 +202,54 @@ evaluateEmergence params fragId pot flux phase mult inv =
     score = computeEmergenceScore params pot flux phase mult
     form = selectContentForm params score inv
     alpha = computeAlpha params score form
+
+-- | Classify emergence based on coherence value
+-- Evaluation order:
+--   1. NoRelation if coherence < coherenceFloor (~0.318)
+--   2. Dark if coherence < 0.40
+--   3. Partial with form based on coherence band
+--   4. Full if coherence >= 0.85
+classifyEmergence :: Double -> Inversion -> EmergenceResult
+classifyEmergence coh inv
+  | noRelation coh = NoRelation
+  | inv == Inverted = Shadow
+  | coh >= 0.85 = Full
+  | coh >= 0.75 = Partial Preview alpha
+  | coh >= 0.55 = Partial Summary alpha
+  | coh >= 0.40 = Partial Blur alpha
+  | coh >= coherenceFloor = Dark  -- Between floor and 0.40
+  | otherwise = NoRelation        -- Should not reach here
+  where
+    -- Alpha interpolates within partial range [0.40, 0.85]
+    alpha = (coh - 0.40) / (0.85 - 0.40)
+
+-- ---------------------------------------------------------------------
+-- Predicates
+-- ---------------------------------------------------------------------
+
+-- | Check if result is NoRelation
+isNoRelation :: EmergenceResult -> Bool
+isNoRelation NoRelation = True
+isNoRelation _          = False
+
+-- | Check if result is Dark
+isDark :: EmergenceResult -> Bool
+isDark Dark = True
+isDark _    = False
+
+-- | Check if result is Partial
+isPartial :: EmergenceResult -> Bool
+isPartial (Partial _ _) = True
+isPartial _             = False
+
+-- | Check if result is Full
+isFull :: EmergenceResult -> Bool
+isFull Full = True
+isFull _    = False
+
+-- ---------------------------------------------------------------------
+-- Invariants
+-- ---------------------------------------------------------------------
 
 -- | Invariant: emergence score in [0, 1]
 scoreInvariant :: EmergenceScore -> Bool
