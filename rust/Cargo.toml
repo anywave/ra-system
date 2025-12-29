@@ -1,0 +1,22 @@
+[package]
+name = "ra_core"
+version = "0.1.0"
+edition = "2021"
+authors = ["Anywave <info@anywavecreations.com>"]
+license = "Apache-2.0"
+description = "Ra System mathematical constants - Rust bindings"
+repository = "https://github.com/anywave/ra-system"
+keywords = ["ra-system", "constants", "harmonics"]
+categories = ["mathematics", "science"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+
+[dev-dependencies]
+proptest = "1.4"
+approx = "0.5"
+
+[lib]
+name = "ra_core"
+path = "src/lib.rs"
