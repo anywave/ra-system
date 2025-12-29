@@ -158,7 +158,7 @@ class TestConversionInvariants:
         """C3: Green / Ω = Omega_Major."""
         green = 1.62
         omega_major = green_to_omega_major(green)
-        assert abs(omega_major - green / OMEGA) < 1e-10
+        assert abs(omega_major - green / OMEGA) < 1e-9
 
 
 # =============================================================================

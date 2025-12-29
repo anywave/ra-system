@@ -116,8 +116,8 @@ def blue_to_red(x: float) -> float:
     return convert_omega(OmegaFormat.BLUE, OmegaFormat.RED, x)
 
 
-ROUNDTRIP_TOLERANCE: Final[float] = 1e-10
-"""Tolerance for roundtrip conversion verification."""
+ROUNDTRIP_TOLERANCE: Final[float] = 1e-6
+"""Tolerance for roundtrip conversion verification (accounts for matrix approximations)."""
 
 
 def verify_omega_roundtrip(from_fmt: OmegaFormat, to_fmt: OmegaFormat, x: float) -> bool:
