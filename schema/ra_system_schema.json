@@ -1,0 +1,485 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/anywave/silver-pancake/ra_system/schema/ra_system_schema.json",
+  "title": "Ra System Constants Schema",
+  "description": "JSON Schema for validating Ra System mathematical constants derived from 'The Rods of Amon Ra' by Wesley H. Bateman",
+  "type": "object",
+  "required": [
+    "metadata",
+    "fundamental_constants",
+    "ra_cubits_racs",
+    "spectral_constants",
+    "repitans_27",
+    "table_of_nines",
+    "omega_format_conversions"
+  ],
+  "properties": {
+    "metadata": {
+      "$ref": "#/$defs/Metadata"
+    },
+    "fundamental_constants": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FundamentalConstant"
+      },
+      "minItems": 1
+    },
+    "ra_cubits_racs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RacConstant"
+      },
+      "minItems": 6,
+      "maxItems": 6,
+      "description": "Exactly 6 RAC levels, ordered RAC1 through RAC6"
+    },
+    "spectral_constants": {
+      "$ref": "#/$defs/SpectralConstants"
+    },
+    "hydrogen_spectral_lines": {
+      "$ref": "#/$defs/HydrogenSpectralLines"
+    },
+    "table_of_nines": {
+      "$ref": "#/$defs/TableOfNines"
+    },
+    "repitans_27": {
+      "$ref": "#/$defs/Repitans27"
+    },
+    "omega_format_conversions": {
+      "$ref": "#/$defs/OmegaFormatConversions"
+    },
+    "unit_conversions": {
+      "$ref": "#/$defs/UnitConversions"
+    },
+    "pyramid_values": {
+      "$ref": "#/$defs/PyramidValues"
+    },
+    "cosmological_constants": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "elf_wave_constants": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "geometry_relationships": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "key_number_omega_levels": {
+      "$ref": "#/$defs/KeyNumberOmegaLevels"
+    }
+  },
+  "$defs": {
+    "Metadata": {
+      "type": "object",
+      "required": ["source", "version"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Original source material reference"
+        },
+        "extracted": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of extraction"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$",
+          "description": "Schema version"
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "OmegaFormat": {
+      "type": "string",
+      "enum": ["red", "omega_major", "green", "omega_minor", "blue"],
+      "description": "Five-level Omega format hierarchy: Red > Omega Major > Green > Omega Minor > Blue"
+    },
+    "PositiveNumber": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "UnitFraction": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "maximum": 1,
+      "description": "Value in range (0, 1]"
+    },
+    "RacValue": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 1,
+      "description": "RAC values must be 0 < x < 1"
+    },
+    "RepitanIndex": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 27,
+      "description": "Repitan index from 1 to 27"
+    },
+    "TonIndex": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 36,
+      "description": "Table of Nines index from 0 to 36"
+    },
+    "FundamentalConstant": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human-readable constant name"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Mathematical symbol (e.g., ☥, π_red, φ_green)"
+        },
+        "value": {
+          "type": "number",
+          "description": "Numeric value (exact as in source)"
+        },
+        "units": {
+          "type": "string"
+        },
+        "symbolic_equivalence": {
+          "type": "string",
+          "description": "How this value is derived symbolically"
+        },
+        "function": {
+          "type": "string",
+          "description": "Role in Ra System"
+        },
+        "used_for": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source_page": {
+          "type": "string"
+        }
+      }
+    },
+    "RacConstant": {
+      "type": "object",
+      "required": ["name", "value"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "pattern": "^RAC [1-6]$",
+          "description": "RAC level name (RAC 1 through RAC 6)"
+        },
+        "value": {
+          "$ref": "#/$defs/RacValue",
+          "description": "Value in Red Rams (must be 0 < x < 1)"
+        },
+        "value_meters": {
+          "$ref": "#/$defs/PositiveNumber",
+          "description": "Value in meters"
+        },
+        "units": {
+          "type": "string",
+          "const": "Red Rams"
+        },
+        "symbolic_equivalence": {
+          "type": "string"
+        },
+        "function": {
+          "type": "string"
+        },
+        "used_for": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "notes": {
+          "type": "string"
+        },
+        "source_page": {
+          "type": "string"
+        }
+      }
+    },
+    "SpectralConstants": {
+      "type": "object",
+      "properties": {
+        "balmer_constant": {
+          "type": "object",
+          "required": ["value"],
+          "properties": {
+            "value": {
+              "type": "number",
+              "const": 364.5,
+              "description": "Green format Balmer constant"
+            },
+            "omega_major_value": { "type": "number" },
+            "units": { "type": "string" },
+            "symbolic_equivalence": { "type": "string" },
+            "function": { "type": "string" },
+            "used_for": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" },
+            "source_page": { "type": "string" }
+          }
+        },
+        "balmer_circle_circumference": {
+          "type": "object",
+          "properties": {
+            "omega_major_value": { "type": "number" },
+            "red_value": { "type": "number" },
+            "green_value": { "type": "number" },
+            "blue_value": { "type": "number" },
+            "units": { "type": "string" },
+            "symbolic_equivalence": { "type": "string" },
+            "notes": { "type": "string" },
+            "source_page": { "type": "string" }
+          }
+        },
+        "rydberg_constant": {
+          "type": "object",
+          "properties": {
+            "ra_value": { "type": "number" },
+            "omega_major_value": { "type": "number" },
+            "units": { "type": "string" },
+            "symbolic_equivalence": { "type": "string" },
+            "function": { "type": "string" },
+            "used_for": { "type": "array", "items": { "type": "string" } },
+            "notes": { "type": "string" },
+            "source_page": { "type": "string" }
+          }
+        },
+        "speed_of_light_omega_major": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "type": "number",
+              "const": 300000
+            },
+            "units": { "type": "string" },
+            "function": { "type": "string" },
+            "used_for": { "type": "array", "items": { "type": "string" } },
+            "source_page": { "type": "string" }
+          }
+        }
+      }
+    },
+    "HydrogenSpectralLines": {
+      "type": "object",
+      "description": "Hydrogen emission spectral series",
+      "properties": {
+        "lyman_series": {
+          "$ref": "#/$defs/SpectralSeries"
+        },
+        "balmer_series": {
+          "$ref": "#/$defs/SpectralSeries"
+        },
+        "paschen_series": {
+          "$ref": "#/$defs/SpectralSeries"
+        },
+        "brackett_series": {
+          "$ref": "#/$defs/SpectralSeries"
+        }
+      }
+    },
+    "SpectralSeries": {
+      "type": "object",
+      "properties": {
+        "spectrum_type": {
+          "type": "string",
+          "enum": ["Ultra Violet", "Visible", "Infra Red", "Deep Infra Red"]
+        },
+        "formula": {
+          "type": "string",
+          "description": "Rydberg formula variant"
+        }
+      },
+      "additionalProperties": {
+        "type": "object",
+        "description": "Spectral line data for each M value"
+      }
+    },
+    "TableOfNines": {
+      "type": "object",
+      "required": ["count", "values"],
+      "properties": {
+        "description": { "type": "string" },
+        "relationship_to_repitans": { "type": "string" },
+        "count": {
+          "type": "integer",
+          "const": 37,
+          "description": "Exactly 37 T.O.N. values"
+        },
+        "significance": { "type": "string" },
+        "values": {
+          "type": "array",
+          "minItems": 37,
+          "maxItems": 37,
+          "items": {
+            "type": "object",
+            "required": ["index", "value"],
+            "properties": {
+              "index": {
+                "$ref": "#/$defs/TonIndex"
+              },
+              "value": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "T.O.N. value = index × 0.027"
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "Repitans27": {
+      "type": "object",
+      "required": ["base", "values"],
+      "properties": {
+        "description": { "type": "string" },
+        "base": {
+          "type": "integer",
+          "const": 27
+        },
+        "relationship_to_phi": { "type": "string" },
+        "block_patterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "values": {
+          "type": "array",
+          "minItems": 27,
+          "maxItems": 27,
+          "items": {
+            "type": "object",
+            "required": ["index", "value"],
+            "properties": {
+              "index": {
+                "$ref": "#/$defs/RepitanIndex"
+              },
+              "value": {
+                "$ref": "#/$defs/UnitFraction",
+                "description": "Repitan(n) = n/27"
+              },
+              "decimal": {
+                "type": "string",
+                "pattern": "^[0-9]{3}$",
+                "description": "Three-digit repeating decimal pattern"
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "OmegaFormatConversions": {
+      "type": "object",
+      "required": ["omega_ratio", "conversions"],
+      "properties": {
+        "description": { "type": "string" },
+        "omega_ratio": {
+          "type": "number",
+          "const": 1.005662978,
+          "description": "Q-Ratio for format conversions"
+        },
+        "conversions": {
+          "type": "object",
+          "description": "Conversion factors between formats",
+          "patternProperties": {
+            "^[a-z_]+_to_[a-z_]+$": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "description": "Conversion multiplier"
+            }
+          }
+        },
+        "notes": { "type": "string" }
+      }
+    },
+    "UnitConversions": {
+      "type": "object",
+      "properties": {
+        "red_ram_to_meters": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "notes": { "type": "string" }
+          }
+        },
+        "meters_to_red_rams": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "notes": { "type": "string" }
+          }
+        }
+      },
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "number" },
+          { "type": "object" }
+        ]
+      }
+    },
+    "PyramidValues": {
+      "type": "object",
+      "properties": {
+        "base_side": {
+          "type": "object",
+          "properties": {
+            "red_rams": { "type": "number" },
+            "green_rams": { "type": "number" },
+            "blue_rams": { "type": "number" },
+            "meters": { "type": "number" },
+            "red_ra_feet": { "type": "number" },
+            "red_ra_inches": { "type": "number" }
+          }
+        },
+        "divisions_by_key_numbers": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "value": { "type": "number" },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "grand_gallery_ramp": {
+          "type": "object",
+          "properties": {
+            "red_rams": { "type": "number" },
+            "meters": { "type": "number" },
+            "formula": { "type": "string" }
+          }
+        }
+      }
+    },
+    "KeyNumberOmegaLevels": {
+      "type": "object",
+      "description": "Key constants across all five Omega format levels",
+      "properties": {
+        "description": { "type": "string" }
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/OmegaLevelValues"
+      }
+    },
+    "OmegaLevelValues": {
+      "type": "object",
+      "properties": {
+        "red": { "type": "number" },
+        "omega_major": { "type": "number" },
+        "green": { "type": "number" },
+        "omega_minor": { "type": "number" },
+        "blue": { "type": "number" },
+        "notes": { "type": "string" }
+      }
+    }
+  }
+}

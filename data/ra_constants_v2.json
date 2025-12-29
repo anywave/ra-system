@@ -1,0 +1,593 @@
+{
+  "metadata": {
+    "source": "The Rods of Amon Ra - Wesley H. Bateman (1992-1997)",
+    "extracted": "2025-12-29",
+    "version": "2.0",
+    "notes": "Comprehensive extraction from OCR text of original manuscript. All decimal values preserved exactly as stated in source."
+  },
+  "fundamental_constants": [
+    {
+      "name": "Ankh",
+      "symbol": "☥",
+      "value": 5.08938,
+      "units": "unitless (product constant)",
+      "symbolic_equivalence": "Red Pi × Green Phi = 3.141592592 × 1.62",
+      "function": "Master harmonic constant - 'Number for Life'",
+      "used_for": ["dynamic geometry", "coherence scaling", "pyramid proportions", "Grand Gallery ramp (9 × Ankh)"],
+      "notes": "Named after Egyptian symbol for life. Appears throughout Great Pyramid dimensions. Key number in Ra System.",
+      "source_page": "vol1_page_55"
+    },
+    {
+      "name": "Red Pi",
+      "symbol": "π_red",
+      "value": 3.141592592,
+      "units": "unitless",
+      "symbolic_equivalence": "0.78539814 × 4 (derived from ELF/Alpha wave ratio 10.602875/13.5)",
+      "function": "Red Trac Pi - Primary Pi value in Ra System",
+      "used_for": ["circle calculations", "Red unit conversions", "pyramid geometry"],
+      "notes": "Derived from 10.602875 / 13.5 × 4. Less than standard Pi by 0.000000062",
+      "source_page": "vol1_page_27"
+    },
+    {
+      "name": "Green Pi",
+      "symbol": "π_green",
+      "value": 3.142696806,
+      "units": "unitless",
+      "symbolic_equivalence": "√9.876543210",
+      "function": "Green Trac Pi - Secondary Pi value",
+      "used_for": ["Green unit calculations", "harmonic ratios"],
+      "notes": "Square root of descending digit sequence 9.876543210",
+      "source_page": "vol1_page_27"
+    },
+    {
+      "name": "Blue Pi",
+      "symbol": "π_blue",
+      "value": 3.143801408,
+      "units": "unitless",
+      "symbolic_equivalence": "1/0.318086250",
+      "function": "Blue Trac Pi - Tertiary Pi value",
+      "used_for": ["Blue unit calculations", "circle circumference in Blue system"],
+      "notes": "Largest of three Pi values. 1/Blue Pi × 2 = RAC 1",
+      "source_page": "vol1_page_158"
+    },
+    {
+      "name": "Green Phi",
+      "symbol": "φ_green",
+      "value": 1.62,
+      "units": "unitless",
+      "symbolic_equivalence": "Golden ratio approximation (truncated)",
+      "function": "Threshold harmonic - shapes of plant/animal life",
+      "used_for": ["access gating", "partial emergence tuning", "biometric thresholds"],
+      "notes": "Relates to shapes and proportion of plant and animal life. Core component of Ankh.",
+      "source_page": "vol1_page_55"
+    },
+    {
+      "name": "Phi (full precision)",
+      "value": 1.619430799,
+      "units": "unitless",
+      "symbolic_equivalence": "Red format golden ratio",
+      "function": "Precise Phi value in Ra System",
+      "used_for": ["pyramid ratio calculations", "coherence thresholds"],
+      "source_page": "vol2a_page_194"
+    },
+    {
+      "name": "81 Divisor",
+      "value": 81,
+      "units": "unitless",
+      "symbolic_equivalence": "1.62 ÷ 2 × 9 × 9 = 3⁴",
+      "function": "Elemental divisor - hydrogen/helium/lithium relationship",
+      "used_for": ["Repitan derivation", "elemental structure mapping", "spectral geometry"],
+      "notes": "Relates Green Phi to basic elements. 3/81 = 0.037 (first Repitan). 729 = 81 × 9 = 27th T.O.N.",
+      "source_page": "vol1_page_60"
+    },
+    {
+      "name": "Hunab",
+      "symbol": "Hu",
+      "value": 1.0602875,
+      "units": "meters (linear) or unitless (scalar)",
+      "symbolic_equivalence": "10.602875 Hz / 10 (ELF dominant frequency)",
+      "function": "Harmonic scalar unit - Mayan God of Measure",
+      "used_for": ["time dilation", "frequency conversion", "unit conversion", "alpha brainwave reference"],
+      "notes": "Named after Aztec God 'Hunab Ku'. Most frequent ELF/Alpha wave frequency. H-Bar Trac Mate.",
+      "source_page": "vol1_page_27"
+    },
+    {
+      "name": "H-Bar (Omega Major)",
+      "value": 1.0546875,
+      "units": "unitless",
+      "symbolic_equivalence": "Hunab / Omega Ratio = 1.0602875 / 1.005662978",
+      "function": "Reduced Planck constant in Ra System - Quantum physics foundation",
+      "used_for": ["quantum calculations", "spectral line analysis", "wave mechanics"],
+      "notes": "Universal Constant of Action in quantumized atom. Trac Mate of alpha brainwave frequency (10.602875 Hz).",
+      "source_page": "vol2a_page_193"
+    },
+    {
+      "name": "Planck's Constant H (Omega Major)",
+      "value": 0.6629126072,
+      "units": "unitless",
+      "symbolic_equivalence": "18th Repitan (0.666666) / Omega Ratio",
+      "function": "Universal Unit of Action",
+      "used_for": ["quantum energy calculations", "photon energy"],
+      "source_page": "vol2a_page_193"
+    },
+    {
+      "name": "Fine Structure Constant (Ra)",
+      "value": 0.0001371742,
+      "units": "unitless",
+      "symbolic_equivalence": "0.037² = 0.0013717421 / 10",
+      "function": "Electromagnetic coupling constant for hydrogen",
+      "used_for": ["spectral line calculations", "hydrogen atom structure", "Repitan-T.O.N. link"],
+      "notes": "First Repitan squared. Links 27 Repitans to 37 numbers in Table of Nines.",
+      "source_page": "vol1_page_79"
+    },
+    {
+      "name": "Key 1 (Red)",
+      "value": 1.0602875,
+      "units": "Red Rams",
+      "symbolic_equivalence": "Hunab value",
+      "function": "Primary key number",
+      "used_for": ["Hubble constant derivation", "harmonic scaling"],
+      "notes": "Same value as Hunab. Key 1 × 90,000 = 95,425.875 (Red Hubble Constant)",
+      "source_page": "vol1_page_129"
+    },
+    {
+      "name": "Key 2 (Red √2)",
+      "value": 1.41371666,
+      "units": "Red units",
+      "symbolic_equivalence": "√2 Ra approximation",
+      "function": "Secondary key number - diagonal calculations",
+      "used_for": ["diagonal calculations", "RAC derivations", "geometric scaling"],
+      "notes": "Close to √2 (1.41421356). Key 2 / 2.222 = RAC 1",
+      "source_page": "vol1_page_158"
+    },
+    {
+      "name": "Omega Ratio",
+      "value": 1.005662978,
+      "units": "unitless",
+      "symbolic_equivalence": "Q-Ratio adjustment factor",
+      "function": "Format conversion between Omega Major and Green",
+      "used_for": ["Omega Major/Minor calculations", "pyramid dimension harmonization"],
+      "notes": "Green ÷ Omega Ratio = Omega Major. Green × Omega Ratio = Omega Minor.",
+      "source_page": "vol2a_page_193"
+    }
+  ],
+  "ra_cubits_racs": [
+    {
+      "name": "RAC 1",
+      "value": 0.6361725,
+      "value_meters": 0.639591666,
+      "units": "Red Rams",
+      "symbolic_equivalence": "Ankh / 8 = 5.08938 / 8",
+      "function": "Resonant Access Constant 1 - Prophetic Cubit range",
+      "used_for": ["pyramid base division (360 units)", "circle diameter/circumference"],
+      "notes": "Close to Prophetic Cubit (0.63569850m). Pyramid base / RAC1 = 360. Also = Red circle diameter / 2.",
+      "source_page": "vol1_page_156"
+    },
+    {
+      "name": "RAC 2",
+      "value": 0.628318519,
+      "value_meters": 0.631695473,
+      "units": "Red Rams",
+      "symbolic_equivalence": "2π/10 approximation",
+      "function": "Resonant Access Constant 2 - Sacred Cubit range",
+      "used_for": ["pyramid base division (364.5 units = Balmer)", "hydrogen resonance", "Lyman-alpha transitions"],
+      "notes": "Pyramid base / RAC2 = 364.5 (Balmer Constant). RAC1/RAC2 = 1.0125",
+      "source_page": "vol1_page_156"
+    },
+    {
+      "name": "RAC 3",
+      "value": 0.57255525,
+      "value_meters": 0.5756325,
+      "units": "Red Rams",
+      "symbolic_equivalence": "1.62 × 1.0602875 × 0.333333",
+      "function": "Resonant Access Constant 3 - Pyk Belady range",
+      "used_for": ["pyramid base division (400 units)", "harmonic scaling"],
+      "notes": "Close to Pyk Belady cubit (0.5773m). Pyramid base / RAC3 = 400",
+      "source_page": "vol1_page_157"
+    },
+    {
+      "name": "RAC 4",
+      "value": 0.523598765,
+      "value_meters": 0.526412894,
+      "units": "Red Rams",
+      "symbolic_equivalence": "π/6 approximation",
+      "function": "Resonant Access Constant 4 - Royal Cubit of Memphis range",
+      "used_for": ["pyramid base division (437.4 = 27 × 1.62)", "coherence thresholds"],
+      "notes": "Most consistent RAC in pyramid dimensions. Close to Royal Cubit (0.525m). 437.4 = 27 × Phi",
+      "source_page": "vol1_page_156"
+    },
+    {
+      "name": "RAC 5",
+      "value": 0.4580442,
+      "value_meters": 0.460506,
+      "units": "Red Rams",
+      "symbolic_equivalence": "Ankh × 9 / 100 = 45.80442 / 100",
+      "function": "Resonant Access Constant 5 - Jomard's Cubit range",
+      "used_for": ["pyramid base division (500 units)", "Grand Gallery ramp length"],
+      "notes": "Pyramid base / RAC5 = 500. Grand Gallery ramp = 9 × Ankh = 45.80442 Red Rams",
+      "source_page": "vol1_page_157"
+    },
+    {
+      "name": "RAC 6",
+      "value": 0.3998594565,
+      "value_meters": 0.4020085371,
+      "units": "Red Rams",
+      "symbolic_equivalence": "Part of RAC lattice structure",
+      "function": "Resonant Access Constant 6",
+      "used_for": ["pyramid base division (572.756493 = 1.125 × Green Ankh)", "spectral mapping"],
+      "notes": "Pyramid base / RAC6 = 572.756493 (1.125 × Green Ankh). Links to circle degrees.",
+      "source_page": "vol1_page_157"
+    }
+  ],
+  "spectral_constants": {
+    "balmer_constant": {
+      "value": 364.5,
+      "omega_major_value": 366.43553167,
+      "units": "unitless (circle degrees / wavelength factor)",
+      "symbolic_equivalence": "729/2 = 27 × 13.5",
+      "function": "Hydrogen spectral series reference - Balmer equation",
+      "used_for": ["spectral line wavelength calculations", "pyramid base (RAC2 division)"],
+      "notes": "Green value. Omega Major = 364.5 / 0.994368911",
+      "source_page": "vol1_page_89"
+    },
+    "balmer_circle_circumference": {
+      "omega_major_value": 1139.0625,
+      "red_value": 1145.1105,
+      "green_value": 1145.512986,
+      "blue_value": 1152,
+      "units": "circle degrees",
+      "symbolic_equivalence": "Balmer × π = 364.5 × π",
+      "function": "Circumference of Balmer circle",
+      "notes": "British yards equivalent: 42.72. Relates to Megalithic Yard.",
+      "source_page": "supplement_page_858"
+    },
+    "rydberg_constant": {
+      "ra_value": 1.0973690,
+      "omega_major_value": 0.91125,
+      "units": "unitless",
+      "symbolic_equivalence": "Fine Structure × 8 = 0.0013717421 × 8",
+      "function": "Hydrogen spectral constant - wave number formula",
+      "used_for": ["hydrogen frequency resonance", "spectral wavelength calculations"],
+      "notes": "Green value. Reciprocal appears in H-Bar relationships.",
+      "source_page": "vol1_page_89"
+    },
+    "speed_of_light_omega_major": {
+      "value": 300000,
+      "units": "Omega Major kilorams per natural second",
+      "function": "Ra System speed of light",
+      "used_for": ["frequency calculations from wavelength", "spectral analysis"],
+      "source_page": "supplement_page_860"
+    }
+  },
+  "hydrogen_spectral_lines": {
+    "lyman_series": {
+      "spectrum_type": "Ultra Violet",
+      "formula": "1/λ = R(1/1² - 1/M²)",
+      "M2": {
+        "wavelength_omega_major_angstroms": 1215,
+        "fine_structure_units": 180000,
+        "h_bar_units": 1152,
+        "notes": "Most intense line emitted by hydrogen. Related to 121.5° = 1.0602875 Hz (alpha brainwave)."
+      },
+      "M3": {
+        "wavelength_omega_major_angstroms": 1025,
+        "notes": "1025 = 1000 + 25"
+      },
+      "M4": {
+        "wavelength_omega_major_angstroms": 972,
+        "notes": "Ra note 'F' first octave = 97.2 degrees of Red Pi circle"
+      }
+    },
+    "balmer_series": {
+      "spectrum_type": "Visible",
+      "formula": "1/λ = R(1/2² - 1/M²)",
+      "M3": {
+        "wavelength_omega_major_angstroms": 6561,
+        "fine_structure_units": 33333.333,
+        "h_bar_units": 6220.8,
+        "notes": "6561 = 81² = 3⁸. Ra note relates to 656.1° of Red Pi circle."
+      },
+      "M8": {
+        "wavelength_omega_major_angstroms": 3888,
+        "fine_structure_units": 56250,
+        "h_bar_units": 3686.4,
+        "notes": "Ra note 'F' third octave = 388.8 degrees of Red Pi circle"
+      }
+    },
+    "paschen_series": {
+      "spectrum_type": "Infra Red",
+      "formula": "1/λ = R(1/3² - 1/M²)",
+      "M6": {
+        "wavelength_omega_major_angstroms": 10935,
+        "fine_structure_units": 20000,
+        "h_bar_units": 10368,
+        "notes": "Ra note 'G' first octave = 109.35 degrees of Red Pi circle"
+      },
+      "M8": {
+        "wavelength_omega_major_angstroms": 9543.27272727,
+        "symbolic_equivalence": "295245/77"
+      }
+    },
+    "brackett_series": {
+      "spectrum_type": "Deep Infra Red",
+      "formula": "1/λ = R(1/4² - 1/M²)",
+      "M5": {
+        "wavelength_omega_major_angstroms": 40500
+      },
+      "M6": {
+        "wavelength_omega_major_angstroms": 26244,
+        "fine_structure_units": 83333.333,
+        "h_bar_units": 24883.2,
+        "notes": "Ra note 'D' sixth octave = 2624.4 degrees of Red Pi circle"
+      },
+      "M8": {
+        "wavelength_omega_major_angstroms": 19440,
+        "notes": "Ra note 'F' second octave = 194.4 degrees → 1944 angstroms"
+      }
+    }
+  },
+  "table_of_nines": {
+    "description": "37 numbers where horizontal digit sum = 9. Forms Snowflake pattern.",
+    "relationship_to_repitans": "Repitan / T.O.N. = 1.371742112 (Fine Structure related)",
+    "count": 37,
+    "significance": "37 overlapping stone slabs in Grand Gallery ceilings. 27 pairs of slots in ramp.",
+    "values": [
+      {"index": 0, "value": 0.000},
+      {"index": 1, "value": 0.027},
+      {"index": 2, "value": 0.054},
+      {"index": 3, "value": 0.081},
+      {"index": 4, "value": 0.108},
+      {"index": 5, "value": 0.135},
+      {"index": 6, "value": 0.162},
+      {"index": 7, "value": 0.189},
+      {"index": 8, "value": 0.216},
+      {"index": 9, "value": 0.243},
+      {"index": 10, "value": 0.270},
+      {"index": 11, "value": 0.297},
+      {"index": 12, "value": 0.324},
+      {"index": 13, "value": 0.351},
+      {"index": 14, "value": 0.378},
+      {"index": 15, "value": 0.405},
+      {"index": 16, "value": 0.432},
+      {"index": 17, "value": 0.459},
+      {"index": 18, "value": 0.486},
+      {"index": 19, "value": 0.513},
+      {"index": 20, "value": 0.540},
+      {"index": 21, "value": 0.567},
+      {"index": 22, "value": 0.594},
+      {"index": 23, "value": 0.621},
+      {"index": 24, "value": 0.648},
+      {"index": 25, "value": 0.675},
+      {"index": 26, "value": 0.702},
+      {"index": 27, "value": 0.729, "notes": "27th value = 729 = 81 × 9 = 3⁶"},
+      {"index": 28, "value": 0.756},
+      {"index": 29, "value": 0.783},
+      {"index": 30, "value": 0.810},
+      {"index": 31, "value": 0.837},
+      {"index": 32, "value": 0.864},
+      {"index": 33, "value": 0.891},
+      {"index": 34, "value": 0.918},
+      {"index": 35, "value": 0.945},
+      {"index": 36, "value": 0.972}
+    ]
+  },
+  "repitans_27": {
+    "description": "27 fractional parts of 27. Chambered nautilus has 27 chambers.",
+    "base": 27,
+    "relationship_to_phi": "3 / 1.62 = 1.85185 (5th Repitan = 5/27)",
+    "block_patterns": ["A", "B", "C"],
+    "values": [
+      {"index": 1, "value": 0.037037037, "decimal": "037", "notes": "3/81 = first Repitan"},
+      {"index": 2, "value": 0.074074074, "decimal": "074"},
+      {"index": 3, "value": 0.111111111, "decimal": "111", "notes": "= 1/9"},
+      {"index": 4, "value": 0.148148148, "decimal": "148"},
+      {"index": 5, "value": 0.185185185, "decimal": "185", "notes": "= 3/1.62"},
+      {"index": 6, "value": 0.222222222, "decimal": "222", "notes": "= 2/9"},
+      {"index": 7, "value": 0.259259259, "decimal": "259"},
+      {"index": 8, "value": 0.296296296, "decimal": "296"},
+      {"index": 9, "value": 0.333333333, "decimal": "333", "notes": "= 1/3"},
+      {"index": 10, "value": 0.370370370, "decimal": "370"},
+      {"index": 11, "value": 0.407407407, "decimal": "407"},
+      {"index": 12, "value": 0.444444444, "decimal": "444", "notes": "= 4/9"},
+      {"index": 13, "value": 0.481481481, "decimal": "481"},
+      {"index": 14, "value": 0.518518518, "decimal": "518"},
+      {"index": 15, "value": 0.555555555, "decimal": "555", "notes": "= 5/9"},
+      {"index": 16, "value": 0.592592592, "decimal": "592"},
+      {"index": 17, "value": 0.629629630, "decimal": "629"},
+      {"index": 18, "value": 0.666666666, "decimal": "666", "notes": "= 2/3, Planck's Constant related"},
+      {"index": 19, "value": 0.703703703, "decimal": "703"},
+      {"index": 20, "value": 0.740740740, "decimal": "740"},
+      {"index": 21, "value": 0.777777777, "decimal": "777", "notes": "= 7/9"},
+      {"index": 22, "value": 0.814814814, "decimal": "814"},
+      {"index": 23, "value": 0.851851851, "decimal": "851"},
+      {"index": 24, "value": 0.888888888, "decimal": "888", "notes": "= 8/9"},
+      {"index": 25, "value": 0.925925925, "decimal": "925"},
+      {"index": 26, "value": 0.962962962, "decimal": "962"},
+      {"index": 27, "value": 1.000000000, "decimal": "000", "notes": "= 27/27"}
+    ]
+  },
+  "omega_format_conversions": {
+    "description": "Five-level format system: Red > Omega Major > Green > Omega Minor > Blue",
+    "omega_ratio": 1.005662978,
+    "conversions": {
+      "meters_to_omega_major_rams": 0.989400790,
+      "omega_major_to_red": 1.005309630,
+      "red_to_omega_major": 0.994718414,
+      "omega_major_to_green": 1.005662978,
+      "green_to_omega_major": 0.994368911,
+      "omega_major_to_blue": 1.006016451,
+      "blue_to_omega_major": 0.994019530,
+      "omega_major_to_omega_minor": 1.011358026,
+      "omega_minor_to_omega_major": 0.988769530,
+      "red_to_green": 1.000351482,
+      "green_to_red": 0.999648641,
+      "red_to_blue": 1.000703088,
+      "blue_to_red": 0.999297406,
+      "red_to_omega_minor": 1.006016451,
+      "omega_minor_to_red": 0.994019530,
+      "green_to_blue": 1.000351482,
+      "blue_to_green": 0.999648641,
+      "green_to_omega_minor": 1.00562978,
+      "omega_minor_to_green": 0.99436891,
+      "blue_to_omega_minor": 1.005309630,
+      "omega_minor_to_blue": 0.994718414
+    },
+    "notes": "Spectral lines of any element are Omega Major Format values. Ra Repitans are Omega Minor Format."
+  },
+  "unit_conversions": {
+    "red_ram_to_meters": {
+      "value": 1.00537459,
+      "notes": "1 Red Ram = 1.00537459 meters (based on Great Pyramid standard)"
+    },
+    "meters_to_red_rams": {
+      "value": 0.994654142,
+      "notes": "1 meter = 0.994654142 Red Rams"
+    },
+    "ra_foot_composition": {
+      "ra_inches_per_foot": 12,
+      "ra_feet_per_ram": 3.333333,
+      "ra_inches_per_ram": 40
+    },
+    "meters_to_red_hunabs": 0.938098526,
+    "meters_to_red_ra_feet": 3.3155138805,
+    "meters_to_red_ra_inches": 39.78616565,
+    "british_feet_to_red_rams": 0.303170582,
+    "british_feet_to_red_ra_feet": 1.010568608,
+    "british_feet_to_red_ra_inches": 12.126823290,
+    "british_inches_to_red_rams": 0.025264215,
+    "british_inches_to_red_ra_inches": 1.010568608,
+    "pyramid_inches_to_red_rams": 0.0252920060,
+    "pyramid_inches_to_red_ra_inches": 1.0116802330,
+    "red_hunabs_to_red_rams": 1.0602875,
+    "red_rams_to_meters": 1.005374590,
+    "red_rams_to_british_feet": 3.298473066,
+    "red_rams_to_british_inches": 39.581676790
+  },
+  "pyramid_values": {
+    "base_side": {
+      "red_rams": 229.0221,
+      "green_rams": 229.1027,
+      "blue_rams": 229.1833,
+      "meters": 230.253,
+      "red_ra_feet": 763.407,
+      "red_ra_inches": 9160.884
+    },
+    "divisions_by_key_numbers": {
+      "by_red_pi": {"value": 72.9, "notes": "729 = 27th T.O.N."},
+      "by_rac1": {"value": 360, "notes": "Circle degrees"},
+      "by_rac2": {"value": 364.5, "notes": "Balmer Constant"},
+      "by_rac3": {"value": 400},
+      "by_rac4": {"value": 437.4, "notes": "27 × 1.62"},
+      "by_rac5": {"value": 500},
+      "by_rac6": {"value": 572.756493, "notes": "1.125 × Green Ankh"}
+    },
+    "grand_gallery_ramp": {
+      "red_rams": 45.80442,
+      "meters": 46.05,
+      "formula": "9 × Ankh = 9 × 5.08938"
+    }
+  },
+  "cosmological_constants": {
+    "hubble_constant_red": {
+      "value": 95425.875,
+      "units": "Red Rams per natural second per million natural parsecs",
+      "symbolic_equivalence": "Key 1 × 90,000 = 1.0602875 × 90,000"
+    },
+    "hubble_constant_green": {
+      "value": 95459.41548,
+      "units": "Green Rams per natural second per million natural parsecs"
+    },
+    "hubble_constant_blue": {
+      "value": 95492.96775,
+      "units": "Blue Rams per natural second per million natural parsecs"
+    },
+    "hubble_red_times_blue": {
+      "value": 9112500000,
+      "notes": "Also reciprocal of Green Rydberg × 10^10"
+    }
+  },
+  "elf_wave_constants": {
+    "dominant_frequency": {
+      "value": 10.602875,
+      "units": "Hz (cycles per natural second)",
+      "notes": "Most common ELF frequency. Same numerical value as Hunab."
+    },
+    "alpha_wave_range": {
+      "low": 7,
+      "high": 13.5,
+      "units": "Hz"
+    },
+    "natural_resonance_cavity": {
+      "notes": "ELF waves bracket Alpha brain-wave frequency range (7 to 13.5 Hz). 10.6 Hz most common."
+    },
+    "lyman_m2_connection": {
+      "value": 1.062875,
+      "units": "Hz per n.s.t.",
+      "notes": "121.5 degrees of Red Pi circle. Most intense H spectral line relates to alpha brainwave."
+    }
+  },
+  "geometry_relationships": {
+    "static_geometry": {
+      "description": "Does not need Pi or Phi. Related to state of death.",
+      "perfect_form": "Cube"
+    },
+    "dynamic_geometry": {
+      "description": "Always needs Pi or Phi. Related to state of life.",
+      "perfect_form": "Sphere"
+    },
+    "pyramid_geometry": {
+      "description": "Form between life and death. Combines static and dynamic."
+    },
+    "snowflake_pattern": {
+      "pentagon_count": 48,
+      "sphere_count": 37,
+      "notes": "48 overlapping pentagons. 37 total spheres (27 peripheral + 10 internal). 37/27 ratio in Grand Gallery."
+    }
+  },
+  "key_number_omega_levels": {
+    "description": "Complete Ra Key Numbers across all five format levels",
+    "pi_reciprocal": {
+      "red": 0.3183098924,
+      "omega_major": 0.3181980515,
+      "green": 0.32,
+      "omega_minor": 0.3164062499,
+      "blue": 0.3180862498
+    },
+    "hunab_h_bar": {
+      "red": 1.0602875,
+      "omega_major": 1.0546875,
+      "green": 1.060660172,
+      "omega_minor": 1.0666,
+      "blue": 1.061032975,
+      "notes": "H-Bar = Omega Major value"
+    },
+    "phi": {
+      "red": 1.619430799,
+      "omega_major": 1.610877636,
+      "green": 1.62,
+      "omega_minor": 1.629174024,
+      "blue": 1.62056401
+    },
+    "sqrt_2": {
+      "red": 1.41371666,
+      "omega_major": 1.40625,
+      "green": 1.414213562,
+      "omega_minor": 1.4222222,
+      "blue": 1.414710633
+    },
+    "balmer": {
+      "red": 366.43553167,
+      "omega_major": 364.5,
+      "green": 366.5641559,
+      "omega_minor": 368.64,
+      "blue": 366.62299663
+    },
+    "rydberg": {
+      "red": 0.9160884,
+      "omega_major": 0.91125,
+      "green": 0.9164103888,
+      "omega_minor": 0.9216,
+      "blue": 0.9167324908
+    }
+  }
+}
