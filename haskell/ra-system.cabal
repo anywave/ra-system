@@ -19,7 +19,6 @@ maintainer:         alex@anywavecreations.com
 category:           Math
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
-data-files:         ../data/ra_constants_v2.json
 
 source-repository head
   type:     git
@@ -39,7 +38,9 @@ library
                     , Ra.Omega
                     , Ra.Spherical
                     , Ra.Gates
+                    , Ra.Scalar
     build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
+                    , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
                     , bytestring >=0.11 && <0.13
                     , text >=2.0 && <3.0

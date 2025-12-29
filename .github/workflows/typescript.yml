@@ -1,0 +1,40 @@
+name: TypeScript Tests
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'typescript/**'
+      - '.github/workflows/typescript.yml'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'typescript/**'
+      - '.github/workflows/typescript.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['18', '20', '22']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        working-directory: typescript
+        run: npm install
+
+      - name: Type check
+        working-directory: typescript
+        run: npm run typecheck
+
+      - name: Run tests
+        working-directory: typescript
+        run: npm test

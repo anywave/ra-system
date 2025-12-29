@@ -1,0 +1,46 @@
+name: Rust Tests
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust.yml'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'rust/**'
+      - '.github/workflows/rust.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust: [stable, beta]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust ${{ matrix.rust }}
+        uses: dtolnay/rust-action@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+
+      - name: Check
+        working-directory: rust
+        run: cargo check --all-targets
+
+      - name: Run tests
+        working-directory: rust
+        run: cargo test --all-targets
+
+      - name: Clippy
+        working-directory: rust
+        run: cargo clippy --all-targets -- -D warnings
+        if: matrix.rust == 'stable'
+
+      - name: Format check
+        working-directory: rust
+        run: cargo fmt --check
+        if: matrix.rust == 'stable'

@@ -1,0 +1,51 @@
+name: Haskell Tests
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - 'haskell/**'
+      - '.github/workflows/haskell.yml'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - 'haskell/**'
+      - '.github/workflows/haskell.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ghc: ['9.4', '9.6', '9.8']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up GHC ${{ matrix.ghc }}
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          cabal-version: 'latest'
+
+      - name: Cache Cabal
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cabal/store
+            dist-newstyle
+          key: ${{ runner.os }}-ghc-${{ matrix.ghc }}-${{ hashFiles('haskell/ra-system.cabal') }}
+          restore-keys: |
+            ${{ runner.os }}-ghc-${{ matrix.ghc }}-
+
+      - name: Update Cabal
+        working-directory: haskell
+        run: cabal update
+
+      - name: Build
+        working-directory: haskell
+        run: cabal build all
+
+      - name: Run tests
+        working-directory: haskell
+        run: cabal test all --test-show-details=direct
