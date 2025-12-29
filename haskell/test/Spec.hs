@@ -34,7 +34,7 @@ main = hspec $ do
             let computed = unHunab hunab / unOmegaRatio omegaRatio
             abs (unHBar hBar - computed) `shouldSatisfy` (< 0.0001)
 
-        it "I4: Repitan(n) = n / 27 for all n ∈ [1, 27]" $ do
+        it "I4: Repitan(n) = n / 27 for all n ∈ [1, 27]" $
             all checkRepitan [1..27] `shouldBe` True
           where
             checkRepitan n = case repitan n of
@@ -58,7 +58,7 @@ main = hspec $ do
             unRedPi redPi `shouldSatisfy` (< unGreenPi greenPi)
             unGreenPi greenPi `shouldSatisfy` (< unBluePi bluePi)
 
-        it "O3: For all n: 0 < Repitan(n) ≤ 1" $ do
+        it "O3: For all n: 0 < Repitan(n) ≤ 1" $
             all checkRepitanRange allRepitans `shouldBe` True
           where
             checkRepitanRange r = let v = repitanValue r in v > 0 && v <= 1
@@ -79,7 +79,7 @@ main = hspec $ do
             abs (greenToOmegaMajor green - green / omega) `shouldSatisfy` (< 1e-10)
 
     describe "Range Invariants (R1-R4)" $ do
-        it "R1: 0 < RAC(i) < 1 for all i ∈ [1, 6]" $ do
+        it "R1: 0 < RAC(i) < 1 for all i ∈ [1, 6]" $
             all checkRacRange allRacLevels `shouldBe` True
           where
             checkRacRange level = isValidRacValue $ unRacValue $ racValue level
