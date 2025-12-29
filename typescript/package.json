@@ -1,0 +1,39 @@
+{
+  "name": "@anywave/ra-system",
+  "version": "0.1.0",
+  "description": "Ra System mathematical constants - TypeScript bindings",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src tests",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "ra-system",
+    "constants",
+    "harmonics",
+    "mathematics"
+  ],
+  "author": "Anywave <info@anywavecreations.com>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anywave/ra-system.git"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.0",
+    "vitest": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
