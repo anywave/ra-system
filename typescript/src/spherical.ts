@@ -9,9 +9,9 @@
  */
 
 import { ANKH } from './constants.js';
-import { Repitan, repitanFromTheta } from './repitans.js';
+import { Repitan } from './repitans.js';
 import { RacLevel } from './rac.js';
-import { OmegaFormat, harmonicFromOmega, omegaFromHarmonic } from './omega.js';
+import { OmegaFormat, harmonicFromOmega } from './omega.js';
 
 /**
  * A complete Ra coordinate in 4-dimensional space

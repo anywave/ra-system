@@ -7,7 +7,7 @@
  * Conversions use the Omega Ratio (Q-Ratio): Ω = 1.005662978
  */
 
-import { OMEGA } from './constants.js';
+// OMEGA constant (1.005662978) is used to derive the conversion matrix values
 
 /**
  * The five Omega format levels (coherence depth tiers)

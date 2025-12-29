@@ -23,9 +23,10 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install Rust ${{ matrix.rust }}
-        uses: dtolnay/rust-action@stable
+        uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
+          components: clippy, rustfmt
 
       - name: Check
         working-directory: rust
