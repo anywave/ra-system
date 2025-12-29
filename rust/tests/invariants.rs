@@ -3,7 +3,6 @@
 //! Tests all 17 invariants from ra_integration_spec.md Section 6.
 
 use ra_core::*;
-use ra_core::constants::*;
 use ra_core::repitans::*;
 use ra_core::rac::*;
 use ra_core::omega::*;
@@ -70,7 +69,7 @@ fn test_i5_ton_equals_m_times_0027() {
     for m in 0..=35 {
         let ton = f64::from(m) * 0.027;
         assert!(
-            ton >= 0.0 && ton < 1.0,
+            (0.0..1.0).contains(&ton),
             "I5: T.O.N.({}) = {} should be in [0, 1)",
             m,
             ton
@@ -104,10 +103,13 @@ fn test_o1_rac_ordering() {
 
 #[test]
 fn test_o2_pi_ordering() {
-    assert!(
-        RED_PI < GREEN_PI && GREEN_PI < BLUE_PI,
-        "O2: π_red < π_green < π_blue"
-    );
+    #[allow(clippy::assertions_on_constants)]
+    {
+        assert!(
+            RED_PI < GREEN_PI && GREEN_PI < BLUE_PI,
+            "O2: π_red < π_green < π_blue"
+        );
+    }
 }
 
 #[test]
@@ -252,7 +254,7 @@ fn test_access_alpha_in_range() {
             let result = access_level(c, level);
             let alpha = result.alpha();
             assert!(
-                alpha >= 0.0 && alpha <= 1.0,
+                (0.0..=1.0).contains(&alpha),
                 "Alpha {} for coherence {} and {:?} should be in [0, 1]",
                 alpha,
                 c,
@@ -314,13 +316,13 @@ fn test_radius_normalization_roundtrip() {
     for raw in raw_values {
         let normalized = normalize_radius(raw);
         assert!(
-            normalized >= 0.0 && normalized <= 1.0,
+            (0.0..=1.0).contains(&normalized),
             "Normalized radius {} should be in [0, 1]",
             normalized
         );
 
         // If within Ankh, roundtrip should preserve
-        if raw <= ANKH && raw >= 0.0 {
+        if (0.0..=ANKH).contains(&raw) {
             let denormalized = denormalize_radius(normalized);
             assert!(
                 (denormalized - raw).abs() < 1e-10,
