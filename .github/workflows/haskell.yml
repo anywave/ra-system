@@ -44,8 +44,8 @@ jobs:
 
       - name: Build
         working-directory: haskell
-        run: cabal build all
+        run: cabal build all --enable-tests
 
       - name: Run tests
         working-directory: haskell
-        run: cabal test all --test-show-details=direct
+        run: cabal test all --enable-tests --test-show-details=direct
