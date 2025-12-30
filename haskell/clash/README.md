@@ -436,6 +436,38 @@ Interfaces with tactile sensors and haptic actuators for bidirectional physical 
 
 **Key Function:** `tactileControl :: Signal dom (Unsigned 8) -> Signal dom (BitVector 4) -> Signal dom (Unsigned 2) -> Signal dom TactileOutput`
 
+### RaMusicChamberHarmonics.hs (Prompt 64 - Solfeggio Overtone Mapper)
+
+Maps coherence band levels to Solfeggio overtone frequencies for music chamber harmonics.
+
+**Solfeggio Base Frequencies:**
+| Index | Frequency | Note  | Association           |
+|-------|-----------|-------|----------------------|
+| 0     | 396 Hz    | G     | Liberation from fear |
+| 1     | 417 Hz    | G#    | Undoing situations   |
+| 2     | 528 Hz    | C     | Transformation/DNA   |
+| 3     | 639 Hz    | E     | Connecting relations |
+
+**Harmonic Mapping:**
+```
+overtoneFreq[i] = baseFreq[i] + (baseFreq[i] * coherenceBand[i]) / 256
+```
+
+**Example:**
+| Band | Base | Coherence | Overtone |
+|------|------|-----------|----------|
+| 0    | 396  | 128       | 594 Hz   |
+| 1    | 417  | 255       | 832 Hz   |
+| 2    | 528  | 64        | 660 Hz   |
+| 3    | 639  | 192       | 1117 Hz  |
+
+**Integration:**
+- Consumes coherence bands from RaBiometricMatcher
+- Outputs frequency values for audio synthesis
+- Feeds into RaSonicEmitter for audible output
+
+**Key Function:** `harmonicMapper :: Signal dom (Vec 4 (Unsigned 8)) -> Signal dom (Vec 4 (Unsigned 16))`
+
 ---
 
 ### BiofieldLoopback.hs Details
