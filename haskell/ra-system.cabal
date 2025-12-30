@@ -67,6 +67,11 @@ library
                     , Ra.AlchemicalNode
                     , Ra.EnergyTransduction
                     , Ra.Scriptum
+                    , Ra.WaterCohesionField
+                    , Ra.GenomicHarmonics
+                    , Ra.AetherSensor
+                    , Ra.VortexGate
+                    , Ra.FrequencyTable
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
