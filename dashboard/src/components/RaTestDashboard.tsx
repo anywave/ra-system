@@ -131,6 +131,7 @@ export default function RaTestDashboard() {
   const [expressionColor, setExpressionColor] = useState('gray')
   const [consentState, setConsentState] = useState<{ granted: boolean; entropy: number; active: number } | null>(null)
   const [transferResult, setTransferResult] = useState<{ signal: number[]; latency: number; ok: boolean } | null>(null)
+  const [tokenStats, setTokenStats] = useState<{ tokensUsed: number; computeCost: number } | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -209,8 +210,35 @@ export default function RaTestDashboard() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ coherence: 200, signal: [60, 90, 120, 180], send: true })
     })
-    const { signal, latency, ok } = await res.json()
+    const { signal, latency, ok, tokensUsed, computeCost } = await res.json()
     setTransferResult({ signal, latency, ok })
+    setTokenStats({ tokensUsed, computeCost })
+
+    const deferReason = applyBackpropGating(tokensUsed, ok)
+    if (deferReason) alert(`Activation deferred: ${deferReason}`)
+  }
+
+  const tokenColor = (tokens: number) => {
+    if (tokens < 100) return 'bg-green-400'
+    if (tokens < 200) return 'bg-yellow-400'
+    return 'bg-red-500'
+  }
+
+  const applyBackpropGating = (tokens: number, ok: boolean): string | null => {
+    if (!ok) return 'Signal integrity failure'
+    if (tokens > 200) return 'Token strain — defer activation'
+    return null
+  }
+
+  const exportTokenTelemetry = () => {
+    const blob = new Blob([
+      JSON.stringify(tokenStats, null, 2)
+    ], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'tokenomics_snapshot.json'
+    a.click()
   }
 
   const simulateHandshake = async () => {
@@ -406,6 +434,22 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderTokenOverlay = () => (
+    <Card className="border-purple-400 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Tokenomics Heatmap</h2>
+        {tokenStats ? (
+          <div className="space-y-2">
+            <div className="text-sm">Tokens: <b>{tokenStats.tokensUsed}</b></div>
+            <div className="text-sm">Compute: <b>{tokenStats.computeCost}</b></div>
+            <div className={`h-4 w-full rounded ${tokenColor(tokenStats.tokensUsed)}`} style={{ transition: 'all 0.3s' }} />
+            <Button variant="outline" onClick={exportTokenTelemetry} className="w-full mt-2">Export Telemetry</Button>
+          </div>
+        ) : <div className="text-sm text-muted-foreground">Run a module to view token usage.</div>}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -428,6 +472,7 @@ export default function RaTestDashboard() {
       {phase === 'phase1' && (
         <>
           {renderTransferOverlay()}
+          {renderTokenOverlay()}
         </>
       )}
       {phase === 'phase2' && (
