@@ -176,6 +176,20 @@ granted=False: Any → Idle (reset)
 
 **Key Function:** `fieldSynthesisNode :: Signal dom Bool -> (Signal dom ChamberState, Signal dom (Unsigned 8))`
 
+### RaBiometricGenerator.hs (Biometric Waveform)
+
+Generates simulated biometric waveforms for coherence entrainment testing.
+
+**Biometric Patterns:**
+| Pattern | Description | Waveform |
+|---------|-------------|----------|
+| Flatline | No variation | Constant 128 |
+| BreathRise | Breath cycle | 0→255→0 |
+| CoherentPulse | Smooth HRV | 100-180 sinusoid |
+| Arrhythmic | Erratic | Random spikes |
+
+**Key Function:** `biometricSignal :: Signal dom BioPattern -> Signal dom (Unsigned 8)`
+
 ---
 
 ### BiofieldLoopback.hs Details
