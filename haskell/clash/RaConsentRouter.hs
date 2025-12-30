@@ -1,11 +1,11 @@
 {-|
 Module      : RaConsentRouter
-Description : Consent State to Channel Router
+Description : Unified downstream activation routing from ConsentState
 Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
 
-Routes consent states to downstream trigger channels based on state values.
-Integrates with RaConsentFramework for complete consent pipeline.
+Used to control biometric, gesture, and field triggers based on consent state
+and external coherence gate.
 
 == Trigger Channels
 
@@ -15,27 +15,17 @@ Integrates with RaConsentFramework for complete consent pipeline.
 | gestureTrigger | Override only                                  |
 | fieldTrigger   | Permit AND coherenceGate high                  |
 
-== Truth Table
-
-| ConsentState | coherenceGate | bioTrigger | gestureTrigger | fieldTrigger |
-|--------------|---------------|------------|----------------|--------------|
-| Permit       | False         | True       | False          | False        |
-| Permit       | True          | True       | False          | True         |
-| Restrict     | False         | False      | False          | False        |
-| Restrict     | True          | False      | False          | False        |
-| Override     | False         | True       | True           | False        |
-| Override     | True          | True       | True           | False        |
-
 == Pipeline Integration
 
 @
-ConsentFramework ─▶ ConsentState ─┬─▶ bioTrigger ──▶ Bio Systems
-                                  ├─▶ gestureTrigger ──▶ Gesture Control
-CoherenceGate ────────────────────┴─▶ fieldTrigger ──▶ Field Emitters
+ConsentFramework ──▶ ConsentState ─┬─▶ bioTrigger ──▶ Bio Systems
+                                   ├─▶ gestureTrigger ──▶ Gesture Control
+CoherenceGate ─────────────────────┴─▶ fieldTrigger ──▶ Field Emitters
 @
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
 
@@ -48,112 +38,79 @@ import qualified Prelude as P
 -- Types
 -- =============================================================================
 
--- | ConsentState encodes the user's current permission signature
--- Imported conceptually from RaConsentFramework
+-- | ConsentState encoding
 data ConsentState = Permit | Restrict | Override
   deriving (Show, Eq, Generic, NFDataX)
-
--- | Trigger output bundle
-type TriggerBundle = (Bool, Bool, Bool)  -- (bioTrigger, gestureTrigger, fieldTrigger)
 
 -- =============================================================================
 -- Core Functions
 -- =============================================================================
 
--- | Route consent state to trigger channels
--- Pure combinational logic - no state required
-routeConsent :: ConsentState -> Bool -> TriggerBundle
-routeConsent state coherenceGate = (bioTrigger, gestureTrigger, fieldTrigger)
-  where
-    -- bioTrigger: activates if state is Permit or Override
-    bioTrigger = state == Permit || state == Override
-
-    -- gestureTrigger: activates only if state is Override
-    gestureTrigger = state == Override
-
-    -- fieldTrigger: activates if state is Permit AND coherenceGate is high
-    fieldTrigger = state == Permit && coherenceGate
-
--- | Signal-level consent router
--- Lifts pure routing logic to signal domain
+-- | Main router logic: activates based on consent state and external coherence
 consentRouter
   :: HiddenClockResetEnable dom
   => Signal dom ConsentState
-  -> Signal dom Bool
+  -> Signal dom Bool               -- ^ coherenceGate (scalar)
   -> (Signal dom Bool, Signal dom Bool, Signal dom Bool)
-consentRouter stateS gateS = unbundle $ routeConsent <$> stateS <*> gateS
+     -- ^ (bioTrigger, gestureTrigger, fieldTrigger)
+consentRouter stateS coherenceS = (bioTrigger, gestureTrigger, fieldTrigger)
+  where
+    bioTrigger     = fmap (\s -> s == Permit || s == Override) stateS
+    gestureTrigger = fmap (== Override) stateS
+    fieldTrigger   = liftA2 (&&) (fmap (== Permit) stateS) coherenceS
 
 -- =============================================================================
 -- Synthesis Entry Point
 -- =============================================================================
 
--- | Top entity for Clash synthesis
--- Input: ConsentState signal, coherenceGate signal
--- Output: (bioTrigger, gestureTrigger, fieldTrigger)
-consentRouterTop
+-- | Top entity with explicit clock, reset, enable
+topEntity
   :: Clock System
   -> Reset System
   -> Enable System
   -> Signal System ConsentState
   -> Signal System Bool
   -> (Signal System Bool, Signal System Bool, Signal System Bool)
-consentRouterTop clk rst en stateS gateS =
-  withClockResetEnable clk rst en $ consentRouter stateS gateS
+topEntity = exposeClockResetEnable consentRouter
 
 -- =============================================================================
 -- Test Data
 -- =============================================================================
 
--- | Test input states (covers all trigger combinations)
+-- | Test vectors for consent states
 testStates :: Vec 6 ConsentState
-testStates = $(listToVecTH
-  [ Permit    -- Case 1: Permit + gate low
-  , Permit    -- Case 2: Permit + gate high
-  , Restrict  -- Case 3: Restrict + gate low
-  , Restrict  -- Case 4: Restrict + gate high
-  , Override  -- Case 5: Override + gate low
-  , Override  -- Case 6: Override + gate high
-  ])
+testStates = $(listToVecTH [Permit, Override, Restrict, Permit, Override, Restrict])
 
--- | Test coherence gate values
-testGates :: Vec 6 Bool
-testGates = $(listToVecTH [False, True, False, True, False, True])
+-- | Test vectors for coherence gate
+testCoherence :: Vec 6 Bool
+testCoherence = $(listToVecTH [True, False, True, False, True, False])
 
 -- | Expected bioTrigger outputs
 expectedBio :: Vec 6 Bool
-expectedBio = $(listToVecTH [True, True, False, False, True, True])
+expectedBio = $(listToVecTH [True, True, False, True, True, False])
 
 -- | Expected gestureTrigger outputs
 expectedGesture :: Vec 6 Bool
-expectedGesture = $(listToVecTH [False, False, False, False, True, True])
+expectedGesture = $(listToVecTH [False, True, False, False, True, False])
 
 -- | Expected fieldTrigger outputs
 expectedField :: Vec 6 Bool
-expectedField = $(listToVecTH [False, True, False, False, False, False])
+expectedField = $(listToVecTH [True, False, False, False, False, False])
 
 -- =============================================================================
 -- Testbench
 -- =============================================================================
 
 -- | Testbench for consent router validation
--- Tests all six input combinations and verifies trigger outputs
 testBench :: Signal System Bool
 testBench = done
   where
     clk = tbSystemClockGen (not <$> done)
     rst = systemResetGen
-
-    -- Stimuli generators
-    stateStim = stimuliGenerator clk rst testStates
-    gateStim = stimuliGenerator clk rst testGates
-
-    -- Router under test
-    (bioOut, gestureOut, fieldOut) = consentRouterTop clk rst enableGen stateStim gateStim
-
-    -- Output verifiers
-    bioVerifier = outputVerifier' clk rst expectedBio
-    gestureVerifier = outputVerifier' clk rst expectedGesture
-    fieldVerifier = outputVerifier' clk rst expectedField
-
-    -- All verifiers must pass
-    done = bioVerifier bioOut .&&. gestureVerifier gestureOut .&&. fieldVerifier fieldOut
+    stateS = stimuliGenerator clk rst testStates
+    coherS = stimuliGenerator clk rst testCoherence
+    (bioS, gestS, fieldS) = topEntity clk rst enableGen stateS coherS
+    bioCheck = outputVerifier' clk rst expectedBio bioS
+    gestCheck = outputVerifier' clk rst expectedGesture gestS
+    fieldCheck = outputVerifier' clk rst expectedField fieldS
+    done = bioCheck .&&. gestCheck .&&. fieldCheck
