@@ -54,6 +54,19 @@ library
                     , Ra.Healing
                     , Ra.Group
                     , Ra.Shadow
+                    , Ra.Dream
+                    , Ra.Navigate
+                    , Ra.Entangle
+                    , Ra.Radionics
+                    , Ra.Biofield
+                    , Ra.Attractors
+                    , Ra.DomainExtensions
+                    , Ra.ChamberTuning
+                    , Ra.SonicFlux
+                    , Ra.TorsionField
+                    , Ra.AlchemicalNode
+                    , Ra.EnergyTransduction
+                    , Ra.Scriptum
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
