@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ra-gold: #D4AF37;
+  --ra-blue: #1E3A5F;
+  --ra-purple: #6B21A8;
+  --ra-glow: #00D4FF;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+}
+
+.coherence-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
