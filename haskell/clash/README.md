@@ -133,6 +133,26 @@ Routes consent states to downstream trigger channels. Integrates with RaConsentF
 
 **Key Function:** `consentRouterTop :: ... -> Signal System ConsentState -> Signal System Bool -> (Signal System Bool, Signal System Bool, Signal System Bool)`
 
+### RaHandshakeGate.hs (Dual-Factor Validation)
+
+Dual-factor validation handshake combining symbolic consent triggers with biometric coherence verification.
+
+**Handshake Logic:**
+```
+handshakeGranted = overrideEnable OR (biometricCoherence AND isPermittedID)
+```
+
+**Permitted Trigger IDs:** `[3, 4, 7, 9]`
+
+**Truth Table:**
+| Trigger | Biometric | Override | Granted |
+|---------|-----------|----------|---------|
+| 3,4,7,9 | True      | False    | True    |
+| other   | True      | False    | False   |
+| any     | any       | True     | True    |
+
+**Key Function:** `handshakeTop :: ... -> Signal System ConsentTrigger -> Signal System Bool -> Signal System Bool -> Signal System Bool`
+
 ---
 
 ### BiofieldLoopback.hs Details
