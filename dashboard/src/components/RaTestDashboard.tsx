@@ -47,6 +47,13 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       status: 'pending'
     },
     {
+      id: 'fieldTransferBus',
+      title: 'Ra.FieldTransferBus — Tesla Coherent Transfer',
+      description: 'Scalar packet transmission with latency tracking and coherence integrity.',
+      phase: 'phase1',
+      status: 'pending'
+    },
+    {
       id: 'prompt32',
       title: 'Ra.ConsentFramework — Symbolic Gate Validator',
       description: 'Self-regulating scalar consent logic with override tracking.',
@@ -123,6 +130,7 @@ export default function RaTestDashboard() {
   const [expression, setExpression] = useState<{ aura: number; limb: number } | null>(null)
   const [expressionColor, setExpressionColor] = useState('gray')
   const [consentState, setConsentState] = useState<{ granted: boolean; entropy: number; active: number } | null>(null)
+  const [transferResult, setTransferResult] = useState<{ signal: number[]; latency: number; ok: boolean } | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -193,6 +201,16 @@ export default function RaTestDashboard() {
     })
     const { granted, entropy, active } = await res.json()
     setConsentState({ granted, entropy, active })
+  }
+
+  const testTransferBus = async () => {
+    const res = await fetch('/api/tests/field-transfer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coherence: 200, signal: [60, 90, 120, 180], send: true })
+    })
+    const { signal, latency, ok } = await res.json()
+    setTransferResult({ signal, latency, ok })
   }
 
   const simulateHandshake = async () => {
@@ -372,6 +390,22 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderTransferOverlay = () => (
+    <Card className="border-blue-400 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Tesla Field Transfer Bus</h2>
+        {transferResult ? (
+          <div className="space-y-1">
+            <div className="text-sm">Signal: <code>[{transferResult.signal.join(', ')}]</code></div>
+            <div className="text-sm">Latency: <b>{transferResult.latency} cycles</b></div>
+            <div className="text-sm">Integrity: <b style={{ color: transferResult.ok ? 'limegreen' : 'red' }}>{transferResult.ok ? 'PASS' : 'FAIL'}</b></div>
+          </div>
+        ) : <div className="text-sm text-muted-foreground">No signal transferred yet.</div>}
+        <Button size="sm" onClick={testTransferBus} className="mt-2">Simulate Transfer</Button>
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -391,6 +425,11 @@ export default function RaTestDashboard() {
           </CardContent>
         </Card>
       ))}
+      {phase === 'phase1' && (
+        <>
+          {renderTransferOverlay()}
+        </>
+      )}
       {phase === 'phase2' && (
         <>
           {renderHandshakeSimulator()}
