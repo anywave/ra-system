@@ -1,0 +1,52 @@
+{
+  "test_suite": "orgone_scalar_stability",
+  "prompt_id": 9,
+  "results": [
+    {
+      "test_id": 0,
+      "potential": 2.0,
+      "flux_coherence": 1.0,
+      "inversion_prob": 0.0,
+      "emergence_score": 2.0,
+      "fragment_stability": 1.0,
+      "emergence_class": "ALPHA_EMERGENCE",
+      "events": [
+        "Blue luminescence detected (coherence spike)"
+      ]
+    },
+    {
+      "test_id": 1,
+      "potential": 1.0,
+      "flux_coherence": 0.5,
+      "inversion_prob": 0.05,
+      "emergence_score": 0.475,
+      "fragment_stability": 0.45,
+      "emergence_class": "SHADOW_FRAGMENT",
+      "events": []
+    },
+    {
+      "test_id": 2,
+      "potential": 0.65,
+      "flux_coherence": 0.35,
+      "inversion_prob": 0.0675,
+      "emergence_score": 0.2121,
+      "fragment_stability": 0.2825,
+      "emergence_class": "FIELD_COLLAPSE",
+      "events": [
+        "Shadow emergence risk: high"
+      ]
+    },
+    {
+      "test_id": 3,
+      "potential": 1.75,
+      "flux_coherence": 0.8,
+      "inversion_prob": 0.0125,
+      "emergence_score": 1.3825,
+      "fragment_stability": 0.7875,
+      "emergence_class": "STABLE_FRAGMENT",
+      "events": [
+        "Blue luminescence detected (coherence spike)"
+      ]
+    }
+  ]
+}
