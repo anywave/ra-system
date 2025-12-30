@@ -20,34 +20,38 @@ import Ra.Spherical
 import Ra.Gates hiding (coherenceFloor)
 import Ra.Identity hiding (Potential, FluxCoherence)
 import qualified Ra.Identity as Id
-import Ra.Emergence (classifyEmergence, isNoRelation, isFull, isDark, isPartial, EmergenceResult(..))
-import Ra.Scalar (Inversion(..))
+import Ra.Emergence (classifyEmergence, classifyEmergenceWithReluctance
+                    , isNoRelation, isFull, isDark, isPartial, isWithheld, isGuardianMismatch
+                    , EmergenceResult(..))
+import Ra.Scalar (Inversion(..), FragmentReluctance(..), HarmonicSignature(..)
+                 , defaultReluctance, guardedReluctance, mkHarmonicSignature
+                 , matchGuardianHarmonic, checkReluctanceFloor)
 import qualified Ra.Gates as Gates
 
 main :: IO ()
 main = hspec $ do
     describe "Constant Invariants (I1-I6)" $ do
-        it "I1: Ankh = π_red × φ_green" $ do
+        it "I1: Ankh = pi_red * phi_green" $ do
             let computed = unRedPi redPi * unGreenPhi greenPhi
             abs (unAnkh ankh - computed) `shouldSatisfy` (< 0.0001)
 
-        it "I2: RAC₁ = Ankh / 8" $ do
+        it "I2: RAC1 = Ankh / 8" $ do
             let computed = unAnkh ankh / 8
             abs (unRacValue (racValue RAC1) - computed) `shouldSatisfy` (< 0.0001)
 
-        it "I3: H-Bar = Hunab / Ω" $ do
+        it "I3: H-Bar = Hunab / Omega" $ do
             -- Tolerance relaxed to 1e-3 due to Ra System's use of truncated constants
             -- H-Bar (1.0546875) vs computed (1.0543269...) differs by ~3.6e-4
             let computed = unHunab hunab / unOmegaRatio omegaRatio
             abs (unHBar hBar - computed) `shouldSatisfy` (< 0.001)
 
-        it "I4: Repitan(n) = n / 27 for all n ∈ [1, 27]" $
+        it "I4: Repitan(n) = n / 27 for all n in [1, 27]" $
             let checkRepitan n = case repitan n of
                     Just r -> abs (repitanValue r - fromIntegral n / 27) < 1e-10
                     Nothing -> False
             in all checkRepitan [1..27] `shouldBe` True
 
-        it "I5: T.O.N.(m) = m × 0.027 for all m ∈ [0, 36]" $
+        it "I5: T.O.N.(m) = m * 0.027 for all m in [0, 36]" $
             -- T.O.N. values are implicitly tested through Repitan relationship
             let tonValue m = fromIntegral m * 0.027
             in all (\m -> tonValue m >= 0 && tonValue m < 1) [0..35] `shouldBe` True
@@ -57,14 +61,14 @@ main = hspec $ do
             abs (r1 * r1 - unFineStructure fineStructure) `shouldSatisfy` (< 1e-10)
 
     describe "Ordering Invariants (O1-O4)" $ do
-        it "O1: RAC₁ > RAC₂ > RAC₃ > RAC₄ > RAC₅ > RAC₆ > 0" $ do
+        it "O1: RAC1 > RAC2 > RAC3 > RAC4 > RAC5 > RAC6 > 0" $ do
             verifyRacOrdering `shouldBe` True
 
-        it "O2: π_red < π_green < π_blue" $ do
+        it "O2: pi_red < pi_green < pi_blue" $ do
             unRedPi redPi `shouldSatisfy` (< unGreenPi greenPi)
             unGreenPi greenPi `shouldSatisfy` (< unBluePi bluePi)
 
-        it "O3: For all n: 0 < Repitan(n) ≤ 1" $
+        it "O3: For all n: 0 < Repitan(n) <= 1" $
             let checkRepitanRange r = let v = repitanValue r in v > 0 && v <= 1
             in all checkRepitanRange allRepitans `shouldBe` True
 
@@ -75,28 +79,28 @@ main = hspec $ do
     describe "Conversion Invariants (C1-C3)" $ do
         prop "C1: Omega roundtrip preserves value" prop_omega_roundtrip
 
-        it "C2: Green × Ω = Omega_Minor" $ do
+        it "C2: Green * Omega = Omega_Minor" $ do
             let green = 1.62
             abs (greenToOmegaMinor green - green * omega) `shouldSatisfy` (< 1e-10)
 
-        it "C3: Green / Ω = Omega_Major" $ do
+        it "C3: Green / Omega = Omega_Major" $ do
             -- Tolerance relaxed to 1e-9 for floating-point precision
             let green = 1.62
             abs (greenToOmegaMajor green - green / omega) `shouldSatisfy` (< 1e-9)
 
     describe "Range Invariants (R1-R4)" $ do
-        it "R1: 0 < RAC(i) < 1 for all i ∈ [1, 6]" $
+        it "R1: 0 < RAC(i) < 1 for all i in [1, 6]" $
             let checkRacRange level = isValidRacValue $ unRacValue $ racValue level
             in all checkRacRange allRacLevels `shouldBe` True
 
-        prop "R2: 0 < Repitan(n) ≤ 1 for all n ∈ [1, 27]" prop_repitan_range
+        prop "R2: 0 < Repitan(n) <= 1 for all n in [1, 27]" prop_repitan_range
 
         it "R3: Coherence bounds are [0, 1]" $ do
             Gates.coherenceFloor `shouldSatisfy` (>= 0)
             Gates.coherenceFloor `shouldSatisfy` (< 1)
             coherenceCeiling `shouldBe` 1.0
 
-        it "R4: Omega format index ∈ {0, 1, 2, 3, 4}" $ do
+        it "R4: Omega format index in {0, 1, 2, 3, 4}" $ do
             all (\f -> harmonicFromOmega f `elem` [0..4]) [minBound..maxBound] `shouldBe` True
 
     describe "Repitan Properties" $ do
@@ -129,7 +133,7 @@ main = hspec $ do
         prop "zero coherence is blocked" prop_zero_coherence_blocked
         prop "access result alpha is in [0, 1]" prop_access_alpha_range
 
-        it "coherence floor is φ_green / Ankh" $ do
+        it "coherence floor is phi_green / Ankh" $ do
             abs (Gates.coherenceFloor - unGreenPhi greenPhi / unAnkh ankh) `shouldSatisfy` (< 1e-10)
 
     describe "Spherical Properties" $ do
@@ -224,6 +228,44 @@ main = hspec $ do
 
         prop "E7: classifyEmergence respects coherenceFloor boundary" prop_norelation_boundary
 
+    describe "Fragment Reluctance Properties" $ do
+        prop "FR1: reluctanceFloor is bounded [0, 1]" prop_reluctanceFloorBounded
+        prop "FR2: Withheld implies sub-floor coherence" prop_withheldImpliesSubFloor
+        prop "FR3: Guardian mismatch cannot produce Full" prop_guardianMismatchNotFull
+        prop "FR4: Default reluctance allows emergence" prop_defaultReluctanceAllowsEmergence
+        prop "FR5: Harmonic signature validates |m| <= l" prop_harmonicSignatureValid
+        prop "FR6: No guardian always matches" prop_noGuardianAlwaysMatches
+        prop "FR7: Same guardian matches" prop_sameGuardianMatches
+        prop "FR8: Reluctance floor check is monotonic" prop_reluctanceFloorMonotonic
+
+        -- Test case 1: High External Coherence, Withheld by Reluctance
+        it "Case 1: High coherence withheld by high reluctance floor" $ do
+            let coh = 0.95
+                fr = FR 0.98 Nothing False  -- reluctance_floor > coherence
+            isWithheld (classifyEmergenceWithReluctance coh Normal fr Nothing) `shouldBe` True
+
+        -- Test case 2: Guardian Harmonic Match -> Full Emergence
+        it "Case 2: Guardian match allows full emergence" $ do
+            let coh = 1.0
+                fragSig = Just (HS 2 1)
+                guardSig = Just (HS 2 1)  -- Match
+                fr = FR 0.8 guardSig False
+            isFull (classifyEmergenceWithReluctance coh Normal fr fragSig) `shouldBe` True
+
+        -- Test case 3: Guardian Mismatch -> Blocked
+        it "Case 3: Guardian mismatch blocks emergence" $ do
+            let coh = 1.0
+                fragSig = Just (HS 2 1)
+                guardSig = Just (HS 3 0)  -- Mismatch
+                fr = FR 0.5 guardSig False
+            isGuardianMismatch (classifyEmergenceWithReluctance coh Normal fr fragSig) `shouldBe` True
+
+        -- Test case 4: Inversion Override
+        it "Case 4: Inversion produces shadow emergence" $ do
+            let coh = 0.7
+                fr = FR 0.5 Nothing True  -- inverted = True
+            classifyEmergenceWithReluctance coh Normal fr Nothing `shouldBe` Shadow
+
 -- QuickCheck Generators
 
 instance Arbitrary Repitan where
@@ -245,7 +287,7 @@ instance Arbitrary OmegaFormat where
 prop_repitan_in_range :: Repitan -> Bool
 prop_repitan_in_range r = repitanIndex r >= 1 && repitanIndex r <= 27
 
--- | Repitan value is always 0 < x ≤ 1
+-- | Repitan value is always 0 < x <= 1
 prop_repitan_range :: Repitan -> Bool
 prop_repitan_range r = let v = repitanValue r in v > 0 && v <= 1
 
@@ -298,3 +340,82 @@ prop_norelation_boundary coh =
         if coh < Id.coherenceFloor
             then isNoRelation (classifyEmergence coh Normal)
             else not (isNoRelation (classifyEmergence coh Normal))
+
+-- ---------------------------------------------------------------------
+-- Fragment Reluctance Properties
+-- ---------------------------------------------------------------------
+
+instance Arbitrary FragmentReluctance where
+    arbitrary = do
+        floor' <- choose (0.0, 1.0)
+        hasGuardian <- arbitrary
+        sig <- if hasGuardian
+               then do
+                   l <- choose (0, 5)
+                   m <- choose (-l, l)
+                   pure $ Just (HS l m)
+               else pure Nothing
+        inv <- arbitrary
+        pure $ FR floor' sig inv
+
+instance Arbitrary HarmonicSignature where
+    arbitrary = do
+        l <- choose (0, 10)
+        m <- choose (-l, l)
+        pure $ HS l m
+
+-- | Reluctance floor is bounded [0, 1]
+prop_reluctanceFloorBounded :: FragmentReluctance -> Bool
+prop_reluctanceFloorBounded fr =
+    reluctanceFloor fr >= 0.0 && reluctanceFloor fr <= 1.0
+
+-- | Withheld implies coherence below reluctance floor
+prop_withheldImpliesSubFloor :: Double -> FragmentReluctance -> Property
+prop_withheldImpliesSubFloor coh fr =
+    coh >= 0 && coh <= 1 ==>
+        case classifyEmergenceWithReluctance coh Normal fr Nothing of
+            Withheld -> coh < reluctanceFloor fr
+            _ -> True
+
+-- | Guardian mismatch cannot produce full emergence
+prop_guardianMismatchNotFull :: Double -> Property
+prop_guardianMismatchNotFull coh =
+    coh >= 0 && coh <= 1 ==>
+        let fragSig = Just (HS 2 1)
+            guardSig = Just (HS 3 0)  -- Mismatch
+            fr = FR 0.0 guardSig False
+        in case classifyEmergenceWithReluctance coh Normal fr fragSig of
+              Full -> False
+              _ -> True
+
+-- | Default reluctance allows emergence when coherence meets thresholds
+prop_defaultReluctanceAllowsEmergence :: Property
+prop_defaultReluctanceAllowsEmergence =
+    forAll (choose (0.85, 1.0)) $ \coh ->
+        isFull (classifyEmergenceWithReluctance coh Normal defaultReluctance Nothing)
+
+-- | Harmonic signature smart constructor validates |m| <= l
+prop_harmonicSignatureValid :: Int -> Int -> Bool
+prop_harmonicSignatureValid l m =
+    case mkHarmonicSignature l m of
+        Just (HS l' m') -> l' >= 0 && abs m' <= l'
+        Nothing -> l < 0 || abs m > l
+
+-- | Guardian match with no guardian always succeeds
+prop_noGuardianAlwaysMatches :: HarmonicSignature -> Bool
+prop_noGuardianAlwaysMatches fragSig =
+    matchGuardianHarmonic fragSig Nothing
+
+-- | Guardian match with same signature succeeds
+prop_sameGuardianMatches :: HarmonicSignature -> Bool
+prop_sameGuardianMatches sig =
+    matchGuardianHarmonic sig (Just sig)
+
+-- | Reluctance floor check is monotonic in score
+-- If s1 passes the floor check, then any s2 >= s1 also passes
+prop_reluctanceFloorMonotonic :: Property
+prop_reluctanceFloorMonotonic =
+    forAll (choose (0.0, 1.0)) $ \floor' ->
+      forAll (choose (0.0, 1.0)) $ \s1 ->
+        forAll (choose (s1, 1.0)) $ \s2 ->
+          checkReluctanceFloor s1 floor' ==> checkReluctanceFloor s2 floor'

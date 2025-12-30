@@ -22,6 +22,15 @@ module Ra.Scalar
   , BowlField(..)
   , FluxCoherence(..)
 
+    -- * Fragment Reluctance (consent-gating)
+  , HarmonicSignature(..), mkHarmonicSignature
+  , FragmentReluctance(..)
+  , defaultReluctance
+  , guardedReluctance
+  , matchGuardianHarmonic
+  , evaluateGuardianPenalty
+  , checkReluctanceFloor
+
     -- * Coordinates + Emergence
   , Coordinate(..)
   , EmergenceCondition(..)
@@ -181,6 +190,63 @@ data FluxCoherence = FC
   } deriving (Eq, Show, Generic, NFData)
 
 --------------------------------------------------------------------------------
+-- Fragment Reluctance (Consent-Gating)
+--------------------------------------------------------------------------------
+
+-- | Harmonic signature (l, m) for guardian matching
+-- Maps to spherical harmonic indices for consent-based gating
+data HarmonicSignature = HS
+  { hsL :: !Int  -- ^ degree (l ≥ 0)
+  , hsM :: !Int  -- ^ order (-l ≤ m ≤ l)
+  } deriving (Eq, Ord, Show, Generic, NFData)
+
+-- | Smart constructor enforcing |m| ≤ l
+mkHarmonicSignature :: Int -> Int -> Maybe HarmonicSignature
+mkHarmonicSignature l m
+  | l >= 0 && abs m <= l = Just (HS l m)
+  | otherwise = Nothing
+
+-- | Internal reluctance model of a fragment
+-- Even if external coherence is high, fragments resist emergence
+-- unless reluctanceFloor is met. This is the consent-gate analog.
+data FragmentReluctance = FR
+  { reluctanceFloor :: !Double                -- ^ Minimum coherence required [0,1]
+  , guardian        :: !(Maybe HarmonicSignature)  -- ^ Required harmonic signature
+  , inverted        :: !Bool                  -- ^ Shadow emergence path
+  } deriving (Eq, Show, Generic, NFData)
+
+-- | Default reluctance (no resistance)
+defaultReluctance :: FragmentReluctance
+defaultReluctance = FR 0.0 Nothing False
+
+-- | High-guard reluctance (therapeutic context)
+-- Creates a reluctance barrier at the specified floor with a guardian harmonic
+guardedReluctance :: Double -> Int -> Int -> Maybe FragmentReluctance
+guardedReluctance floor l m = do
+  sig <- mkHarmonicSignature l m
+  pure $ FR (clamp01 floor) (Just sig) False
+  where
+    clamp01 x = max 0.0 (min 1.0 x)
+
+-- | Check if fragment harmonic matches guardian requirement
+matchGuardianHarmonic :: HarmonicSignature -> Maybe HarmonicSignature -> Bool
+matchGuardianHarmonic _ Nothing = True  -- No guardian = always match
+matchGuardianHarmonic fragSig (Just guardSig) =
+  hsL fragSig == hsL guardSig && hsM fragSig == hsM guardSig
+
+-- | Calculate penalty for guardian mismatch (0 = full match, 1 = total mismatch)
+evaluateGuardianPenalty :: HarmonicSignature -> Maybe HarmonicSignature -> Double
+evaluateGuardianPenalty _ Nothing = 0.0
+evaluateGuardianPenalty fragSig (Just guardSig) =
+  let lDiff = abs (hsL fragSig - hsL guardSig)
+      mDiff = abs (hsM fragSig - hsM guardSig)
+  in min 1.0 (fromIntegral (lDiff + mDiff) / 10.0)
+
+-- | Check if external coherence meets internal reluctance floor
+checkReluctanceFloor :: Double -> Double -> Bool
+checkReluctanceFloor score floor = score >= floor
+
+--------------------------------------------------------------------------------
 -- Composite Coordinate & Emergence
 --------------------------------------------------------------------------------
 
@@ -199,6 +265,7 @@ data EmergenceCondition = EC
   , ecFluxCoherence :: !FluxCoherence
   , ecInversion     :: !Inversion
   , ecTemporalPhase :: !TemporalWindow
+  , ecReluctance    :: !FragmentReluctance  -- ^ Internal consent-gate constraints
   } deriving (Eq, Show, Generic, NFData)
 
 -- | Result of emergence attempt
@@ -207,6 +274,8 @@ data EmergenceResult fragment
   | PartialEmergence !Double fragment   -- ^ α ∈ (0,1), partial coherence
   | Dark                                -- ^ Phase mismatch, no emergence
   | ShadowEmergence fragment            -- ^ Inverted/mirror emergence
+  | Withheld fragment                   -- ^ Internal block despite external readiness
+  | GuardianMismatch fragment           -- ^ Harmonic signature rejected
   deriving (Eq, Show, Generic, NFData)
 
 --------------------------------------------------------------------------------

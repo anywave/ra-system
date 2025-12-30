@@ -34,12 +34,15 @@ module Ra.Emergence
   , selectContentForm
   , evaluateEmergence
   , classifyEmergence
+  , classifyEmergenceWithReluctance
 
     -- * Predicates
   , isNoRelation
   , isDark
   , isPartial
   , isFull
+  , isWithheld
+  , isGuardianMismatch
 
     -- * Invariants
   , scoreInvariant
@@ -48,7 +51,8 @@ module Ra.Emergence
 
 import GHC.Generics (Generic)
 import Control.DeepSeq (NFData)
-import Ra.Scalar (Inversion(..))
+import Ra.Scalar (Inversion(..), FragmentReluctance(..), HarmonicSignature(..)
+                 , matchGuardianHarmonic, checkReluctanceFloor)
 import Ra.Temporal (AlignmentMultiplier(..), WindowPhase(..))
 import Ra.Identity (coherenceFloor, noRelation)
 
@@ -95,7 +99,7 @@ data PartialForm
 instance NFData PartialForm
 
 -- | High-level emergence classification result
--- Order of evaluation: NoRelation → Blocked → Dark → Partial → Full
+-- Order of evaluation: NoRelation → Withheld → GuardianMismatch → Blocked → Dark → Partial → Full
 data EmergenceResult
   = NoRelation              -- ^ No relational substrate (coh < coherenceFloor)
   | Dark                    -- ^ Field exists but unreachable (coh < 0.40)
@@ -103,6 +107,8 @@ data EmergenceResult
   | Full                    -- ^ Full alignment (coh >= 0.85)
   | Shadow                  -- ^ Inverted state
   | Blocked                 -- ^ Consent denied (future)
+  | Withheld                -- ^ Internal block despite external readiness (reluctance floor not met)
+  | GuardianMismatch        -- ^ Harmonic signature rejected (guardian pattern mismatch)
   deriving (Show, Eq, Generic)
 
 instance NFData EmergenceResult
@@ -246,6 +252,57 @@ isPartial _             = False
 isFull :: EmergenceResult -> Bool
 isFull Full = True
 isFull _    = False
+
+-- | Check if result is Withheld
+isWithheld :: EmergenceResult -> Bool
+isWithheld Withheld = True
+isWithheld _        = False
+
+-- | Check if result is GuardianMismatch
+isGuardianMismatch :: EmergenceResult -> Bool
+isGuardianMismatch GuardianMismatch = True
+isGuardianMismatch _                = False
+
+-- ---------------------------------------------------------------------
+-- Reluctance-Aware Classification
+-- ---------------------------------------------------------------------
+
+-- | Classify emergence with reluctance constraints
+-- Evaluation order:
+--   1. NoRelation if coherence < coherenceFloor (~0.318)
+--   2. Withheld if coherence < reluctanceFloor
+--   3. GuardianMismatch if fragment harmonic doesn't match guardian
+--   4. Shadow if inverted
+--   5. Normal classification (Dark → Partial → Full)
+classifyEmergenceWithReluctance
+  :: Double              -- ^ Coherence score [0, 1]
+  -> Inversion           -- ^ Normal or Inverted emergence
+  -> FragmentReluctance  -- ^ Internal reluctance constraints
+  -> Maybe HarmonicSignature  -- ^ Fragment's harmonic signature (for guardian check)
+  -> EmergenceResult
+classifyEmergenceWithReluctance coh inv reluc fragSig
+  -- 1. Below coherence floor = no relational substrate
+  | noRelation coh = NoRelation
+  -- 2. Below reluctance floor = internal block
+  | not (checkReluctanceFloor coh (reluctanceFloor reluc)) = Withheld
+  -- 3. Guardian mismatch (if fragment has signature and guardian is set)
+  | not (guardianMatch fragSig (guardian reluc)) = GuardianMismatch
+  -- 4. Inverted path
+  | inverted reluc || inv == Inverted = Shadow
+  -- 5. Normal emergence classification
+  | coh >= 0.85 = Full
+  | coh >= 0.75 = Partial Preview alpha
+  | coh >= 0.55 = Partial Summary alpha
+  | coh >= 0.40 = Partial Blur alpha
+  | coh >= coherenceFloor = Dark
+  | otherwise = NoRelation  -- Should not reach here
+  where
+    -- Alpha interpolates within partial range [0.40, 0.85]
+    alpha = (coh - 0.40) / (0.85 - 0.40)
+    -- Guardian match helper
+    guardianMatch :: Maybe HarmonicSignature -> Maybe HarmonicSignature -> Bool
+    guardianMatch Nothing _ = True  -- No fragment sig = always match
+    guardianMatch (Just fSig) guardianSig = matchGuardianHarmonic fSig guardianSig
 
 -- ---------------------------------------------------------------------
 -- Invariants

@@ -43,22 +43,34 @@ library
                     , Ra.Temporal
                     , Ra.Emergence
                     , Ra.Identity
-    build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
+    build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
-                    , bytestring >=0.11 && <0.13
-                    , text >=2.0 && <3.0
+                    , bytestring >=0.10 && <0.13
+                    , text >=1.2 && <3.0
                     , containers >=0.6 && <0.8
     hs-source-dirs:   src
-    default-language: GHC2021
+    default-language: Haskell2010
+    default-extensions: DeriveGeneric
+                      , DeriveAnyClass
+                      , DerivingStrategies
+                      , GeneralizedNewtypeDeriving
+                      , OverloadedStrings
+                      , StrictData
+                      , BangPatterns
 
 test-suite ra-system-test
     import:           warnings
-    default-language: GHC2021
+    default-language: Haskell2010
+    default-extensions: DeriveGeneric
+                      , DeriveAnyClass
+                      , DerivingStrategies
+                      , GeneralizedNewtypeDeriving
+                      , OverloadedStrings
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
-    build-depends:    base ^>=4.17 || ^>=4.18 || ^>=4.19 || ^>=4.20
+    build-depends:    base >=4.14 && <5
                     , ra-system
                     , QuickCheck >=2.14
                     , hspec >=2.10
