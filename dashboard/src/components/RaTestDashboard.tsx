@@ -133,6 +133,7 @@ export default function RaTestDashboard() {
   const [transferResult, setTransferResult] = useState<{ signal: number[]; latency: number; ok: boolean } | null>(null)
   const [tokenStats, setTokenStats] = useState<{ tokensUsed: number; computeCost: number } | null>(null)
   const [bioResult, setBioResult] = useState<{ motion: boolean; haptic: boolean } | null>(null)
+  const [aura, setAura] = useState<number[] | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -253,6 +254,20 @@ export default function RaTestDashboard() {
     })
     const { motionIntent, hapticPing } = await res.json()
     setBioResult({ motion: motionIntent, haptic: hapticPing })
+  }
+
+  const runAvatarFieldTest = async () => {
+    const res = await fetch('/api/tests/avatarfield', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        signature: [10, 20, 30, 40],
+        chamberState: [0, 1, 5, 3, 5, 2],
+        emergenceLevel: [5, 10, 2, 1, 3, 0]
+      })
+    })
+    const { auraPattern } = await res.json()
+    setAura(auraPattern)
   }
 
   const simulateHandshake = async () => {
@@ -482,6 +497,27 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderAuraPattern = (pattern: number[]) => (
+    <div className="grid grid-cols-4 gap-2 pt-2">
+      {pattern.map((val, i) => (
+        <div key={i} className="h-6 w-full bg-gradient-to-r from-blue-300 to-purple-500 rounded" style={{ opacity: val / 255 }} />
+      ))}
+    </div>
+  )
+
+  const renderAvatarFieldControl = () => (
+    <Card className="border-pink-400 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 62: Avatar Field Visualizer</h2>
+        <p className="text-sm text-muted-foreground">
+          Chamber state = 0b101 triggers aura glow with emergence scaling.
+        </p>
+        <Button onClick={runAvatarFieldTest}>Run Visualizer Test</Button>
+        {aura && renderAuraPattern(aura)}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -505,6 +541,7 @@ export default function RaTestDashboard() {
         <>
           {renderTransferOverlay()}
           {renderBiofeedbackControl()}
+          {renderAvatarFieldControl()}
           {renderTokenOverlay()}
         </>
       )}
