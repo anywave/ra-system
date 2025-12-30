@@ -6,10 +6,23 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { CheckCircle, AlertTriangle, Loader2, Info, Coins, Cpu } from 'lucide-react'
+import { CheckCircle, AlertTriangle, Loader2, Info, Coins, Cpu, HelpCircle } from 'lucide-react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+
+// Tooltip helper component
+const FieldTooltip = ({ tip }: { tip: string }) => (
+  <Tooltip>
+    <TooltipTrigger asChild>
+      <HelpCircle className="inline-block w-4 h-4 ml-1 text-muted-foreground cursor-help" />
+    </TooltipTrigger>
+    <TooltipContent className="max-w-xs">
+      <p className="text-xs">{tip}</p>
+    </TooltipContent>
+  </Tooltip>
+)
 
 interface TestModule {
   id: string
@@ -611,8 +624,17 @@ export default function RaTestDashboard() {
   const renderBiofeedbackPanel = () => (
     <Card className="border-lime-600 shadow">
       <CardContent className="p-4 space-y-2">
-        <h2 className="font-semibold text-lg">Prompt 52: Biofeedback Harness</h2>
+        <h2 className="font-semibold text-lg">
+          Prompt 52: Biofeedback Harness
+          <FieldTooltip tip="Maps exhale-hold breath + high coherence to motion/haptic triggers. Trigger: phase=ExhaleHold AND coherence>=230." />
+        </h2>
         <p className="text-sm text-muted-foreground">Triggers haptic + intent on exhale-hold + coherence</p>
+        <div className="text-xs text-muted-foreground mb-1">
+          <span>phase: Inhale|Exhale|Hold|ExhaleHold</span>
+          <FieldTooltip tip="Only ExhaleHold can trigger. Other phases are inactive." />
+          <span className="ml-2">coherence: 0-255</span>
+          <FieldTooltip tip="Must be >= 230 (~0.9) to trigger with ExhaleHold." />
+        </div>
         <Textarea
           className="font-mono text-xs"
           value={bioInputs}
@@ -623,6 +645,7 @@ export default function RaTestDashboard() {
           <Button onClick={runBiofeedbackTest}>Run Biofeedback Test</Button>
           <span className="text-sm text-muted-foreground">
             Token Cost: {bioCostOverlay(bioInputs).toFixed(2)} units
+            <FieldTooltip tip="Active trigger costs 1.8 units, inactive costs 0.6 units." />
           </span>
         </div>
         {bioResults && (
@@ -749,8 +772,17 @@ export default function RaTestDashboard() {
   const renderTwistEnvelopePanel = () => (
     <Card className="border-yellow-700 shadow">
       <CardContent className="p-4 space-y-2">
-        <h2 className="font-semibold text-lg">Prompt 49: Harmonic Inversion Twist</h2>
+        <h2 className="font-semibold text-lg">
+          Prompt 49: Harmonic Inversion Twist
+          <FieldTooltip tip="Computes twist envelope from harmonic mode Y(a,b). Formula: invMag = a*10 + b*7, then ±15 based on coherence threshold (105)." />
+        </h2>
         <p className="text-sm text-muted-foreground">Y(a,b) inversion mapped to twist vector and duration</p>
+        <div className="text-xs text-muted-foreground mb-1">
+          <span>modeA/modeB: 0-15</span>
+          <FieldTooltip tip="Harmonic mode indices. Higher values = larger inverse magnitude." />
+          <span className="ml-2">coherence: 0-255</span>
+          <FieldTooltip tip="Coherence >= 105 amplifies (+15), below suppresses (-10)." />
+        </div>
         <Textarea
           className="font-mono text-xs"
           value={twistInputs}
@@ -761,6 +793,7 @@ export default function RaTestDashboard() {
           <Button onClick={runTwistEnvelope}>Run Inversion Test</Button>
           <span className="text-sm text-muted-foreground">
             Token Cost: {twistCostOverlay(twistInputs).toFixed(2)} units
+            <FieldTooltip tip="High coherence (>=105) costs 2.0 units, low coherence costs 1.2 units per test case." />
           </span>
         </div>
         {twistResults && (
@@ -822,22 +855,24 @@ export default function RaTestDashboard() {
   )
 
   return (
-    <div className="p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Ra Prompt Compliance Dashboard</h1>
-      {loading ? <p className="text-muted-foreground">Loading test modules...</p> : (
-        <Tabs defaultValue="phase2" className="w-full">
-          <TabsList>
+    <TooltipProvider>
+      <div className="p-6 space-y-4">
+        <h1 className="text-2xl font-bold">Ra Prompt Compliance Dashboard</h1>
+        {loading ? <p className="text-muted-foreground">Loading test modules...</p> : (
+          <Tabs defaultValue="phase2" className="w-full">
+            <TabsList>
+              {phases.map(p => (
+                <TabsTrigger key={p} value={p}>{p.toUpperCase()}</TabsTrigger>
+              ))}
+            </TabsList>
             {phases.map(p => (
-              <TabsTrigger key={p} value={p}>{p.toUpperCase()}</TabsTrigger>
+              <TabsContent key={p} value={p}>
+                {renderPhase(p)}
+              </TabsContent>
             ))}
-          </TabsList>
-          {phases.map(p => (
-            <TabsContent key={p} value={p}>
-              {renderPhase(p)}
-            </TabsContent>
-          ))}
-        </Tabs>
-      )}
-    </div>
+          </Tabs>
+        )}
+      </div>
+    </TooltipProvider>
   )
 }
