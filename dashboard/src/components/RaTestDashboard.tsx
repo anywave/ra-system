@@ -146,6 +146,15 @@ export default function RaTestDashboard() {
       { coherence: 0, angle: 127 }
     ], null, 2)
   )
+  const [morphInputs, setMorphInputs] = useState<string>(
+    JSON.stringify([
+      { coherence: 90, instability: 100, form: 'Sphere' },
+      { coherence: 120, instability: 50, form: 'Sphere' },
+      { coherence: 80, instability: 60, form: 'Cube' },
+      { coherence: 150, instability: 80, form: 'Cube' }
+    ], null, 2)
+  )
+  const [morphResults, setMorphResults] = useState<any[] | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -314,6 +323,28 @@ export default function RaTestDashboard() {
       if (op.startsWith('GateThreshold')) return acc + 1.0
       return acc
     }, 0)
+  }
+
+  const runMorphFallback = async () => {
+    const res = await fetch('/api/tests/morphfallback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inputStates: JSON.parse(morphInputs) })
+    })
+    const { result } = await res.json()
+    setMorphResults(result)
+  }
+
+  const morphCostOverlay = (inputStr: string): number => {
+    try {
+      const inputs = JSON.parse(inputStr)
+      return inputs.reduce((acc: number, state: any) => {
+        const cost = (state.coherence < 100 && state.instability > 77) ? 1.5 : 0.5
+        return acc + cost
+      }, 0)
+    } catch {
+      return 0
+    }
   }
 
   const simulateHandshake = async () => {
@@ -621,6 +652,36 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderMorphologyFallback = () => (
+    <Card className="border-orange-600 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 44: Chamber Morphology System</h2>
+        <p className="text-sm text-muted-foreground">Fallback to Toroid when coherence &lt; 0.39 and instability &gt; 0.30</p>
+        <Textarea
+          className="font-mono text-xs"
+          value={morphInputs}
+          onChange={e => setMorphInputs(e.target.value)}
+          rows={6}
+        />
+        <div className="flex items-center justify-between">
+          <Button onClick={runMorphFallback}>Run Fallback</Button>
+          <span className="text-sm text-muted-foreground">
+            Token Cost: {morphCostOverlay(morphInputs).toFixed(2)} units
+          </span>
+        </div>
+        {morphResults && (
+          <div className="pt-2 space-y-1">
+            {morphResults.map((res, idx) => (
+              <div key={idx} className="text-xs bg-muted p-2 rounded">
+                <pre className="whitespace-pre-wrap">{JSON.stringify(res, null, 2)}</pre>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -647,6 +708,7 @@ export default function RaTestDashboard() {
           {renderAvatarFieldControl()}
           {renderMusicChamberModule()}
           {renderSymbolicOps()}
+          {renderMorphologyFallback()}
           {renderTokenOverlay()}
         </>
       )}
