@@ -94,6 +94,9 @@ library
                     , Ra.Propulsion.VectorConduction
                     , Ra.Propulsion.BiofeedbackHarness
                     , Ra.Simulation.AetherLab
+                    , Ra.ORME.FluxChamber
+                    , Ra.Energy.RadiantTap
+                    , Ra.Memory.ScalarPalette
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
