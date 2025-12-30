@@ -30,6 +30,20 @@ Real-time harmonic driver mapping coherence to audio scalar output.
 | < 0.80    | HarmonicMid   |
 | >= 0.80   | HarmonicHigh  |
 
+### RaSonicEmitter.hs (Prompt 22 Extended)
+
+Signal-level audio generator with scalar envelope synthesis.
+
+**Pipeline:** `Coherence → sonicFluxMapper → OutputAudioScalar → audioEmitter → Amplitude`
+
+**Amplitude Mapping:**
+| Scalar State  | Amplitude |
+|---------------|-----------|
+| Silence       | 0.0       |
+| HarmonicLow   | 0.3       |
+| HarmonicMid   | 0.6       |
+| HarmonicHigh  | 0.9       |
+
 ---
 
 ### BiofieldLoopback.hs Details
