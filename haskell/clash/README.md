@@ -156,6 +156,26 @@ handshakeGranted = overrideFlag OR (biometricMatch AND symbolOK)
 
 **Key Function:** `handshakeTop :: ... -> Signal System HandshakeIn -> Signal System HandshakeOut`
 
+### RaFieldSynthesisNode.hs (Chamber State Cascade)
+
+Chamber state machine activated by handshakeGranted signal. Controls field synthesis progression through activation phases.
+
+**Chamber States:**
+| State | Glow | Description |
+|-------|------|-------------|
+| Idle | 0 | Awaiting grant |
+| Spinning | 64 | Initial spin-up |
+| Stabilizing | 192 | Coherence stabilization |
+| Emanating | 255 | Full emission |
+
+**State Transitions:**
+```
+granted=True:  Idle → Spinning → Stabilizing → Emanating (holds)
+granted=False: Any → Idle (reset)
+```
+
+**Key Function:** `fieldSynthesisNode :: Signal dom Bool -> (Signal dom ChamberState, Signal dom (Unsigned 8))`
+
 ---
 
 ### BiofieldLoopback.hs Details
