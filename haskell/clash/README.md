@@ -44,6 +44,19 @@ Signal-level audio generator with scalar envelope synthesis.
 | HarmonicMid   | 0.6       |
 | HarmonicHigh  | 0.9       |
 
+### RaPWMDriver.hs (Hardware Output)
+
+Scalar amplitude to PWM duty signal generator for low-frequency outputs.
+
+**Applications:**
+- LED intensity modulation
+- Haptic vibration control
+- Solfeggio/Schumann entrainment
+
+**Specs:**
+- Resolution: 8-bit (256 levels)
+- Duty cycle: amplitude × 255
+
 ---
 
 ### BiofieldLoopback.hs Details
