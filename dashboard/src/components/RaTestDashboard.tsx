@@ -164,6 +164,15 @@ export default function RaTestDashboard() {
     ], null, 2)
   )
   const [twistResults, setTwistResults] = useState<any[] | null>(null)
+  const [bioInputs, setBioInputs] = useState<string>(
+    JSON.stringify([
+      { phase: "ExhaleHold", coherence: 240 },
+      { phase: "Exhale", coherence: 240 },
+      { phase: "ExhaleHold", coherence: 200 },
+      { phase: "Inhale", coherence: 255 }
+    ], null, 2)
+  )
+  const [bioResults, setBioResults] = useState<any[] | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -277,13 +286,10 @@ export default function RaTestDashboard() {
     const res = await fetch('/api/tests/biofeedback', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        breath: [0, 1, 2, 2, 1, 2, 0, 0],
-        coherence: [100, 100, 240, 240, 100, 250, 240, 200]
-      })
+      body: JSON.stringify({ inputStates: JSON.parse(bioInputs) })
     })
-    const { motionIntent, hapticPing } = await res.json()
-    setBioResult({ motion: motionIntent, haptic: hapticPing })
+    const { result } = await res.json()
+    setBioResults(result)
   }
 
   const runAvatarFieldTest = async () => {
@@ -373,6 +379,20 @@ export default function RaTestDashboard() {
         // Cost based on coherence threshold: high coherence = more expensive
         const baseCost = state.coherence >= 105 ? 2.0 : 1.2
         return acc + baseCost
+      }, 0)
+    } catch {
+      return 0
+    }
+  }
+
+  const bioCostOverlay = (inputStr: string): number => {
+    try {
+      const inputs = JSON.parse(inputStr)
+      return inputs.reduce((acc: number, state: any) => {
+        // Cost based on trigger activation
+        const active = state.phase === "ExhaleHold" && state.coherence >= 230
+        const cost = active ? 1.8 : 0.6
+        return acc + cost
       }, 0)
     } catch {
       return 0
@@ -588,18 +608,30 @@ export default function RaTestDashboard() {
     </Card>
   )
 
-  const renderBiofeedbackControl = () => (
-    <Card className="border-green-400 shadow">
+  const renderBiofeedbackPanel = () => (
+    <Card className="border-lime-600 shadow">
       <CardContent className="p-4 space-y-2">
         <h2 className="font-semibold text-lg">Prompt 52: Biofeedback Harness</h2>
-        <p className="text-sm text-muted-foreground">
-          Exhale to Hold + Coherence &gt; 230 triggers MotionIntent + HapticPing.
-        </p>
-        <Button onClick={runBiofeedbackTest}>Run Harness Test</Button>
-        {bioResult && (
-          <div className="text-sm pt-2">
-            <div>MotionIntent: <b style={{ color: bioResult.motion ? 'limegreen' : 'red' }}>{bioResult.motion ? 'ACTIVE' : 'INACTIVE'}</b></div>
-            <div>HapticPing: <b style={{ color: bioResult.haptic ? 'limegreen' : 'red' }}>{bioResult.haptic ? 'ACTIVE' : 'INACTIVE'}</b></div>
+        <p className="text-sm text-muted-foreground">Triggers haptic + intent on exhale-hold + coherence</p>
+        <Textarea
+          className="font-mono text-xs"
+          value={bioInputs}
+          onChange={e => setBioInputs(e.target.value)}
+          rows={6}
+        />
+        <div className="flex items-center justify-between">
+          <Button onClick={runBiofeedbackTest}>Run Biofeedback Test</Button>
+          <span className="text-sm text-muted-foreground">
+            Token Cost: {bioCostOverlay(bioInputs).toFixed(2)} units
+          </span>
+        </div>
+        {bioResults && (
+          <div className="pt-2 space-y-1">
+            {bioResults.map((res, idx) => (
+              <div key={idx} className="text-xs bg-muted p-2 rounded">
+                <pre className="whitespace-pre-wrap">{JSON.stringify(res, null, 2)}</pre>
+              </div>
+            ))}
           </div>
         )}
       </CardContent>
@@ -766,12 +798,12 @@ export default function RaTestDashboard() {
       {phase === 'phase1' && (
         <>
           {renderTransferOverlay()}
-          {renderBiofeedbackControl()}
+          {renderBiofeedbackPanel()}
+          {renderTwistEnvelopePanel()}
           {renderAvatarFieldControl()}
           {renderMusicChamberModule()}
           {renderSymbolicOps()}
           {renderMorphologyFallback()}
-          {renderTwistEnvelopePanel()}
           {renderTokenOverlay()}
         </>
       )}
