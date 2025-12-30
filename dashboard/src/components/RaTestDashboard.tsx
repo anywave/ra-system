@@ -1,5 +1,5 @@
-// RaTestDashboard.tsx — Visual Interface for Modular Prompt Testing
-// Tailored for Ra Codex Test Suite Integration
+// RaTestDashboard.tsx — Updated Phase II with HandshakeGate visual module
+// Ra Codex Test Suite Integration with Interactive Handshake Simulation
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { CheckCircle, AlertTriangle, Loader2, Info } from 'lucide-react'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { Switch } from '@/components/ui/switch'
 
 interface TestModule {
   id: string
@@ -18,7 +20,13 @@ interface TestModule {
   cost?: number
 }
 
-// Dynamic loader for test module metadata and results
+interface HandshakeResult {
+  handshakeGranted: boolean
+  passedBiometric: boolean
+  matchedSymbol: boolean
+  overrideUsed: boolean
+}
+
 const fetchTestModules = async (): Promise<TestModule[]> => {
   const response = await fetch('/api/tests/modules')
   const data = await response.json()
@@ -29,36 +37,35 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       title: 'Ra.SonicFlux Harmonic Driver',
       description: 'Real-time sonification of field emergence data.',
       phase: 'phase1',
-      status: 'pending',
-      tokenUsage: null,
-      cost: null
+      status: 'pending'
     },
     {
       id: 'prompt22-pwm',
       title: 'Ra.SonicEmitter → PWM Output',
       description: 'Cascaded scalar amplitude to PWM driver for chamber hardware.',
       phase: 'phase1',
-      status: 'pending',
-      tokenUsage: null,
-      cost: null
+      status: 'pending'
     },
     {
       id: 'prompt32',
       title: 'Ra.ConsentFramework — Symbolic Gate Validator',
       description: 'Self-regulating scalar consent logic with override tracking.',
       phase: 'phase2',
-      status: 'pending',
-      tokenUsage: null,
-      cost: null
+      status: 'pending'
     },
     {
       id: 'prompt32-router',
       title: 'ConsentRouter — Downstream Activation Splitter',
       description: 'Distributes consent state to biometric, gesture, and field pathways.',
       phase: 'phase2',
-      status: 'pending',
-      tokenUsage: null,
-      cost: null
+      status: 'pending'
+    },
+    {
+      id: 'handshakegate',
+      title: 'Ra.HandshakeGate — Dual-Factor Consent Link',
+      description: 'Validates biometric + symbolic gestures with override support.',
+      phase: 'phase2',
+      status: 'pending'
     }
   ]
 }
@@ -66,6 +73,10 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
 export default function RaTestDashboard() {
   const [modules, setModules] = useState<TestModule[]>([])
   const [loading, setLoading] = useState(true)
+  const [gesture, setGesture] = useState('3')
+  const [biometric, setBiometric] = useState(true)
+  const [override, setOverride] = useState(false)
+  const [handshakeResult, setHandshakeResult] = useState<HandshakeResult | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -81,6 +92,16 @@ export default function RaTestDashboard() {
     setModules(prev => prev.map(m => m.id === id ? { ...m, status: result.status, cost: result.cost, tokenUsage: result.tokenUsage } : m))
   }
 
+  const simulateHandshake = async () => {
+    const res = await fetch('/api/tests/simulate-handshake', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gestureID: parseInt(gesture), biometricMatch: biometric, overrideFlag: override })
+    })
+    const data = await res.json()
+    setHandshakeResult(data)
+  }
+
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'complete': return <CheckCircle className="text-green-500" />
@@ -89,6 +110,41 @@ export default function RaTestDashboard() {
       default: return <Info className="text-gray-400" />
     }
   }
+
+  const renderHandshakeSimulator = () => (
+    <Card className="shadow-md border-blue-400">
+      <CardContent className="p-4 space-y-3">
+        <h2 className="font-semibold text-lg">Handshake Simulation</h2>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium">Gesture ID</label>
+            <Select value={gesture} onValueChange={setGesture}>
+              <SelectTrigger><SelectValue placeholder="Select gesture ID" /></SelectTrigger>
+              <SelectContent>
+                {[0,1,2,3,4,5,6,7,8,9].map(id => (
+                  <SelectItem key={id} value={id.toString()}>{id}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Biometric Coherence</label>
+            <Switch checked={biometric} onCheckedChange={setBiometric} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium">Override Flag</label>
+            <Switch checked={override} onCheckedChange={setOverride} />
+          </div>
+        </div>
+        <Button onClick={simulateHandshake}>Simulate Handshake</Button>
+        {handshakeResult !== null && (
+          <div className="text-sm mt-2">
+            Granted: <b>{handshakeResult.handshakeGranted ? 'Yes' : 'No'}</b> | Biometric: {String(handshakeResult.passedBiometric)} | Symbol: {String(handshakeResult.matchedSymbol)} | Override: {String(handshakeResult.overrideUsed)}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
 
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
@@ -102,16 +158,14 @@ export default function RaTestDashboard() {
               {getStatusIcon(mod.status)}
             </div>
             <p className="text-sm text-muted-foreground">{mod.description}</p>
-            <div className="text-xs text-muted-foreground">
-              Token Usage: {mod.tokenUsage ?? '—'} | Cost: {mod.cost ?? '—'} RaUnits
-            </div>
             <Button onClick={() => runTest(mod.id)} disabled={mod.status === 'running'}>
               {mod.status === 'pending' ? 'Run Test' : mod.status === 'running' ? 'Running...' : 'Re-run'}
             </Button>
-            {mod.status === 'running' && <Progress value={75} className="h-1" />}
+            {mod.status === 'running' && <Progress value={70} className="h-1" />}
           </CardContent>
         </Card>
       ))}
+      {phase === 'phase2' && renderHandshakeSimulator()}
     </div>
   )
 
@@ -119,7 +173,7 @@ export default function RaTestDashboard() {
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-bold">Ra Prompt Compliance Dashboard</h1>
       {loading ? <p className="text-muted-foreground">Loading test modules...</p> : (
-        <Tabs defaultValue="phase1" className="w-full">
+        <Tabs defaultValue="phase2" className="w-full">
           <TabsList>
             {phases.map(p => (
               <TabsTrigger key={p} value={p}>{p.toUpperCase()}</TabsTrigger>
