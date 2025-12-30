@@ -50,6 +50,15 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       status: 'pending',
       tokenUsage: null,
       cost: null
+    },
+    {
+      id: 'prompt32-router',
+      title: 'ConsentRouter — Downstream Activation Splitter',
+      description: 'Distributes consent state to biometric, gesture, and field pathways.',
+      phase: 'phase2',
+      status: 'pending',
+      tokenUsage: null,
+      cost: null
     }
   ]
 }
