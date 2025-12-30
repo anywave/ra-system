@@ -107,12 +107,5 @@ jobs:
           HACKAGE_USERNAME: ${{ secrets.HACKAGE_USERNAME }}
           HACKAGE_TOKEN: ${{ secrets.HACKAGE_PASSWORD }}
         run: |
-          # Create cabal config with credentials
-          mkdir -p ~/.cabal
-          cat > ~/.cabal/config << EOF
-          repository hackage.haskell.org
-            url: https://hackage.haskell.org/
-            username: $HACKAGE_USERNAME
-            password: $HACKAGE_TOKEN
-          EOF
-          cabal upload --publish sdist/*.tar.gz
+          # Use command-line args for authentication
+          cabal upload --publish -u "$HACKAGE_USERNAME" -p "$HACKAGE_TOKEN" sdist/*.tar.gz
