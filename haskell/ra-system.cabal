@@ -49,12 +49,18 @@ library
                     , Ra.Music
                     , Ra.Pipeline
                     , Ra.Constants.Extended
+                    , Ra.Sympathetic
+                    , Ra.Orgone
+                    , Ra.Healing
+                    , Ra.Group
+                    , Ra.Shadow
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
                     , bytestring >=0.10 && <0.13
                     , text >=1.2 && <3.0
                     , containers >=0.6 && <0.8
+                    , time >=1.9 && <1.15
     hs-source-dirs:   src
     default-language: Haskell2010
     default-extensions: DeriveGeneric
