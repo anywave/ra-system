@@ -1,12 +1,12 @@
-// RaTestDashboard.tsx — Chamber State Visualizer for Phase II
-// Ra Codex Test Suite with Handshake + Chamber State Integration
+// RaTestDashboard.tsx — Phase II Tokenomics & Cost Overlay Integration
+// Ra Codex Test Suite with Full Consent Pipeline Visualization
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
-import { CheckCircle, AlertTriangle, Loader2, Info } from 'lucide-react'
+import { CheckCircle, AlertTriangle, Loader2, Info, Coins, Cpu } from 'lucide-react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 
@@ -73,6 +73,20 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       description: 'Transitions chamber states based on handshakeGrant signal.',
       phase: 'phase2',
       status: 'pending'
+    },
+    {
+      id: 'biometricGenerator',
+      title: 'Ra.BiometricGenerator — Runtime Coherence Waveform',
+      description: 'Injects dynamic biometric signals for handshake loopback.',
+      phase: 'phase2',
+      status: 'pending'
+    },
+    {
+      id: 'tokenomicsProfiler',
+      title: 'Ra.TokenomicsProfiler — Prompt Cost Analyzer',
+      description: 'Logs token + compute spend for Claude operations.',
+      phase: 'phase2',
+      status: 'pending'
     }
   ]
 }
@@ -83,9 +97,13 @@ export default function RaTestDashboard() {
   const [gesture, setGesture] = useState('3')
   const [biometric, setBiometric] = useState(true)
   const [override, setOverride] = useState(false)
+  const [pattern, setPattern] = useState('CoherentPulse')
   const [handshakeResult, setHandshakeResult] = useState<HandshakeResult | null>(null)
   const [chamberState, setChamberState] = useState('Idle')
   const [glow, setGlow] = useState(0)
+  const [bioSample, setBioSample] = useState(128)
+  const [tokenTotal, setTokenTotal] = useState(0)
+  const [computeTotal, setComputeTotal] = useState(0)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -101,7 +119,31 @@ export default function RaTestDashboard() {
     setModules(prev => prev.map(m => m.id === id ? { ...m, status: result.status, cost: result.cost, tokenUsage: result.tokenUsage } : m))
   }
 
+  const updateBiometricSignal = async () => {
+    const res = await fetch('/api/tests/biometric-sample', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pattern })
+    })
+    const out = await res.json()
+    setBioSample(out.sample)
+  }
+
+  const updateTokenomics = async (opType: string) => {
+    const res = await fetch('/api/tests/tokenomics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ opType })
+    })
+    const t = await res.json()
+    setTokenTotal(t.totalTokens)
+    setComputeTotal(t.totalCompute)
+  }
+
   const simulateHandshake = async () => {
+    await updateBiometricSignal()
+    await updateTokenomics('BioEmit')
+
     const res = await fetch('/api/tests/simulate-handshake', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -109,6 +151,8 @@ export default function RaTestDashboard() {
     })
     const data = await res.json()
     setHandshakeResult(data)
+    await updateTokenomics('Handshake')
+
     if (data.handshakeGranted) {
       const cascade = await fetch('/api/tests/trigger-chamber', {
         method: 'POST',
@@ -118,6 +162,7 @@ export default function RaTestDashboard() {
       const node = await cascade.json()
       setChamberState(node.state)
       setGlow(node.glow)
+      await updateTokenomics('ChamberSpin')
     } else {
       setChamberState('Idle')
       setGlow(0)
@@ -168,6 +213,27 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderBiometricVisualizer = () => (
+    <Card className="shadow-md border-green-400">
+      <CardContent className="p-4 space-y-3">
+        <h2 className="font-semibold text-lg">Biometric Pattern Emulator</h2>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">Pattern:</span>
+          <Select value={pattern} onValueChange={setPattern}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Choose Pattern" /></SelectTrigger>
+            <SelectContent>
+              {['Flatline', 'BreathRise', 'CoherentPulse', 'Arrhythmic'].map(p => (
+                <SelectItem key={p} value={p}>{p}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span className="text-sm">Current Sample: <b>{bioSample}</b></span>
+        </div>
+        <Progress value={bioSample / 2.55} className="h-2 mt-2" />
+      </CardContent>
+    </Card>
+  )
+
   const renderChamberVisual = () => (
     <Card className="shadow-md border-purple-400">
       <CardContent className="p-4 space-y-3">
@@ -177,6 +243,19 @@ export default function RaTestDashboard() {
           <span className="text-sm">Glow Intensity: <b>{glow}</b></span>
         </div>
         <Progress value={glow / 2.55} className="h-2 mt-2" />
+      </CardContent>
+    </Card>
+  )
+
+  const renderCostOverlay = () => (
+    <Card className="shadow border-yellow-500">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Tokenomics Profiler</h2>
+        <div className="flex items-center justify-between">
+          <span className="flex gap-2 items-center text-sm"><Coins size={14}/> Tokens: <b>{tokenTotal}</b></span>
+          <span className="flex gap-2 items-center text-sm"><Cpu size={14}/> Compute Units: <b>{computeTotal}</b></span>
+        </div>
+        <Progress value={(tokenTotal / 1024) * 100} className="h-1" />
       </CardContent>
     </Card>
   )
@@ -203,7 +282,9 @@ export default function RaTestDashboard() {
       {phase === 'phase2' && (
         <>
           {renderHandshakeSimulator()}
+          {renderBiometricVisualizer()}
           {renderChamberVisual()}
+          {renderCostOverlay()}
         </>
       )}
     </div>

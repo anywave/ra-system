@@ -190,6 +190,19 @@ Generates simulated biometric waveforms for coherence entrainment testing.
 
 **Key Function:** `biometricSignal :: Signal dom BioPattern -> Signal dom (Unsigned 8)`
 
+### RaTokenomicsProfiler.hs (Cost Analysis)
+
+Tracks token usage and compute costs for Ra system operations.
+
+**Operation Costs:**
+| Operation | Tokens | Compute |
+|-----------|--------|---------|
+| Handshake | 128 | 500 |
+| BioEmit | 64 | 200 |
+| ChamberSpin | 256 | 1000 |
+
+**Key Function:** `profiler :: Signal dom OpTrigger -> Signal dom (Unsigned 16, Unsigned 16)`
+
 ---
 
 ### BiofieldLoopback.hs Details
