@@ -22,7 +22,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar
 
-
 # T.O.N. coefficient: 0.027 = 1/37.037... ≈ 27/1000
 TON_COEFFICIENT = 0.027
 

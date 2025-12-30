@@ -36,13 +36,13 @@ class TestTONCreation:
         """Direct construction with invalid index raises ValueError."""
         try:
             TON(-1)
-            assert False, "Should have raised ValueError"
+            raise AssertionError("Should have raised ValueError")
         except ValueError as e:
             assert "must be in [0, 36]" in str(e)
 
         try:
             TON(37)
-            assert False, "Should have raised ValueError"
+            raise AssertionError("Should have raised ValueError")
         except ValueError as e:
             assert "must be in [0, 36]" in str(e)
 
@@ -207,10 +207,10 @@ class TestTONRepitanRelationship:
         # T.O.N.(27) = 0.729, Repitan(20) = 20/27 ≈ 0.741 (close)
         t27 = TON(27)
         # Check if any repitan aligns
-        aligned_idx = t27.aligned_repitan_index
         # 0.729 is close to 20/27 = 0.7407... (diff = 0.0117, > 0.01 threshold)
-        # Let's just verify the method runs without error
+        # Verify the method runs without error and returns expected type
         assert isinstance(t27.is_repitan_aligned, bool)
+        assert t27.aligned_repitan_index is None or isinstance(t27.aligned_repitan_index, int)
 
 
 class TestTONOrdering:

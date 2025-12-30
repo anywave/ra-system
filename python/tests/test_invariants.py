@@ -56,7 +56,6 @@ from ra_system.spherical import (
     verify_omega_indices,
 )
 from ra_system.ton import (
-    TON,
     TON_COEFFICIENT,
     all_tons,
     verify_ton_invariant,
