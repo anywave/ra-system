@@ -203,6 +203,26 @@ Tracks token usage and compute costs for Ra system operations.
 
 **Key Function:** `profiler :: Signal dom OpTrigger -> Signal dom (Unsigned 16, Unsigned 16)`
 
+### RaBiometricMatcher.hs (Prompt 33 - Coherence Profile Matcher)
+
+Biometric coherence profile matcher. Compares input signal patterns against reference templates to compute coherence scores for handshake validation.
+
+**Biometric Templates:**
+| Template | Description | Pattern |
+|----------|-------------|---------|
+| TemplateFlat | Baseline, no variation | Constant 128 |
+| TemplateResonant | Full coherent oscillation | 64-192 sinusoid |
+| TemplatePulse | Subtle pulse variation | 108-148 wave |
+
+**Coherence Scoring:**
+```
+Score = 255 - (average absolute difference)
+```
+- 255: Perfect match (no difference)
+- 0: Maximum mismatch
+
+**Key Function:** `matchCoherence :: Signal dom (Vec 16 (Unsigned 8)) -> Signal dom BioTemplate -> Signal dom (Unsigned 8)`
+
 ---
 
 ### BiofieldLoopback.hs Details
