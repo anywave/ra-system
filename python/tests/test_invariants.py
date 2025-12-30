@@ -55,6 +55,13 @@ from ra_system.spherical import (
     theta_from_repitan,
     verify_omega_indices,
 )
+from ra_system.ton import (
+    TON,
+    TON_COEFFICIENT,
+    all_tons,
+    verify_ton_invariant,
+    verify_ton_range_invariant,
+)
 
 # =============================================================================
 # Constant Invariants (I1-I6)
@@ -92,10 +99,12 @@ class TestConstantInvariants:
 
     def test_i5_ton_equals_m_times_0027(self) -> None:
         """I5: T.O.N.(m) = m × 0.027 for all m ∈ [0, 36]."""
-        for m in range(36):
-            ton = m * 0.027
-            assert ton >= 0
-            assert ton < 1
+        assert verify_ton_invariant()
+        assert verify_ton_range_invariant()
+        for t in all_tons():
+            expected = t.index * TON_COEFFICIENT
+            assert abs(t.value - expected) < 1e-10
+            assert 0 <= t.value < 1
 
     def test_i6_fine_structure_equals_repitan1_squared(self) -> None:
         """I6: Fine Structure = Repitan(1)² = 0.0013717421."""

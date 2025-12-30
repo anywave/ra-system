@@ -5,7 +5,7 @@ This module provides type-safe access to the Ra System constants from
 "The Rods of Amon Ra" by Wesley H. Bateman.
 
 Example:
-    >>> from ra_system import ANKH, Repitan, RacLevel, OmegaFormat
+    >>> from ra_system import ANKH, Repitan, RacLevel, OmegaFormat, TON
     >>> from ra_system.gates import access_level
     >>>
     >>> # Check access at 80% coherence for RAC1
@@ -15,6 +15,10 @@ Example:
     >>> # Create a validated Repitan
     >>> r = Repitan.create(9)
     >>> print(r.value)  # 0.333...
+    >>>
+    >>> # Create a T.O.N. (Table of Nines) node
+    >>> t = TON.create(9)
+    >>> print(t.value)  # 0.243
 
 Invariants:
     All 17 invariants from ra_integration_spec.md are enforced:
@@ -22,6 +26,7 @@ Invariants:
     - Ordering invariants (O1-O4)
     - Conversion invariants (C1-C3)
     - Range invariants (R1-R4)
+    - T.O.N. invariant (I5): T.O.N.(m) = m × 0.027 for all m ∈ [0, 36]
 """
 
 from ra_system.constants import (
@@ -80,6 +85,16 @@ from ra_system.spherical import (
     rac_from_phi,
     theta_from_repitan,
 )
+from ra_system.ton import (
+    TON,
+    TON_COEFFICIENT,
+    all_tons,
+    is_valid_ton_index,
+    repitan_ton_ratio,
+    ton_from_value,
+    verify_ton_invariant,
+    verify_ton_range_invariant,
+)
 
 __all__ = [
     # Constants
@@ -136,6 +151,15 @@ __all__ = [
     "partial_emergence",
     "ResonanceWeights",
     "resonance_score",
+    # T.O.N. (Table of Nines)
+    "TON",
+    "TON_COEFFICIENT",
+    "all_tons",
+    "is_valid_ton_index",
+    "ton_from_value",
+    "verify_ton_invariant",
+    "verify_ton_range_invariant",
+    "repitan_ton_ratio",
 ]
 
 __version__ = "0.1.0"
