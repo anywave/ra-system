@@ -223,6 +223,67 @@ Score = 255 - (average absolute difference)
 
 **Key Function:** `matchCoherence :: Signal dom (Vec 16 (Unsigned 8)) -> Signal dom BioTemplate -> Signal dom (Unsigned 8)`
 
+### RaScalarExpression.hs (Prompt 34 - Avatar Expression Mapper)
+
+Maps biometric coherence and breath phase to avatar visual expression parameters.
+
+**Expression Mapping:**
+| Coherence | Breath Phase | Aura Intensity | Limb Vector |
+|-----------|--------------|----------------|-------------|
+| >= 200    | Exhale       | coherence      | +40         |
+| >= 150    | Exhale       | 128            | +20         |
+| >= 150    | Inhale       | 128            | -20         |
+| < 150     | Any          | 64             | 0           |
+
+**Output Bundle:**
+- `auraIntensity` (Unsigned 8): Visual field luminance [0-255]
+- `limbVector` (Signed 8): Motion intent scalar [-128 to +127]
+
+**Key Function:** `mapExpression :: Signal dom (Unsigned 8) -> Signal dom Bool -> Signal dom AvatarExpression`
+
+### RaConsentTransformer.hs (Prompt 31 - Multi-Core Consent)
+
+Distributed consent logic across multiple avatar threads with quorum voting and biometric gating.
+
+**Activation Requirements:**
+- `coherenceScore >= 180`
+- `auraIntensity >= 128`
+
+If either threshold is not met, all votes are suspended (treated as False).
+
+**Outputs:**
+| Field | Description |
+|-------|-------------|
+| consentGranted | True if quorum % of active votes agree |
+| fieldEntropy | Number of dissenting votes |
+| activeVotes | Number of qualifying True votes |
+
+**Key Function:** `consentTransform :: Signal dom (Unsigned 8) -> Signal dom (Unsigned 8) -> Signal dom (Vec n Bool) -> Signal dom (Unsigned 8) -> Signal dom (Bool, Unsigned 8, Unsigned 8)`
+
+### RaFieldTransferBus.hs (Prompt 35 - Tesla Coherent Field Transfer)
+
+Simulates scalar packet transmission from Avatar A to Avatar B with coherence preservation.
+
+**Transfer Constraints:**
+- TransferLatency < 300 cycles (simulated at 1ms per cycle)
+- CoherenceInvariant: Score delta <= +/-1 post-transfer
+
+**Inputs:**
+| Signal | Description |
+|--------|-------------|
+| srcCoherence | Coherence score (0-255) |
+| srcSignal | 4-element scalar harmonic vector |
+| sendPulse | Triggers transfer on rising edge |
+
+**Outputs:**
+| Signal | Description |
+|--------|-------------|
+| destSignal | Received scalar harmonic vector |
+| latencyCount | Transfer time in cycles |
+| integrityOK | True if coherence preserved within tolerance |
+
+**Key Function:** `fieldTransferBus :: Signal dom (Unsigned 8) -> Signal dom (Vec 4 (Unsigned 8)) -> Signal dom Bool -> Signal dom (Vec 4 (Unsigned 8), Unsigned 9, Bool)`
+
 ---
 
 ### BiofieldLoopback.hs Details

@@ -1,4 +1,4 @@
-// RaTestDashboard.tsx — Phase II Tokenomics & Cost Overlay Integration
+// RaTestDashboard.tsx — Phase II with Biometric Coherence Matcher (Prompt 33)
 // Ra Codex Test Suite with Full Consent Pipeline Visualization
 
 import React, { useState, useEffect } from 'react'
@@ -87,6 +87,20 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       description: 'Logs token + compute spend for Claude operations.',
       phase: 'phase2',
       status: 'pending'
+    },
+    {
+      id: 'biometricMatcher',
+      title: 'Ra.BiometricMatcher — Coherence Profile Matcher',
+      description: 'Compares biometric waveforms against reference templates for coherence scoring.',
+      phase: 'phase2',
+      status: 'pending'
+    },
+    {
+      id: 'scalarExpression',
+      title: 'Ra.ScalarExpression — Avatar Expression Mapper',
+      description: 'Maps biometric coherence + breath phase to aura intensity and limb vector.',
+      phase: 'phase2',
+      status: 'pending'
     }
   ]
 }
@@ -104,6 +118,11 @@ export default function RaTestDashboard() {
   const [bioSample, setBioSample] = useState(128)
   const [tokenTotal, setTokenTotal] = useState(0)
   const [computeTotal, setComputeTotal] = useState(0)
+  const [coherenceScore, setCoherenceScore] = useState<number | null>(null)
+  const [coherenceColor, setCoherenceColor] = useState('gray')
+  const [expression, setExpression] = useState<{ aura: number; limb: number } | null>(null)
+  const [expressionColor, setExpressionColor] = useState('gray')
+  const [consentState, setConsentState] = useState<{ granted: boolean; entropy: number; active: number } | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -138,6 +157,42 @@ export default function RaTestDashboard() {
     const t = await res.json()
     setTokenTotal(t.totalTokens)
     setComputeTotal(t.totalCompute)
+  }
+
+  const updateCoherenceScore = async (samples: number[], template: string) => {
+    const res = await fetch('/api/tests/biometric-match', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ waveform: samples, template })
+    })
+    const score = await res.json()
+    setCoherenceScore(score)
+    if (score >= 230) setCoherenceColor('green')
+    else if (score >= 200) setCoherenceColor('yellow')
+    else setCoherenceColor('red')
+  }
+
+  const updateAvatarExpression = async (coherence: number, breath: boolean) => {
+    const res = await fetch('/api/tests/avatar-expression', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coherence, breath })
+    })
+    const { aura, limb } = await res.json()
+    setExpression({ aura, limb })
+    if (aura >= 200) setExpressionColor('lime')
+    else if (aura >= 150) setExpressionColor('gold')
+    else setExpressionColor('gray')
+  }
+
+  const updateConsent = async (coherence: number, aura: number, votes: boolean[], quorum: number) => {
+    const res = await fetch('/api/tests/consent-transform', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coherence, aura, votes, quorum })
+    })
+    const { granted, entropy, active } = await res.json()
+    setConsentState({ granted, entropy, active })
   }
 
   const simulateHandshake = async () => {
@@ -260,6 +315,63 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderCoherenceOverlay = () => (
+    <Card className="border-blue-500 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Biometric Coherence Matcher</h2>
+        {coherenceScore !== null ? (
+          <div className="text-sm">
+            Score: <b style={{ color: coherenceColor }}>{coherenceScore}</b>
+          </div>
+        ) : <div className="text-sm text-muted-foreground">Awaiting input...</div>}
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => updateCoherenceScore([128,128,128,128,128,128,128,128,128,128,128,128,128,128,128,128], 'TemplateFlat')}>Test Flat</Button>
+          <Button size="sm" onClick={() => updateCoherenceScore([128,140,160,180,192,180,160,140,128,116,96,76,64,76,96,116], 'TemplateResonant')}>Test Resonant</Button>
+          <Button size="sm" onClick={() => updateCoherenceScore([100,120,140,160,180,160,140,120,100,80,60,40,20,40,60,80], 'TemplateResonant')}>Test Divergence</Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const renderExpressionOverlay = () => (
+    <Card className="border-purple-500 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Avatar Scalar Expression</h2>
+        {expression ? (
+          <>
+            <div className="text-sm">Aura Intensity: <b style={{ color: expressionColor }}>{expression.aura}</b></div>
+            <div className="text-sm">Limb Vector: <b>{expression.limb}</b></div>
+          </>
+        ) : <div className="text-sm text-muted-foreground">Awaiting expression...</div>}
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => updateAvatarExpression(255, true)}>Max (Exhale)</Button>
+          <Button size="sm" onClick={() => updateAvatarExpression(180, false)}>Mid (Inhale)</Button>
+          <Button size="sm" onClick={() => updateAvatarExpression(100, true)}>Low (Exhale)</Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
+  const renderConsentOverlay = () => (
+    <Card className="border-red-500 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Consent Field State</h2>
+        {consentState ? (
+          <div className="space-y-1">
+            <div className="text-sm">Consent: <b style={{ color: consentState.granted ? 'limegreen' : 'gray' }}>{consentState.granted ? 'GRANTED' : 'PENDING'}</b></div>
+            <div className="text-sm">Entropy: <b>{consentState.entropy}</b></div>
+            <div className="text-sm">Active Votes: <b>{consentState.active}</b></div>
+          </div>
+        ) : <div className="text-sm text-muted-foreground">Awaiting input...</div>}
+        <div className="flex gap-2">
+          <Button size="sm" onClick={() => updateConsent(190, 140, [true, true, true], 66)}>All Agree</Button>
+          <Button size="sm" onClick={() => updateConsent(170, 100, [true, false, false], 50)}>Low Coherence</Button>
+          <Button size="sm" onClick={() => updateConsent(200, 160, [true, true, false], 75)}>Partial</Button>
+        </div>
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -285,6 +397,9 @@ export default function RaTestDashboard() {
           {renderBiometricVisualizer()}
           {renderChamberVisual()}
           {renderCostOverlay()}
+          {renderCoherenceOverlay()}
+          {renderExpressionOverlay()}
+          {renderConsentOverlay()}
         </>
       )}
     </div>
