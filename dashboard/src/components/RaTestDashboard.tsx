@@ -155,6 +155,15 @@ export default function RaTestDashboard() {
     ], null, 2)
   )
   const [morphResults, setMorphResults] = useState<any[] | null>(null)
+  const [twistInputs, setTwistInputs] = useState<string>(
+    JSON.stringify([
+      { modeA: 3, modeB: 2, coherence: 110 },
+      { modeA: 3, modeB: 2, coherence: 100 },
+      { modeA: 5, modeB: 1, coherence: 108 },
+      { modeA: 2, modeB: 3, coherence: 90 }
+    ], null, 2)
+  )
+  const [twistResults, setTwistResults] = useState<any[] | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -335,12 +344,35 @@ export default function RaTestDashboard() {
     setMorphResults(result)
   }
 
+  const runTwistEnvelope = async () => {
+    const res = await fetch('/api/tests/twistenvelope', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ inputStates: JSON.parse(twistInputs) })
+    })
+    const { result } = await res.json()
+    setTwistResults(result)
+  }
+
   const morphCostOverlay = (inputStr: string): number => {
     try {
       const inputs = JSON.parse(inputStr)
       return inputs.reduce((acc: number, state: any) => {
         const cost = (state.coherence < 100 && state.instability > 77) ? 1.5 : 0.5
         return acc + cost
+      }, 0)
+    } catch {
+      return 0
+    }
+  }
+
+  const twistCostOverlay = (inputStr: string): number => {
+    try {
+      const inputs = JSON.parse(inputStr)
+      return inputs.reduce((acc: number, state: any) => {
+        // Cost based on coherence threshold: high coherence = more expensive
+        const baseCost = state.coherence >= 105 ? 2.0 : 1.2
+        return acc + baseCost
       }, 0)
     } catch {
       return 0
@@ -682,6 +714,36 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderTwistEnvelopePanel = () => (
+    <Card className="border-yellow-700 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 49: Harmonic Inversion Twist</h2>
+        <p className="text-sm text-muted-foreground">Y(a,b) inversion mapped to twist vector and duration</p>
+        <Textarea
+          className="font-mono text-xs"
+          value={twistInputs}
+          onChange={e => setTwistInputs(e.target.value)}
+          rows={6}
+        />
+        <div className="flex items-center justify-between">
+          <Button onClick={runTwistEnvelope}>Run Inversion Test</Button>
+          <span className="text-sm text-muted-foreground">
+            Token Cost: {twistCostOverlay(twistInputs).toFixed(2)} units
+          </span>
+        </div>
+        {twistResults && (
+          <div className="pt-2 space-y-1">
+            {twistResults.map((res, idx) => (
+              <div key={idx} className="text-xs bg-muted p-2 rounded">
+                <pre className="whitespace-pre-wrap">{JSON.stringify(res, null, 2)}</pre>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -709,6 +771,7 @@ export default function RaTestDashboard() {
           {renderMusicChamberModule()}
           {renderSymbolicOps()}
           {renderMorphologyFallback()}
+          {renderTwistEnvelopePanel()}
           {renderTokenOverlay()}
         </>
       )}
