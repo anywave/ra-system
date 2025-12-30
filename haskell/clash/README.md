@@ -16,6 +16,24 @@ cabal install clash-ghc
 
 ### BiofieldLoopback.hs (Prompt 17)
 
+Biofield loopback feedback system - closed-loop resonant coupling.
+
+### RaSonicFlux.hs (Prompt 22)
+
+Real-time harmonic driver mapping coherence to audio scalar output.
+
+**Audio State Mapping:**
+| Coherence | Output State  |
+|-----------|---------------|
+| < 0.30    | Silence       |
+| < 0.55    | HarmonicLow   |
+| < 0.80    | HarmonicMid   |
+| >= 0.80   | HarmonicHigh  |
+
+---
+
+### BiofieldLoopback.hs Details
+
 Biofield loopback feedback system - closed-loop resonant coupling between biometric input and avatar field output.
 
 **Inputs:**
