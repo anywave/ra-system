@@ -76,6 +76,9 @@ library
                     , Ra.Projection.Map
                     , Ra.Chamber.Morphology
                     , Ra.Entangle.BioMap
+                    , Ra.Lexicon.Harmonizer
+                    , Ra.Resonator.MusicChamber
+                    , Ra.Telemetry.RecoveryGraph
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
