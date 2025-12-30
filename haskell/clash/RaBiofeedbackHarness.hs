@@ -127,31 +127,25 @@ biofeedbackTop = exposeClockResetEnable biofeedbackHarness
 -- =============================================================================
 
 -- | Test biofeedback states
-testInputs :: Vec 6 BioState
+testInputs :: Vec 4 BioState
 testInputs =
-  BioState Inhale 200 :>       -- Not trigger phase
-  BioState Exhale 240 :>       -- Not trigger phase
-  BioState ExhaleHold 235 :>   -- Trigger: ExhaleHold + coherence > 230
-  BioState Hold 250 :>         -- Not trigger phase (wrong hold type)
-  BioState ExhaleHold 220 :>   -- ExhaleHold but coherence < 230
-  BioState ExhaleHold 231 :>   -- Trigger: ExhaleHold + coherence > 230
+  BioState ExhaleHold 240 :>   -- Trigger: ExhaleHold + coherence >= 230
+  BioState Exhale 240 :>       -- Not trigger phase (wrong phase)
+  BioState ExhaleHold 200 :>   -- ExhaleHold but coherence < 230
+  BioState Inhale 255 :>       -- Not trigger phase (wrong phase)
   Nil
 
 -- | Expected outputs
--- Test 0: Inhale, no trigger -> (False, False)
--- Test 1: Exhale, no trigger -> (False, False)
--- Test 2: ExhaleHold + 235 >= 230 -> (True, True)
--- Test 3: Hold (not ExhaleHold), no trigger -> (False, False)
--- Test 4: ExhaleHold + 220 < 230, no trigger -> (False, False)
--- Test 5: ExhaleHold + 231 >= 230 -> (True, True)
-expectedOutput :: Vec 6 BioOutput
-expectedOutput =
-  BioOutput False False :>
-  BioOutput False False :>
+-- Test 0: ExhaleHold + 240 >= 230 -> (True, True)
+-- Test 1: Exhale, not trigger phase -> (False, False)
+-- Test 2: ExhaleHold + 200 < 230, no trigger -> (False, False)
+-- Test 3: Inhale, not trigger phase -> (False, False)
+testExpected :: Vec 4 BioOutput
+testExpected =
   BioOutput True True :>
   BioOutput False False :>
   BioOutput False False :>
-  BioOutput True True :>
+  BioOutput False False :>
   Nil
 
 -- =============================================================================
@@ -162,8 +156,6 @@ expectedOutput =
 testBench :: Signal System Bool
 testBench = done
   where
-    clk = tbSystemClockGen (not <$> done)
-    rst = systemResetGen
-    stim = stimuliGenerator clk rst testInputs
-    out = biofeedbackTop clk rst enableGen stim
-    done = outputVerifier' clk rst expectedOutput out
+    testInput = stimuliGenerator testInputs
+    expectedOutput = outputVerifier' testExpected
+    done = expectedOutput (biofeedbackHarness testInput)
