@@ -322,30 +322,30 @@ syncState = Desync   otherwise
 
 Maps exhale-hold breath transition with high coherence to physical/energetic output signals.
 
-**Breath Phases:**
-| Code | Phase  |
-|------|--------|
-| 00   | Inhale |
-| 01   | Exhale |
-| 10   | Hold   |
-| 11   | Rest   |
+**Breath Phases (ADT):**
+| Phase      | Description                    |
+|------------|--------------------------------|
+| Inhale     | Breathing in                   |
+| Exhale     | Breathing out                  |
+| Hold       | Breath held (post-inhale)      |
+| ExhaleHold | Breath held after exhale       |
 
 **Trigger Logic:**
 ```
-Trigger = (breath transitions exhale→hold) AND (coherence > 230)
+Trigger = (breathPhase == ExhaleHold) AND (coherence >= 230)
 ```
 
 **Outputs:**
-| Signal | Description |
-|--------|-------------|
-| MotionIntent | Triggers limb movement cascade |
-| HapticPing | Triggers haptic feedback pulse |
+| Signal       | Description                    |
+|--------------|--------------------------------|
+| motionIntent | Triggers limb movement cascade |
+| hapticPing   | Triggers haptic feedback pulse |
 
 **Integration:**
 - Downstream from RaFieldTransferBus (Prompt 35)
 - Links to chamber update via RPP field coherence
 
-**Key Function:** `biofeedbackHarness :: Signal dom (BitVector 2) -> Signal dom (Unsigned 8) -> Signal dom (Bool, Bool)`
+**Key Function:** `biofeedbackHarness :: Signal dom BioState -> Signal dom BioOutput`
 
 ### RaVisualizerShell.hs (Prompt 41 - Visual Shell Renderer)
 

@@ -10,24 +10,24 @@ MotionIntent and HapticPing outputs for avatar physical response.
 == Trigger Logic
 
 @
-Trigger = (breathPhase transitions exhale→hold) AND (coherence > 230)
+Trigger = (breathPhase == ExhaleHold) AND (coherence >= 230)
 @
 
 == Breath Phases
 
-| Code | Phase  |
-|------|--------|
-| 00   | Inhale |
-| 01   | Exhale |
-| 10   | Hold   |
-| 11   | Rest   |
+| Phase      | Description                    |
+|------------|--------------------------------|
+| Inhale     | Breathing in                   |
+| Exhale     | Breathing out                  |
+| Hold       | Breath held (post-inhale)      |
+| ExhaleHold | Breath held after exhale       |
 
 == Outputs
 
-| Signal | Description |
-|--------|-------------|
-| MotionIntent | Triggers limb movement cascade |
-| HapticPing | Triggers haptic feedback pulse |
+| Signal       | Description                    |
+|--------------|--------------------------------|
+| motionIntent | Triggers limb movement cascade |
+| hapticPing   | Triggers haptic feedback pulse |
 
 == Integration
 
@@ -46,60 +46,68 @@ import Clash.Prelude
 import qualified Prelude as P
 
 -- =============================================================================
+-- Types
+-- =============================================================================
+
+-- | Fixed-point representation (0-255 maps to 0.0-1.0)
+type Fixed = Unsigned 8
+
+-- | Breath phase ADT
+data BreathPhase
+  = Inhale      -- ^ Breathing in
+  | Exhale      -- ^ Breathing out
+  | Hold        -- ^ Breath held (post-inhale)
+  | ExhaleHold  -- ^ Breath held after exhale (trigger phase)
+  deriving (Show, Eq, Generic, NFDataX)
+
+-- | Biofeedback input state
+data BioState = BioState
+  { phase     :: BreathPhase   -- ^ Current breath phase
+  , coherence :: Fixed         -- ^ Coherence level (0-255)
+  } deriving (Show, Eq, Generic, NFDataX)
+
+-- | Biofeedback output bundle
+data BioOutput = BioOutput
+  { motionIntent :: Bool       -- ^ Triggers limb movement cascade
+  , hapticPing   :: Bool       -- ^ Triggers haptic feedback pulse
+  } deriving (Show, Eq, Generic, NFDataX)
+
+-- =============================================================================
 -- Constants
 -- =============================================================================
 
--- | Coherence threshold for trigger activation
-coherenceThreshold :: Unsigned 8
+-- | Coherence threshold for trigger activation (~0.9)
+coherenceThreshold :: Fixed
 coherenceThreshold = 230
-
--- | Breath phase codes
-phaseInhale, phaseExhale, phaseHold, phaseRest :: BitVector 2
-phaseInhale = 0b00
-phaseExhale = 0b01
-phaseHold   = 0b10
-phaseRest   = 0b11
 
 -- =============================================================================
 -- Core Functions
 -- =============================================================================
 
--- | Check if breath phase matches target
-breathMatch :: BitVector 2 -> BitVector 2 -> Bool
-breathMatch current target = current == target
+-- | Check if breath phase is the trigger phase (ExhaleHold)
+triggerBreath :: BreathPhase -> Bool
+triggerBreath ExhaleHold = True
+triggerBreath _          = False
 
--- | Detect exhale-to-hold transition
-detectExhaleHold :: BitVector 2 -> BitVector 2 -> Bool
-detectExhaleHold prev curr =
-  breathMatch prev phaseExhale && breathMatch curr phaseHold
+-- | Process biofeedback state to generate output signals
+processBiofeedback :: BioState -> BioOutput
+processBiofeedback bio =
+  let active = triggerBreath (phase bio) && coherence bio >= coherenceThreshold
+  in BioOutput
+     { motionIntent = active
+     , hapticPing   = active
+     }
 
 -- =============================================================================
 -- Signal-Level Processing
 -- =============================================================================
 
--- | Biofeedback harness - maps breath + coherence to physical output
+-- | Biofeedback harness - maps breath state + coherence to physical output
 biofeedbackHarness
   :: HiddenClockResetEnable dom
-  => Signal dom (BitVector 2)        -- ^ breathPhase (2-bit code)
-  -> Signal dom (Unsigned 8)         -- ^ coherenceScore (0-255)
-  -> Signal dom (Bool, Bool)         -- ^ (MotionIntent, HapticPing)
-biofeedbackHarness breath coherence = bundle (motionIntent, hapticPulse)
-  where
-    -- Track previous breath phase
-    prevBreath = register phaseRest breath
-
-    -- Detect exhale→hold transition
-    exhaleHoldEvent = liftA2 detectExhaleHold prevBreath breath
-
-    -- Check coherence above threshold
-    coherenceHigh = fmap (> coherenceThreshold) coherence
-
-    -- Trigger on both conditions
-    trigger = liftA2 (&&) exhaleHoldEvent coherenceHigh
-
-    -- Output pulses (registered for timing)
-    motionIntent = register False trigger
-    hapticPulse  = register False trigger
+  => Signal dom BioState           -- ^ Input biofeedback state
+  -> Signal dom BioOutput          -- ^ Output motion/haptic signals
+biofeedbackHarness = fmap processBiofeedback
 
 -- =============================================================================
 -- Synthesis Entry Point
@@ -110,38 +118,41 @@ biofeedbackTop
   :: Clock System
   -> Reset System
   -> Enable System
-  -> Signal System (BitVector 2)
-  -> Signal System (Unsigned 8)
-  -> Signal System (Bool, Bool)
+  -> Signal System BioState
+  -> Signal System BioOutput
 biofeedbackTop = exposeClockResetEnable biofeedbackHarness
 
 -- =============================================================================
 -- Test Data
 -- =============================================================================
 
--- | Test breath phases: rest → exhale → hold → inhale → exhale → hold
-testBreath :: Vec 6 (BitVector 2)
-testBreath = $(listToVecTH [0b11, 0b01, 0b10, 0b00, 0b01, 0b10])
+-- | Test biofeedback states
+testInputs :: Vec 6 BioState
+testInputs =
+  BioState Inhale 200 :>       -- Not trigger phase
+  BioState Exhale 240 :>       -- Not trigger phase
+  BioState ExhaleHold 235 :>   -- Trigger: ExhaleHold + coherence > 230
+  BioState Hold 250 :>         -- Not trigger phase (wrong hold type)
+  BioState ExhaleHold 220 :>   -- ExhaleHold but coherence < 230
+  BioState ExhaleHold 231 :>   -- Trigger: ExhaleHold + coherence > 230
+  Nil
 
--- | Test coherence values: varying around threshold
-testCoherence :: Vec 6 (Unsigned 8)
-testCoherence = $(listToVecTH [200 :: Unsigned 8, 240, 235, 220, 250, 231])
-
--- | Expected outputs:
--- Cycle 0: rest→exhale, not exhale→hold, no trigger
--- Cycle 1: exhale→hold, coherence 235 > 230, TRIGGER (output at cycle 2 due to register)
--- Cycle 2: hold→inhale, not exhale→hold, no trigger
--- Cycle 3: inhale→exhale, not exhale→hold, no trigger
--- Cycle 4: exhale→hold, coherence 231 > 230, TRIGGER (output at cycle 5 due to register)
-expectedOutput :: Vec 6 (Bool, Bool)
-expectedOutput = $(listToVecTH
-  [ (False, False)   -- Cycle 0: no trigger yet
-  , (False, False)   -- Cycle 1: trigger detected, not output yet
-  , (True, True)     -- Cycle 2: previous trigger output
-  , (False, False)   -- Cycle 3: no trigger
-  , (False, False)   -- Cycle 4: trigger detected, not output yet
-  , (True, True)     -- Cycle 5: previous trigger output
-  ])
+-- | Expected outputs
+-- Test 0: Inhale, no trigger -> (False, False)
+-- Test 1: Exhale, no trigger -> (False, False)
+-- Test 2: ExhaleHold + 235 >= 230 -> (True, True)
+-- Test 3: Hold (not ExhaleHold), no trigger -> (False, False)
+-- Test 4: ExhaleHold + 220 < 230, no trigger -> (False, False)
+-- Test 5: ExhaleHold + 231 >= 230 -> (True, True)
+expectedOutput :: Vec 6 BioOutput
+expectedOutput =
+  BioOutput False False :>
+  BioOutput False False :>
+  BioOutput True True :>
+  BioOutput False False :>
+  BioOutput False False :>
+  BioOutput True True :>
+  Nil
 
 -- =============================================================================
 -- Testbench
@@ -153,7 +164,6 @@ testBench = done
   where
     clk = tbSystemClockGen (not <$> done)
     rst = systemResetGen
-    s1 = stimuliGenerator clk rst testBreath
-    s2 = stimuliGenerator clk rst testCoherence
-    out = biofeedbackTop clk rst enableGen s1 s2
+    stim = stimuliGenerator clk rst testInputs
+    out = biofeedbackTop clk rst enableGen stim
     done = outputVerifier' clk rst expectedOutput out
