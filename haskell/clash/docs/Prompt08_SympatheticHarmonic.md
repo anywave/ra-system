@@ -169,6 +169,50 @@ if guardianActive AND NOT guardianMet:
 | 417 Hz | Undoing situations | Tonic |
 | 432 Hz | Cosmic tuning | Alternate base |
 
+### System Compatibility
+
+**Upstream Dependencies:**
+| Module | Purpose | Data Flow |
+|--------|---------|-----------|
+| RaScalarExpression (Prompt 34) | Pre-normalization | Scalar → Hz conversion |
+| RaBiometricMatcher (Prompt 33) | User profiles | HRV/coherence normalization |
+| RaConsentFramework (Prompt 32) | Gating | Coherence validation |
+| Ra.Constants | Signatures | RA_CONSTANTS_V2.json |
+
+**Downstream Consumers:**
+| Module | Purpose | Data Flow |
+|--------|---------|-----------|
+| RaFieldTransferBus (Prompt 35) | Emission | AccessResult gating |
+| RaVisualizerShell (Prompt 41) | Rendering | EmergenceAlpha intensity |
+| RaChamberSync (Prompt 40) | Coordination | ResonanceLocked sync |
+| RaConsentRouter | Chain status | Guardian propagation |
+
+**Pre-Normalization Interface:**
+```
+Expected pre-normalization via: RaScalarExpression.hs
+Converts Codex harmonic field constants (e.g., √10, phase ratios) into Hz
+This allows scalar harmonic signatures to be processed as Hz triplets downstream.
+```
+
+**Codex Scalability:**
+- Signature triplets extendable to pentads (5-element)
+- Chain accumulator supports 255 linked fragments
+- Guardian graph expandable via adjacency matrix
+- Frequency precision upgradeable to 12-bit (4096 Hz)
+
+---
+
+### Reflection Summary
+
+| Aspect | Decision | Rationale |
+|--------|----------|-----------|
+| Frequency Handling | 10-bit Hz integers | Codex scalars pre-converted by RaScalarExpression |
+| Floating Point | Not needed | Fixed-point logic confirmed via synthesis |
+| Latency | 3-4 cycles | Triplet match + guardian clause end-to-end |
+| Resources | ~180 LUTs, 6 DSP | Validated on Artix-7 reference |
+
+---
+
 ### Reflection Responses
 
 **Precision Requirements:**
@@ -184,3 +228,24 @@ if guardianActive AND NOT guardianMet:
 - FP16 not needed; integer fixed-point sufficient for FPGA
 - Could benefit from pipelining for higher throughput
 - LUT-based sqrt would reduce latency vs iterative
+
+**Pipelining Support (Future):**
+```
+Stage 1: normalizeTriplet (division)
+Stage 2: dotProduct + squaredMagnitude (multiplication)
+Stage 3: isqrt (iterative)
+Stage 4: final division + threshold comparison
+```
+Insert register stages for >4 fragment comparisons/cycle.
+
+---
+
+### Hardware Synthesis Targets
+
+| Target | LUTs | DSP | Notes |
+|--------|------|-----|-------|
+| Xilinx Artix-7 | ~180 | 6 slices | Reference platform |
+| Intel Cyclone V | ~200 ALMs | 4 blocks | Validated |
+| Lattice ECP5 | ~220 | 6 mult | Low-power option |
+
+**Clock:** Validated at 100 MHz system clock

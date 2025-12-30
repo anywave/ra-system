@@ -59,6 +59,47 @@ Some fragments require guardian clause verification:
 - Consumes user profiles from biometric subsystem
 - Routes into Ra.Gates gating system
 - Enables Architect emergence when phase-aligned
+
+== Precision Handling
+
+@
+Frequency Precision:      10-bit (0–1023 Hz range)
+Intermediate Calculations: 16-bit fixed-point
+Output Types:             8-bit coherence-scaled
+@
+
+Justification: Supports all audio-range sympathetic harmonic operations;
+optimized for FPGA fixed-point math. The 10-bit frequency range covers
+the full Solfeggio spectrum (174–963 Hz) with margin for overtones.
+
+== Upstream Data Expectations
+
+- Fragment signatures: Provided by Ra.Constants (RA_CONSTANTS_V2.json)
+- User profiles: Normalized by RaBiometricMatcher (Prompt 33)
+- Frequency input: Integer Hz from RaScalarExpression (Prompt 34)
+- Coherence gating: Validated by RaConsentFramework (Prompt 32)
+
+== Downstream Propagation
+
+- AccessResult feeds into RaFieldTransferBus (Prompt 35)
+- EmergenceAlpha controls RaVisualizerShell (Prompt 41)
+- ResonanceLocked enables RaChamberSync (Prompt 40)
+- Guardian chain status propagates to RaConsentRouter
+
+== Codex Scalability Notes
+
+For future Codex-based harmonic field propagation:
+- Signature triplets can be extended to pentads (5-element)
+- Chain accumulator supports up to 255 linked fragments
+- Guardian graph can be expanded via adjacency matrix
+- Frequency precision upgradeable to 12-bit (4096 Hz) if needed
+
+== Hardware Synthesis Targets
+
+- Xilinx Artix-7: ~180 LUTs, 6 DSP slices
+- Intel Cyclone V: ~200 ALMs, 4 DSP blocks
+- Lattice ECP5: ~220 LUTs, 6 multipliers
+- Clock: Validated at 100 MHz system clock
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -172,6 +213,30 @@ sig639 = HarmonicSignature 639 479 767
 -- =============================================================================
 -- Core Functions: Normalization
 -- =============================================================================
+
+-- -----------------------------------------------------------------------------
+-- Pre-Normalization Interface
+-- -----------------------------------------------------------------------------
+-- Expected pre-normalization via: RaScalarExpression.hs
+-- Converts Codex harmonic field constants (e.g., √10, phase ratios) into Hz
+-- This allows scalar harmonic signatures to be processed as Hz triplets downstream.
+-- -----------------------------------------------------------------------------
+
+-- -----------------------------------------------------------------------------
+-- Future Optimization Note (Pipelining):
+-- -----------------------------------------------------------------------------
+-- Insert register stages between normalizeTriplet → cosineSimilarity for
+-- throughput pipelining if >4 fragment comparisons/cycle are required.
+-- This will reduce critical path delay in high-density deployments.
+--
+-- Suggested pipeline stages:
+--   Stage 1: normalizeTriplet (division)
+--   Stage 2: dotProduct + squaredMagnitude (multiplication)
+--   Stage 3: isqrt (iterative)
+--   Stage 4: final division + threshold comparison
+--
+-- Pipelined variant: sympatheticProcessorPipelined (TODO)
+-- -----------------------------------------------------------------------------
 
 -- | Normalize frequency triplet to ratios (scaled by 256 for fixed-point)
 -- Returns (256, dominant_ratio, enharmonic_ratio)
