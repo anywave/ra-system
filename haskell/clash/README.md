@@ -88,6 +88,30 @@ BioOverride ──────────────────────�
 
 **Key Function:** `multiHarmonicBiometric :: Signal dom HarmonicWeights -> Signal dom Float -> Signal dom Float -> Signal dom Float -> Signal dom Float -> (Signal dom Bool, Signal dom Float)`
 
+### RaConsentFramework.hs (Prompt 32 - Consent Gating)
+
+Self-regulating consent framework with scalar-aware symbolic validation. Honors Codex protocols of shadow gating, harmonic override, and coherence memory.
+
+**Consent States:**
+| State    | Description                                    |
+|----------|------------------------------------------------|
+| Permit   | Full consent - coherent and authorized         |
+| Restrict | Limited consent - incoherent or unauthorized   |
+| Override | Emergency override - bypasses normal gating    |
+
+**State Transitions:**
+```
+isCoherent = True  ──▶ Permit
+isCoherent = False ──▶ Restrict
+overrideFlag = True ──▶ Override (highest priority)
+```
+
+**Coherence Memory:**
+- Tracks `coherenceDur` - how long coherence has been maintained
+- Enables graduated consent escalation and shadow gating warmup
+
+**Key Function:** `consentGate :: Signal dom ConsentInput -> Signal dom ConsentState`
+
 ---
 
 ### BiofieldLoopback.hs Details

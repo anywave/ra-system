@@ -41,6 +41,15 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       status: 'pending',
       tokenUsage: null,
       cost: null
+    },
+    {
+      id: 'prompt32',
+      title: 'Ra.ConsentFramework — Symbolic Gate Validator',
+      description: 'Self-regulating scalar consent logic with override tracking.',
+      phase: 'phase2',
+      status: 'pending',
+      tokenUsage: null,
+      cost: null
     }
   ]
 }
