@@ -1,27 +1,20 @@
-// Ra Test Dashboard - Backend API Server
-// Provides test execution endpoints for Ra System modules
+// ra_test_backend.js — Express.js API scaffold for Ra Test Dashboard
 
 const express = require('express');
 const cors = require('cors');
-const { spawn } = require('child_process');
-const path = require('path');
-
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4321;
 
-app.use(cors());
-app.use(express.json());
-
-// Test module definitions
-const testModules = [
+// Mock data — replace with actual Claude or Clash test logs
+let testModules = [
   {
     id: 'prompt17',
     title: 'Biofield Loopback Feedback',
-    description: 'Closed-loop biofield feedback with scalar emergence coupling.',
+    description: 'Simulates recursive entrainment from biometric input.',
     phase: 'phase1',
     status: 'pending',
-    module: 'Ra.Biofield.Loopback',
-    testCommand: 'cabal test --test-option=--match=/Loopback/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt22',
@@ -29,26 +22,26 @@ const testModules = [
     description: 'Real-time sonification of field emergence data.',
     phase: 'phase1',
     status: 'pending',
-    module: 'Ra.SonicFlux',
-    testCommand: 'cabal test --test-option=--match=/SonicFlux/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt31',
     title: 'Multi-Core Consent Transformer',
-    description: 'Hubbard + Tesla consent transformer with 3:1 step-up resonance.',
+    description: 'Hubbard + Tesla consent transformer with 3:1 step-up.',
     phase: 'phase1',
     status: 'pending',
-    module: 'Ra.Consent.Transformer',
-    testCommand: 'cabal test --test-option=--match=/Consent/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt32',
-    title: 'Self-Regulating Resonance Engine',
-    description: 'Tesla coil + Joe Cell hybrid with biometric feedback loops.',
-    phase: 'phase1',
+    title: 'Self-Regulating Consent Framework',
+    description: 'Controls symbolic emergence based on dynamic thresholds.',
+    phase: 'phase2',
     status: 'pending',
-    module: 'Ra.Engine.Resonator',
-    testCommand: 'cabal test --test-option=--match=/Resonator/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt33',
@@ -56,8 +49,8 @@ const testModules = [
     description: 'Biometric-to-avatar scalar field expression.',
     phase: 'phase2',
     status: 'pending',
-    module: 'Ra.Expression.Pipeline',
-    testCommand: 'cabal test --test-option=--match=/Expression/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt34',
@@ -65,17 +58,17 @@ const testModules = [
     description: 'Surface shader system with biometric coherence coupling.',
     phase: 'phase2',
     status: 'pending',
-    module: 'Ra.Visualizer.Surfaces',
-    testCommand: 'cabal test --test-option=--match=/Surfaces/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt40',
     title: 'Chamber Sync Resonance',
     description: 'Wireless scalar chamber synchronization.',
-    phase: 'phase2',
+    phase: 'phase3',
     status: 'pending',
-    module: 'Ra.Chamber.Sync',
-    testCommand: 'cabal test --test-option=--match=/Sync/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt41',
@@ -83,8 +76,8 @@ const testModules = [
     description: 'Terminal-based sync network visualization.',
     phase: 'phase3',
     status: 'pending',
-    module: 'Ra.Visualizer.Shell',
-    testCommand: 'cabal test --test-option=--match=/Shell/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt56',
@@ -92,162 +85,82 @@ const testModules = [
     description: 'Mind-controlled appendage routing layer.',
     phase: 'phase3',
     status: 'pending',
-    module: 'Ra.Interface.TactileControl',
-    testCommand: 'cabal test --test-option=--match=/Tactile/',
+    tokenUsage: null,
+    cost: null
   },
   {
     id: 'prompt60',
-    title: 'Chamber Synthesis',
+    title: 'Ra.Chamber Synthesis',
     description: 'Generates scalar chamber geometry from biometric fields.',
     phase: 'phase4',
     status: 'pending',
-    module: 'Ra.Chamber.Synthesis',
-    testCommand: 'cabal test --test-option=--match=/Synthesis/',
-  },
+    tokenUsage: null,
+    cost: null
+  }
 ];
 
-// Track test results
-const testResults = new Map();
+app.use(cors());
+app.use(express.json());
 
-// GET /api/tests/modules - List all test modules
+// Fetch all test modules
 app.get('/api/tests/modules', (req, res) => {
-  const modulesWithResults = testModules.map(mod => ({
-    ...mod,
-    ...testResults.get(mod.id),
-  }));
-  res.json(modulesWithResults);
+  res.json(testModules);
 });
 
-// GET /api/tests/module/:id - Get single module
-app.get('/api/tests/module/:id', (req, res) => {
-  const mod = testModules.find(m => m.id === req.params.id);
-  if (!mod) {
-    return res.status(404).json({ error: 'Module not found' });
-  }
-  res.json({ ...mod, ...testResults.get(mod.id) });
+// Run a test module (mock simulation)
+app.get('/api/tests/run/:id', (req, res) => {
+  const { id } = req.params;
+  const index = testModules.findIndex(m => m.id === id);
+  if (index === -1) return res.status(404).send('Module not found');
+
+  const tokenUsed = Math.floor(Math.random() * 900) + 100;
+  const cost = (tokenUsed * 0.002).toFixed(3);
+
+  testModules[index] = {
+    ...testModules[index],
+    status: 'complete',
+    tokenUsage: tokenUsed,
+    cost
+  };
+
+  res.json({ status: 'complete', tokenUsage: tokenUsed, cost });
 });
 
-// POST /api/tests/run/:id - Run a test
-app.post('/api/tests/run/:id', async (req, res) => {
-  const mod = testModules.find(m => m.id === req.params.id);
-  if (!mod) {
-    return res.status(404).json({ error: 'Module not found' });
-  }
+// POST version of run (for compatibility)
+app.post('/api/tests/run/:id', (req, res) => {
+  const { id } = req.params;
+  const index = testModules.findIndex(m => m.id === id);
+  if (index === -1) return res.status(404).send('Module not found');
 
-  const startTime = Date.now();
+  const tokenUsed = Math.floor(Math.random() * 900) + 100;
+  const cost = (tokenUsed * 0.002).toFixed(3);
 
-  try {
-    // Run the Haskell test via cabal
-    const result = await runCabalTest(mod);
+  testModules[index] = {
+    ...testModules[index],
+    status: 'complete',
+    tokenUsage: tokenUsed,
+    cost
+  };
 
-    const elapsed = Date.now() - startTime;
-    const testResult = {
-      status: result.success ? 'complete' : 'error',
-      coherence: result.success ? 0.85 + Math.random() * 0.15 : 0.3,
-      tokenUsage: Math.floor(Math.random() * 1000) + 500,
-      cost: (Math.random() * 0.1).toFixed(4),
-      duration: elapsed,
-      output: result.output,
-      timestamp: new Date().toISOString(),
-    };
-
-    testResults.set(mod.id, testResult);
-    res.json(testResult);
-  } catch (error) {
-    const testResult = {
-      status: 'error',
-      error: error.message,
-      timestamp: new Date().toISOString(),
-    };
-    testResults.set(mod.id, testResult);
-    res.status(500).json(testResult);
-  }
+  res.json({ status: 'complete', tokenUsage: tokenUsed, cost });
 });
 
-// POST /api/tests/run-all - Run all tests
-app.post('/api/tests/run-all', async (req, res) => {
-  const results = [];
-
-  for (const mod of testModules) {
-    try {
-      const result = await runCabalTest(mod);
-      const testResult = {
-        id: mod.id,
-        status: result.success ? 'complete' : 'error',
-        coherence: result.success ? 0.85 + Math.random() * 0.15 : 0.3,
-      };
-      testResults.set(mod.id, testResult);
-      results.push(testResult);
-    } catch (error) {
-      results.push({ id: mod.id, status: 'error', error: error.message });
-    }
-  }
-
-  res.json({ results, completed: results.filter(r => r.status === 'complete').length });
-});
-
-// GET /api/tests/results - Get all results
-app.get('/api/tests/results', (req, res) => {
-  const results = {};
-  for (const [id, result] of testResults) {
-    results[id] = result;
-  }
-  res.json(results);
-});
-
-// POST /api/tests/reset - Reset all test results
+// Reset all tests
 app.post('/api/tests/reset', (req, res) => {
-  testResults.clear();
-  res.json({ status: 'reset', message: 'All test results cleared' });
+  testModules = testModules.map(m => ({
+    ...m,
+    status: 'pending',
+    tokenUsage: null,
+    cost: null
+  }));
+  res.json({ status: 'reset' });
 });
-
-// Run cabal test command
-function runCabalTest(mod) {
-  return new Promise((resolve) => {
-    const haskellDir = path.resolve(__dirname, '../../haskell');
-
-    // For now, simulate test execution
-    // In production, uncomment the spawn code below
-    setTimeout(() => {
-      resolve({
-        success: Math.random() > 0.1, // 90% success rate for demo
-        output: `Testing ${mod.module}...\nAll tests passed.`,
-      });
-    }, 1000 + Math.random() * 2000);
-
-    /*
-    const child = spawn('cabal', ['test'], {
-      cwd: haskellDir,
-      shell: true,
-    });
-
-    let output = '';
-    child.stdout.on('data', (data) => { output += data.toString(); });
-    child.stderr.on('data', (data) => { output += data.toString(); });
-
-    child.on('close', (code) => {
-      resolve({
-        success: code === 0,
-        output,
-      });
-    });
-
-    child.on('error', (err) => {
-      resolve({
-        success: false,
-        output: err.message,
-      });
-    });
-    */
-  });
-}
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+  res.json({ status: 'ok', modules: testModules.length });
 });
 
 app.listen(PORT, () => {
-  console.log(`Ra Test Dashboard API running on http://localhost:${PORT}`);
-  console.log(`Loaded ${testModules.length} test modules`);
+  console.log(`Ra Test Backend running at http://localhost:${PORT}`);
 });
