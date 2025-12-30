@@ -30,11 +30,11 @@ Real-time harmonic driver mapping coherence to audio scalar output.
 | < 0.80    | HarmonicMid   |
 | >= 0.80   | HarmonicHigh  |
 
-### RaSonicEmitter.hs (Prompt 22 Extended)
+### RaSonicEmitter.hs (Full Hardware Pipeline)
 
-Signal-level audio generator with scalar envelope synthesis.
+Complete pipeline from coherence to PWM output for hardware integration.
 
-**Pipeline:** `Coherence → sonicFluxMapper → OutputAudioScalar → audioEmitter → Amplitude`
+**Pipeline:** `Coherence → sonicFluxMapper → OutputAudioScalar → audioEmitter → Amplitude → scalarToPWM → PWM`
 
 **Amplitude Mapping:**
 | Scalar State  | Amplitude |
@@ -43,6 +43,8 @@ Signal-level audio generator with scalar envelope synthesis.
 | HarmonicLow   | 0.3       |
 | HarmonicMid   | 0.6       |
 | HarmonicHigh  | 0.9       |
+
+**Key Function:** `sonicPWMOutput :: Signal dom Float -> Signal dom Bool`
 
 ### RaPWMDriver.hs (Hardware Output)
 

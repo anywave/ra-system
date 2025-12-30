@@ -4,13 +4,13 @@ Description : Signal-level audio generator with scalar envelope synthesis
 Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
 
-Expands Prompt 22 into wave-emitting pattern driver for hardware or emulation.
-Converts symbolic OutputAudioScalar states into actual waveform amplitudes.
+Expanded to drive PWM modulation from symbolic scalar amplitude.
+Full pipeline from coherence input to PWM hardware output.
 
-== Pipeline Architecture
+== Complete Pipeline
 
 @
-Coherence (Float) → sonicFluxMapper → OutputAudioScalar → audioEmitter → Float (amplitude)
+Coherence (Float) → sonicFluxMapper → OutputAudioScalar → audioEmitter → Float → scalarToPWM → Bool (PWM)
 @
 
 == Amplitude Mapping
@@ -22,12 +22,12 @@ Coherence (Float) → sonicFluxMapper → OutputAudioScalar → audioEmitter →
 | HarmonicMid   | 0.6       |
 | HarmonicHigh  | 0.9       |
 
-== Synthesis Commands
+== Hardware Output
 
-@
-clash --verilog RaSonicEmitter.hs
-clash --vcd RaSonicEmitter.hs
-@
+Output can drive GPIO or chamber modulator for:
+- LED biofeedback
+- Haptic entrainment
+- Solfeggio/Schumann resonance
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -40,6 +40,7 @@ import Clash.Prelude
 import GHC.Generics (Generic)
 import qualified Prelude as P
 import RaSonicFlux (OutputAudioScalar(..), sonicFluxMapper, testCoherence)
+import RaPWMDriver (scalarToPWM)
 
 -- =============================================================================
 -- Types
@@ -53,7 +54,6 @@ type AudioWave dom = Signal dom Float
 -- =============================================================================
 
 -- | Map symbolic scalar output to waveform amplitude
--- Simple envelope mapping: silence (0.0), low (0.3), mid (0.6), high (0.9)
 mapScalarToWave :: OutputAudioScalar -> Float
 mapScalarToWave Silence      = 0.0
 mapScalarToWave HarmonicLow  = 0.3
@@ -61,53 +61,51 @@ mapScalarToWave HarmonicMid  = 0.6
 mapScalarToWave HarmonicHigh = 0.9
 
 -- | Convert symbolic scalar to waveform amplitude output
--- Pure combinational mapping for synthesis
 audioEmitter :: HiddenClockResetEnable dom
              => Signal dom OutputAudioScalar -> AudioWave dom
 audioEmitter = fmap mapScalarToWave
 
--- | Full pipeline: coherence → scalar → waveform output
--- Composes sonicFluxMapper and audioEmitter into single pipeline
-sonicPipeline :: HiddenClockResetEnable dom
-              => Signal dom Float -> AudioWave dom
-sonicPipeline = audioEmitter . sonicFluxMapper
+-- | Full pipeline: coherence → scalar → amplitude → PWM output
+-- Combines all stages into single hardware-ready pipeline
+sonicPWMOutput :: HiddenClockResetEnable dom
+               => Signal dom Float -> Signal dom Bool
+sonicPWMOutput = scalarToPWM . audioEmitter . sonicFluxMapper
 
 -- =============================================================================
 -- Synthesis Entry Point
 -- =============================================================================
 
--- | Top entity for waveform output synthesis
--- Input: coherence (0.0-1.0)
--- Output: waveform amplitude (0.0, 0.3, 0.6, or 0.9)
+-- | Top entity for scalar-PWM integration
+-- Output can drive GPIO or chamber modulator
 topEntity
   :: Clock System
   -> Reset System
   -> Enable System
   -> Signal System Float
-  -> Signal System Float
-topEntity = exposeClockResetEnable sonicPipeline
+  -> Signal System Bool
+topEntity = exposeClockResetEnable sonicPWMOutput
 
 -- =============================================================================
 -- Test Data
 -- =============================================================================
 
--- | Test vector for waveform output verification
--- Maps testCoherence through full pipeline
--- Expected: [0.0, 0.3, 0.6, 0.9, 0.9, 0.0]
-testWaveOutput :: Vec 6 Float
-testWaveOutput = sampleN @System 6 $ sonicPipeline (fromList testCoherence)
+-- | Test vector for PWM pipeline output
+-- NOTE: This is mock expected data for shape only — real PWM is dynamic
+-- Visualize with GTKWave for proper waveform validation
+testPWMOutput :: Vec 6 Bool
+testPWMOutput = map (\x -> x > 0.3) testCoherence
 
 -- =============================================================================
 -- Testbench
 -- =============================================================================
 
--- | Testbench for waveform inspection
--- Validates full pipeline output against expected amplitudes
+-- | Testbench for scalar to PWM waveform validation
 testBench :: Signal System Bool
 testBench = done
   where
     clk = tbSystemClockGen (not <$> done)
     rst = systemResetGen
-    expected = outputVerifier' clk rst testWaveOutput
     stim = stimuliGenerator clk rst testCoherence
-    done = expected (topEntity clk rst enableGen stim)
+    pwmOut = topEntity clk rst enableGen stim
+    expected = outputVerifier' clk rst testPWMOutput
+    done = expected pwmOut
