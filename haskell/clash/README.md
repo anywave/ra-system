@@ -540,6 +540,44 @@ else:
 
 **Key Function:** `morphologyProcessor :: Signal dom ChamberState -> Signal dom MorphResult`
 
+### RaHarmonicTwist.hs (Prompt 49 - Harmonic Inversion Twist)
+
+Computes twist envelope from harmonic mode pair Y(a,b) and coherence level for animation/rendering.
+
+**Harmonic Mode Encoding:**
+| Parameter | Description | Range |
+|-----------|-------------|-------|
+| modeA | Azimuthal mode Y(a,b) | 0-15 |
+| modeB | Polar mode | 0-15 |
+| coherence | Coherence level | 0-255 |
+
+**Twist Calculation:**
+```
+invMag = a * 10 + b * 7
+twistMag = invMag + 15  (if coherence >= 0.41)
+         = invMag - 10  (if coherence < 0.41)
+duration = 8 cycles     (if twistMag > 80)
+         = 4 cycles     (if twistMag <= 80)
+```
+
+**Thresholds:**
+- coherenceThreshold = 105 (~0.41)
+- twistMagThreshold = 80
+
+**Example Calculations:**
+| modeA | modeB | coherence | invMag | twistMag | duration |
+|-------|-------|-----------|--------|----------|----------|
+| 5     | 3     | 120       | 71     | 86       | 8        |
+| 2     | 4     | 80        | 48     | 38       | 4        |
+| 8     | 6     | 200       | 122    | 137      | 8        |
+
+**Integration:**
+- Consumes harmonic mode from field analysis
+- Outputs twist envelope for animation/rendering
+- Duration feeds into timing subsystem
+
+**Key Function:** `computeTwistEnvelope :: HarmonicInput -> TwistResult`
+
 ---
 
 ### BiofieldLoopback.hs Details
