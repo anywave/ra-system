@@ -72,6 +72,10 @@ library
                     , Ra.AetherSensor
                     , Ra.VortexGate
                     , Ra.FrequencyTable
+                    , Ra.Sonic.Feedback
+                    , Ra.Projection.Map
+                    , Ra.Chamber.Morphology
+                    , Ra.Entangle.BioMap
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
