@@ -504,6 +504,42 @@ Output: (coherence=197, angle=55)
 
 **Key Function:** `symbolicProcessor :: Signal dom (Vec 3 SymbolicOp) -> Signal dom EmergenceCondition -> Signal dom EmergenceCondition`
 
+### RaChamberMorphology.hs (Prompt 44 - Chamber Form Transitions)
+
+Models chamber morphology transitions based on coherence and instability thresholds.
+
+**Chamber Forms:**
+| Form    | Description                        |
+|---------|------------------------------------|
+| Sphere  | Default stable form                |
+| Toroid  | Collapsed form (low coherence)     |
+| Cube    | Crystallized form (high coherence) |
+
+**Morphology Events:**
+| Event         | Trigger Condition                    |
+|---------------|--------------------------------------|
+| NoChange      | Normal operation, form stable        |
+| RapidCollapse | coherence < 0.39 AND instability > 0.30 |
+
+**Thresholds:**
+- coherenceThreshold = 100 (~0.39)
+- instabilityThreshold = 77 (~0.30)
+
+**State Transition:**
+```
+if coherence < 100 AND instability > 77:
+    result = (Toroid, RapidCollapse)
+else:
+    result = (currentForm, NoChange)
+```
+
+**Integration:**
+- Consumes coherence from RaBiometricMatcher
+- Consumes instability from field entropy
+- Outputs form change events for visualization
+
+**Key Function:** `morphologyProcessor :: Signal dom ChamberState -> Signal dom MorphResult`
+
 ---
 
 ### BiofieldLoopback.hs Details
