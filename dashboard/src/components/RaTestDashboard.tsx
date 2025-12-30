@@ -1,5 +1,5 @@
-// RaTestDashboard.tsx — Updated Phase II with HandshakeGate visual module
-// Ra Codex Test Suite Integration with Interactive Handshake Simulation
+// RaTestDashboard.tsx — Chamber State Visualizer for Phase II
+// Ra Codex Test Suite with Handshake + Chamber State Integration
 
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
@@ -66,6 +66,13 @@ const fetchTestModules = async (): Promise<TestModule[]> => {
       description: 'Validates biometric + symbolic gestures with override support.',
       phase: 'phase2',
       status: 'pending'
+    },
+    {
+      id: 'fieldSynthesisNode',
+      title: 'Ra.FieldSynthesisNode — Chamber State Cascade',
+      description: 'Transitions chamber states based on handshakeGrant signal.',
+      phase: 'phase2',
+      status: 'pending'
     }
   ]
 }
@@ -77,6 +84,8 @@ export default function RaTestDashboard() {
   const [biometric, setBiometric] = useState(true)
   const [override, setOverride] = useState(false)
   const [handshakeResult, setHandshakeResult] = useState<HandshakeResult | null>(null)
+  const [chamberState, setChamberState] = useState('Idle')
+  const [glow, setGlow] = useState(0)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -100,6 +109,19 @@ export default function RaTestDashboard() {
     })
     const data = await res.json()
     setHandshakeResult(data)
+    if (data.handshakeGranted) {
+      const cascade = await fetch('/api/tests/trigger-chamber', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ trigger: true })
+      })
+      const node = await cascade.json()
+      setChamberState(node.state)
+      setGlow(node.glow)
+    } else {
+      setChamberState('Idle')
+      setGlow(0)
+    }
   }
 
   const getStatusIcon = (status: string) => {
@@ -146,6 +168,19 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderChamberVisual = () => (
+    <Card className="shadow-md border-purple-400">
+      <CardContent className="p-4 space-y-3">
+        <h2 className="font-semibold text-lg">Chamber State Monitor</h2>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">Current State: <b>{chamberState}</b></span>
+          <span className="text-sm">Glow Intensity: <b>{glow}</b></span>
+        </div>
+        <Progress value={glow / 2.55} className="h-2 mt-2" />
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -165,7 +200,12 @@ export default function RaTestDashboard() {
           </CardContent>
         </Card>
       ))}
-      {phase === 'phase2' && renderHandshakeSimulator()}
+      {phase === 'phase2' && (
+        <>
+          {renderHandshakeSimulator()}
+          {renderChamberVisual()}
+        </>
+      )}
     </div>
   )
 
