@@ -48,6 +48,7 @@ library
                     , Ra.Chamber
                     , Ra.Music
                     , Ra.Pipeline
+                    , Ra.Constants.Extended
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
@@ -75,6 +76,7 @@ test-suite ra-system-test
     type:             exitcode-stdio-1.0
     hs-source-dirs:   test
     main-is:          Spec.hs
+    other-modules:    Ra.Test.Coherence
     build-depends:    base >=4.14 && <5
                     , ra-system
                     , QuickCheck >=2.14

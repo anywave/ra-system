@@ -13,6 +13,7 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck
 
 import Ra.Constants
+import Ra.Test.Coherence (coherenceTests)
 import Ra.Repitans
 import Ra.Rac
 import Ra.Omega
@@ -30,6 +31,9 @@ import qualified Ra.Gates as Gates
 
 main :: IO ()
 main = hspec $ do
+    -- New Ra.Test namespace tests
+    coherenceTests
+
     describe "Constant Invariants (I1-I6)" $ do
         it "I1: Ankh = pi_red * phi_green" $ do
             let computed = unRedPi redPi * unGreenPhi greenPhi
