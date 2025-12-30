@@ -101,27 +101,31 @@ harmonicTop = exposeClockResetEnable harmonicMapper
 -- Test Data
 -- =============================================================================
 
--- | Test coherence bands
-testBands :: Vec 4 (Vec 4 (Unsigned 8))
-testBands = $(listToVecTH
-  [ $(listToVecTH [0 :: Unsigned 8, 0, 0, 0])           -- No modulation
-  , $(listToVecTH [128, 128, 128, 128])                 -- 50% modulation
-  , $(listToVecTH [255, 255, 255, 255])                 -- Max modulation
-  , $(listToVecTH [64, 192, 32, 224])                   -- Mixed modulation
-  ])
+-- | Test coherence bands (0% to 100% in key transitions)
+testBands :: Vec 6 (Vec 4 (Unsigned 8))
+testBands =
+  (0 :> 0 :> 0 :> 0 :> Nil) :>               -- 0% modulation
+  (64 :> 64 :> 64 :> 64 :> Nil) :>           -- 25% modulation
+  (128 :> 128 :> 128 :> 128 :> Nil) :>       -- 50% modulation
+  (192 :> 192 :> 192 :> 192 :> Nil) :>       -- 75% modulation
+  (255 :> 255 :> 255 :> 255 :> Nil) :>       -- 100% modulation
+  (100 :> 200 :> 50 :> 250 :> Nil) :> Nil    -- Mixed modulation
 
 -- | Expected outputs:
--- Band 0: [0,0,0,0] -> [396, 417, 528, 639] (no change)
--- Band 1: [128,128,128,128] -> [396+198, 417+208, 528+264, 639+319] = [594, 625, 792, 958]
--- Band 2: [255,255,255,255] -> [396+394, 417+415, 528+526, 639+636] = [790, 832, 1054, 1275]
--- Band 3: [64,192,32,224] -> mixed calculations
-expectedOutput :: Vec 4 (Vec 4 (Unsigned 16))
-expectedOutput = $(listToVecTH
-  [ $(listToVecTH [396 :: Unsigned 16, 417, 528, 639])    -- No modulation
-  , $(listToVecTH [594, 625, 792, 958])                   -- 50% modulation
-  , $(listToVecTH [790, 832, 1054, 1275])                 -- Max modulation
-  , $(listToVecTH [495, 729, 594, 1198])                  -- Mixed modulation
-  ])
+-- 0%:   base frequencies unchanged
+-- 25%:  base + base*64/256  = base * 1.25
+-- 50%:  base + base*128/256 = base * 1.50
+-- 75%:  base + base*192/256 = base * 1.75
+-- 100%: base + base*255/256 = base * ~2.0
+-- Mixed: per-band calculation
+expectedOutput :: Vec 6 (Vec 4 (Unsigned 16))
+expectedOutput =
+  (396 :> 417 :> 528 :> 639 :> Nil) :>       -- 0%
+  (495 :> 521 :> 660 :> 798 :> Nil) :>       -- 25%
+  (594 :> 625 :> 792 :> 957 :> Nil) :>       -- 50%
+  (693 :> 729 :> 924 :> 1116 :> Nil) :>      -- 75%
+  (792 :> 833 :> 1056 :> 1275 :> Nil) :>     -- 100%
+  (551 :> 733 :> 631 :> 1264 :> Nil) :> Nil  -- Mixed
 
 -- =============================================================================
 -- Testbench
