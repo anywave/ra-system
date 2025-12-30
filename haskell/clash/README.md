@@ -347,6 +347,95 @@ Trigger = (breath transitions exhale→hold) AND (coherence > 230)
 
 **Key Function:** `biofeedbackHarness :: Signal dom (BitVector 2) -> Signal dom (Unsigned 8) -> Signal dom (Bool, Bool)`
 
+### RaVisualizerShell.hs (Prompt 41 - Visual Shell Renderer)
+
+Renders visual shell feedback from chamber state, coherence, and sync status to RGB color output.
+
+**Chamber State Colors:**
+| State       | Base RGB        | Description       |
+|-------------|-----------------|-------------------|
+| Idle        | (0, 0, 32)      | Deep blue (dim)   |
+| Spinning    | (0, 64, 128)    | Cyan glow         |
+| Stabilizing | (128, 64, 255)  | Purple pulse      |
+| Emanating   | (255, 128, 64)  | Golden radiance   |
+
+**Sync State Modulation:**
+| Sync State | Effect                      |
+|------------|-----------------------------|
+| Desync     | Flash red overlay (50%)     |
+| Aligning   | Pulse brightness (25-100%)  |
+| Locked     | Steady (100%)               |
+| Drifting   | Subtle fade (75-100%)       |
+
+**Coherence Intensity:**
+```
+Final brightness = baseColor * syncModulation * (coherence / 255)
+```
+
+**Integration:**
+- Consumes ChamberState from RaFieldSynthesisNode
+- Consumes SyncState from RaChamberSync
+- Outputs RGB triplet for LED/display driver
+
+**Key Function:** `visualizerShell :: Signal dom ChamberState -> Signal dom SyncState -> Signal dom (Unsigned 8) -> Signal dom RGBColor`
+
+### RaAvatarFieldVisualizer.hs (Prompt 62 - Avatar Field Glow Anchors)
+
+Generates AuraPattern (4 glow anchors) from signature vector, chamber state, and emergence level.
+
+**Chamber State Codes:**
+| Code  | State       | Visualization |
+|-------|-------------|---------------|
+| 0b000 | Idle        | Inactive      |
+| 0b001 | Spinning    | Inactive      |
+| 0b010 | Stabilizing | Inactive      |
+| 0b101 | Emanating   | Active        |
+
+**Output Calculation:**
+```
+AuraPattern[i] = signature[i] * emergenceLevel / 256  (when state = 0b101)
+AuraPattern[i] = 0                                    (otherwise)
+```
+
+**Integration:**
+- Downstream from RaFieldSynthesisNode
+- Feeds into LED driver or display renderer
+
+**Key Function:** `avatarField :: Signal dom (Vec 4 (Unsigned 8)) -> Signal dom (BitVector 3) -> Signal dom (Unsigned 8) -> Signal dom (Vec 4 (Unsigned 8))`
+
+### RaTactileControl.hs (Prompt 56 - Tactile Haptic Interface)
+
+Interfaces with tactile sensors and haptic actuators for bidirectional physical feedback.
+
+**Gesture Codes:**
+| Code | Gesture      | Haptic Response |
+|------|--------------|-----------------|
+| 0000 | None         | Silent          |
+| 0001 | Tap          | Short pulse     |
+| 0010 | Hold         | Sustained buzz  |
+| 0011 | Swipe        | Wave pattern    |
+| 0100 | Circle       | Spiral ramp     |
+| 0101 | Pinch        | Double pulse    |
+
+**Consent Gating:**
+| Level | Allowed Patterns              |
+|-------|-------------------------------|
+| 0     | None (all haptics disabled)   |
+| 1     | Pulse, Buzz only              |
+| 2     | Full haptic range             |
+
+**Haptic Patterns:**
+| Pattern     | PWM Duty | Duration    |
+|-------------|----------|-------------|
+| Silent      | 0%       | 0           |
+| Pulse       | 80%      | 8 cycles    |
+| Buzz        | 50%      | Sustained   |
+| Wave        | 0-100%   | 16 (ramp)   |
+| Spiral      | 25-75%   | 24 (osc)    |
+| DoublePulse | 80%      | 4+4+gap     |
+
+**Key Function:** `tactileControl :: Signal dom (Unsigned 8) -> Signal dom (BitVector 4) -> Signal dom (Unsigned 2) -> Signal dom TactileOutput`
+
 ---
 
 ### BiofieldLoopback.hs Details

@@ -132,6 +132,7 @@ export default function RaTestDashboard() {
   const [consentState, setConsentState] = useState<{ granted: boolean; entropy: number; active: number } | null>(null)
   const [transferResult, setTransferResult] = useState<{ signal: number[]; latency: number; ok: boolean } | null>(null)
   const [tokenStats, setTokenStats] = useState<{ tokensUsed: number; computeCost: number } | null>(null)
+  const [bioResult, setBioResult] = useState<{ motion: boolean; haptic: boolean } | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -239,6 +240,19 @@ export default function RaTestDashboard() {
     a.href = url
     a.download = 'tokenomics_snapshot.json'
     a.click()
+  }
+
+  const runBiofeedbackTest = async () => {
+    const res = await fetch('/api/tests/biofeedback', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        breath: [0, 1, 2, 2, 1, 2, 0, 0],
+        coherence: [100, 100, 240, 240, 100, 250, 240, 200]
+      })
+    })
+    const { motionIntent, hapticPing } = await res.json()
+    setBioResult({ motion: motionIntent, haptic: hapticPing })
   }
 
   const simulateHandshake = async () => {
@@ -450,6 +464,24 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderBiofeedbackControl = () => (
+    <Card className="border-green-400 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 52: Biofeedback Harness</h2>
+        <p className="text-sm text-muted-foreground">
+          Exhale to Hold + Coherence &gt; 230 triggers MotionIntent + HapticPing.
+        </p>
+        <Button onClick={runBiofeedbackTest}>Run Harness Test</Button>
+        {bioResult && (
+          <div className="text-sm pt-2">
+            <div>MotionIntent: <b style={{ color: bioResult.motion ? 'limegreen' : 'red' }}>{bioResult.motion ? 'ACTIVE' : 'INACTIVE'}</b></div>
+            <div>HapticPing: <b style={{ color: bioResult.haptic ? 'limegreen' : 'red' }}>{bioResult.haptic ? 'ACTIVE' : 'INACTIVE'}</b></div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -472,6 +504,7 @@ export default function RaTestDashboard() {
       {phase === 'phase1' && (
         <>
           {renderTransferOverlay()}
+          {renderBiofeedbackControl()}
           {renderTokenOverlay()}
         </>
       )}
