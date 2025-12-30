@@ -6,6 +6,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 
 | Prompt | Module | Description | Testbench | Dashboard | Status |
 |--------|--------|-------------|-----------|-----------|--------|
+| 8 | RaSympatheticHarmonic | Sympathetic resonance fragment access | Yes | Phase 1 | Verified |
 | 17 | BiofieldLoopback | Biofield loopback feedback system | Testbench.hs | Phase 1 | Verified |
 | 22 | RaSonicFlux | Real-time harmonic driver | Yes | Phase 1 | Verified |
 | 22+ | RaSonicEmitter | Full hardware PWM pipeline | Yes | Phase 1 | Verified |
@@ -40,6 +41,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 ## Quick Links
 
 ### Phase 1 Modules (Field Synthesis)
+- [Prompt 08 Guide](./Prompt08_SympatheticHarmonic.md) - Sympathetic resonance
 - [Prompt 17 Guide](./Prompt17_BiofieldLoopback.md) - Biofield resonance
 - [Prompt 22 Guide](./Prompt22_SonicFlux.md) - Audio scalar output
 - [Prompt 35 Guide](./Prompt35_FieldTransferBus.md) - Tesla field transfer
@@ -108,6 +110,6 @@ Response format:
 ## Last Updated
 
 - **Date**: 2025-12-30
-- **Modules**: 25 total, 21 with testbenches
+- **Modules**: 26 total, 21 with testbenches
 - **Dashboard Panels**: 12 interactive controls
-- **Guides**: 21 prompt guides (16 numbered + 5 supporting)
+- **Guides**: 22 prompt guides (17 numbered + 5 supporting)
