@@ -9,13 +9,29 @@ modulates biometric parameters, producing physiological feedback in the
 user via resonant coupling. Models the user's biofield as both emitter
 and receiver, completing the scalar resonance loop.
 
+== Clash Synthesis Compatibility
+
+This module is designed for both simulation and Clash-ready synthesis.
+The core feedback loop ('updateFeedbackLoop') is a pure mealy machine
+transition function suitable for hardware synthesis.
+
+For Clash synthesis, use:
+
+@
+import Clash.Prelude
+biofieldLoopback = mealy updateFn initFrame
+  where
+    updateFn frame input = let (frame', _) = updateFeedbackLoop input frame in (frame', frame')
+    initFrame = AvatarFieldFrame GlowNone 0.0 0.0 0.0 False
+@
+
 == Biofield Loopback Theory
 
 === Feedback Architecture
 
-* Biometric input (breath, HRV, GSR) feeds coherence calculation
-* Coherence drives emergence state classification
-* Emergence state modulates feedback channels
+* Biometric input (breath, HRV) feeds coherence calculation
+* Coherence drives emergence glow classification
+* Glow state triggers feedback channel outputs
 * Feedback channels influence biometric state (closed loop)
 
 === Resonant Reinforcement
@@ -31,7 +47,7 @@ and receiver, completing the scalar resonance loop.
 * REICH_ORGONE_ACCUMULATOR.md - Biophysical energy storage
 -}
 module Ra.Biofield.Loopback
-  ( -- * Core Types
+  ( -- * Core Types (Clash-compatible)
     BiofieldState(..)
   , BiometricInput(..)
   , EmergenceGlow(..)
@@ -82,6 +98,12 @@ module Ra.Biofield.Loopback
   , simulateLoop
   , SimulationResult(..)
   , runSimulation
+
+    -- * Clash-Compatible Simple API
+  , mkBiometricInput
+  , computeCoherenceSimple
+  , initFrame
+  , testInputs
   ) where
 
 import Ra.Constants.Extended (phi, phiInverse)
@@ -611,3 +633,52 @@ glowIntensity glow = case glow of
 -- | Floating point modulo
 mod' :: Double -> Double -> Double
 mod' x y = x - fromIntegral (floor (x / y) :: Int) * y
+
+-- =============================================================================
+-- Clash-Compatible Simple API
+-- =============================================================================
+-- These functions mirror the exact signatures from the Clash synthesis version.
+-- For FPGA synthesis with Clash, use these with:
+--
+--   biofieldLoopback = mealy updateFn initFrame
+--     where updateFn frame input = let (frame', _) = updateFeedbackLoop input frame
+--                                  in (frame', frame')
+
+-- | Simple biometric input constructor (Clash-compatible)
+-- Creates a BiometricInput with just breath rate and HRV (core synthesis inputs)
+mkBiometricInput :: Double -> Double -> BiometricInput
+mkBiometricInput breathRate hrvVal = BiometricInput
+  { biBreathRate = breathRate
+  , biHRV = hrvVal
+  , biGSR = 0.5        -- Default GSR
+  , biFocus = 0.5      -- Default focus
+  , biTimestamp = 0    -- No timestamp for synthesis
+  }
+
+-- | Simple coherence computation (exact Clash formula)
+-- Coherence = (6.5 - |6.5 - breathRate|) * hrv
+-- This models optimal breath rate at 6.5 Hz (resonant frequency)
+computeCoherenceSimple :: Double -> Double -> Double
+computeCoherenceSimple breathRate hrvVal =
+  (6.5 - abs (6.5 - breathRate)) * hrvVal
+
+-- | Initial frame for mealy machine (Clash synthesis starting state)
+initFrame :: AvatarFieldFrame
+initFrame = AvatarFieldFrame
+  { affGlowState = GlowNone
+  , affCoherence = 0.0
+  , affFieldIntensity = 0.0
+  , affPhaseAngle = 0.0
+  , affPulseActive = False
+  }
+
+-- | Sample test inputs (matches Clash Vec 5 test data)
+-- These represent a typical biometric input sequence for testing
+testInputs :: [BiometricInput]
+testInputs =
+  [ mkBiometricInput 6.2 0.81   -- Near optimal breath, good HRV
+  , mkBiometricInput 6.4 0.85   -- Slightly above optimal, excellent HRV
+  , mkBiometricInput 6.1 0.65   -- Near optimal, moderate HRV
+  , mkBiometricInput 5.7 0.90   -- Below optimal, high HRV
+  , mkBiometricInput 6.6 0.78   -- Above optimal, good HRV
+  ]
