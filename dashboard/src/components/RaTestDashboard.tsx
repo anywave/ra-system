@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { CheckCircle, AlertTriangle, Loader2, Info, Coins, Cpu } from 'lucide-react'
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
+import { Textarea } from '@/components/ui/textarea'
 
 interface TestModule {
   id: string
@@ -135,6 +136,16 @@ export default function RaTestDashboard() {
   const [bioResult, setBioResult] = useState<{ motion: boolean; haptic: boolean } | null>(null)
   const [aura, setAura] = useState<number[] | null>(null)
   const [tones, setTones] = useState<number[] | null>(null)
+  const [symbolicInputs, setSymbolicInputs] = useState<string>('PhaseShift(0.618) ○ InvertAngle ○ GateThreshold(0.4)')
+  const [symbolicResults, setSymbolicResults] = useState<any[] | null>(null)
+  const [symbolicConditions, setSymbolicConditions] = useState<string>(
+    JSON.stringify([
+      { coherence: 100, angle: 80 },
+      { coherence: 200, angle: 0 },
+      { coherence: 50, angle: 250 },
+      { coherence: 0, angle: 127 }
+    ], null, 2)
+  )
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -279,6 +290,30 @@ export default function RaTestDashboard() {
     })
     const { overtoneFrequencies } = await res.json()
     setTones(overtoneFrequencies)
+  }
+
+  const runSymbolicEval = async () => {
+    const res = await fetch('/api/tests/symboliceval', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        composition: symbolicInputs,
+        inputs: JSON.parse(symbolicConditions)
+      })
+    })
+    const { result } = await res.json()
+    setSymbolicResults(result)
+  }
+
+  const symbolicCostOverlay = (ops: string): number => {
+    if (!ops) return 0
+    const opsList = ops.split('○').map(o => o.trim())
+    return opsList.reduce((acc, op) => {
+      if (op.startsWith('PhaseShift')) return acc + 1.2
+      if (op.startsWith('InvertAngle')) return acc + 0.8
+      if (op.startsWith('GateThreshold')) return acc + 1.0
+      return acc
+    }, 0)
   }
 
   const simulateHandshake = async () => {
@@ -550,6 +585,42 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderSymbolicOps = () => (
+    <Card className="border-purple-600 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 54: Symbolic Coherence Ops</h2>
+        <p className="text-sm text-muted-foreground">Evaluate symbolic DSL on EmergenceConditions.</p>
+        <Textarea
+          className="text-sm font-mono"
+          value={symbolicInputs}
+          onChange={e => setSymbolicInputs(e.target.value)}
+          rows={2}
+        />
+        <Textarea
+          className="font-mono text-xs"
+          value={symbolicConditions}
+          onChange={e => setSymbolicConditions(e.target.value)}
+          rows={6}
+        />
+        <div className="flex items-center justify-between">
+          <Button onClick={runSymbolicEval}>Evaluate</Button>
+          <span className="text-sm text-muted-foreground">
+            Token Cost: {symbolicCostOverlay(symbolicInputs).toFixed(2)} units
+          </span>
+        </div>
+        {symbolicResults && (
+          <div className="pt-2 space-y-1">
+            {symbolicResults.map((step, idx) => (
+              <div key={idx} className="text-xs bg-muted p-2 rounded">
+                <pre className="whitespace-pre-wrap">{JSON.stringify(step, null, 2)}</pre>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -575,6 +646,7 @@ export default function RaTestDashboard() {
           {renderBiofeedbackControl()}
           {renderAvatarFieldControl()}
           {renderMusicChamberModule()}
+          {renderSymbolicOps()}
           {renderTokenOverlay()}
         </>
       )}
