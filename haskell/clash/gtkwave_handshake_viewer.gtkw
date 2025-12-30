@@ -1,0 +1,26 @@
+# GTKWave save file for RaHandshakeGate VCD visualization
+[dumpfile] handshakeBench.vcd
+[dumpfile_mtimes] 0
+[savefile] gtkwave_handshake_viewer.gtkw
+[timestart] 0
+[size] 800 600
+[pos] -1 -1
+[flags] 0 0
+[winpos] 50 50
+[sst_width] 200
+[signals_width] 400
+[highlighted] 0
+[search_expr]
+[search_type] 0
+[search_matchcase] 0
+[signals]
+- /RaHandshakeGate/handshakeTop/clk
+- /RaHandshakeGate/handshakeTop/rst
+- /RaHandshakeGate/handshakeTop/inputStim/gestureID
+- /RaHandshakeGate/handshakeTop/inputStim/biometricMatch
+- /RaHandshakeGate/handshakeTop/inputStim/overrideFlag
+- /RaHandshakeGate/handshakeTop/out/handshakeGranted
+- /RaHandshakeGate/handshakeTop/out/passedBiometric
+- /RaHandshakeGate/handshakeTop/out/matchedSymbol
+- /RaHandshakeGate/handshakeTop/out/overrideUsed
+[end]
