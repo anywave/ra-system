@@ -79,6 +79,10 @@ library
                     , Ra.Lexicon.Harmonizer
                     , Ra.Resonator.MusicChamber
                     , Ra.Telemetry.RecoveryGraph
+                    , Ra.Chamber.TeslaVortex
+                    , Ra.Shell.LimbGestures
+                    , Ra.Shell.LimbLearning
+                    , Ra.Shell.ResonantGestures
     build-depends:    base >=4.14 && <5
                     , deepseq >=1.4 && <1.6
                     , aeson >=2.0 && <3.0
