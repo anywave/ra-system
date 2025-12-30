@@ -59,6 +59,13 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 - [Prompt 33 Guide](./Prompt33_BiometricMatcher.md) - Template matching
 - [Prompt 34 Guide](./Prompt34_ScalarExpression.md) - Avatar expression
 
+### Supporting Modules (Infrastructure)
+- [HandshakeGate Guide](./Supporting_HandshakeGate.md) - Dual-factor validation
+- [FieldSynthesisNode Guide](./Supporting_FieldSynthesisNode.md) - Chamber state cascade
+- [BiometricGenerator Guide](./Supporting_BiometricGenerator.md) - Waveform simulation
+- [TokenomicsProfiler Guide](./Supporting_TokenomicsProfiler.md) - Cost analyzer
+- [ConsentRouter Guide](./Supporting_ConsentRouter.md) - Channel splitter
+
 ## Synthesis Commands
 
 ```bash
@@ -103,3 +110,4 @@ Response format:
 - **Date**: 2025-12-30
 - **Modules**: 25 total, 21 with testbenches
 - **Dashboard Panels**: 12 interactive controls
+- **Guides**: 21 prompt guides (16 numbered + 5 supporting)
