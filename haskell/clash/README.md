@@ -135,23 +135,26 @@ Routes consent states to downstream trigger channels. Integrates with RaConsentF
 
 ### RaHandshakeGate.hs (Dual-Factor Validation)
 
-Dual-factor validation handshake combining symbolic consent triggers with biometric coherence verification.
+Dual-factor validation handshake combining symbolic consent triggers with biometric coherence verification. Wired to Phase II dashboard and field trigger cascade.
 
 **Handshake Logic:**
 ```
-handshakeGranted = overrideEnable OR (biometricCoherence AND isPermittedID)
+handshakeGranted = overrideFlag OR (biometricMatch AND symbolOK)
 ```
 
 **Permitted Trigger IDs:** `[3, 4, 7, 9]`
 
-**Truth Table:**
-| Trigger | Biometric | Override | Granted |
-|---------|-----------|----------|---------|
-| 3,4,7,9 | True      | False    | True    |
-| other   | True      | False    | False   |
-| any     | any       | True     | True    |
+**Output Bundle:**
+| Field | Description |
+|-------|-------------|
+| handshakeGranted | Final grant decision |
+| passedBiometric | Biometric coherence status |
+| matchedSymbol | Symbolic ID in permitted list |
+| overrideUsed | Override flag was enabled |
 
-**Key Function:** `handshakeTop :: ... -> Signal System ConsentTrigger -> Signal System Bool -> Signal System Bool -> Signal System Bool`
+**Field Cascade:** `fieldTriggerFromHandshake` extracts grant for downstream emitters.
+
+**Key Function:** `handshakeTop :: ... -> Signal System HandshakeIn -> Signal System HandshakeOut`
 
 ---
 

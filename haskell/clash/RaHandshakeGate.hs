@@ -5,28 +5,31 @@ Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
 
 Ensures coherence + identity match, or explicit override.
-Dual-factor validation combining symbolic consent triggers with biometric coherence.
+Now wired to Phase II dashboard and field trigger cascade.
 
 == Handshake Logic
 
 @
-handshakeGranted = overrideEnable OR (biometricCoherence AND isPermittedID)
+handshakeGranted = overrideFlag OR (biometricMatch AND symbolOK)
 @
 
 == Permitted Trigger IDs
 
-Only triggers with IDs [3, 4, 7, 9] pass symbolic validation.
+Only gestures with IDs [3, 4, 7, 9] pass symbolic validation.
 
-== Test Coverage
+== Output Bundle
 
-| # | Trigger | Bio   | Override | Expected | Reason                    |
-|---|---------|-------|----------|----------|---------------------------|
-| 1 | 3       | True  | False    | True     | Permitted + coherent      |
-| 2 | 5       | True  | False    | False    | Invalid ID                |
-| 3 | 9       | False | True     | True     | Override enabled          |
-| 4 | 2       | True  | False    | False    | Invalid ID                |
-| 5 | 7       | False | False    | False    | No coherence, no override |
-| 6 | 4       | True  | False    | True     | Permitted + coherent      |
+| Field            | Description                              |
+|------------------|------------------------------------------|
+| handshakeGranted | Final grant decision                     |
+| passedBiometric  | Biometric coherence status               |
+| matchedSymbol    | Symbolic ID in permitted list            |
+| overrideUsed     | Override flag was enabled                |
+
+== Field Cascade
+
+The `fieldTriggerFromHandshake` function extracts `handshakeGranted` for
+downstream field emitter activation.
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -44,14 +47,29 @@ import qualified Prelude as P
 -- Types
 -- =============================================================================
 
--- | Symbolic input ID (8-bit gesture/trigger identifier)
+-- | Symbolic input ID (8-bit gesture/field identifier)
 type ConsentTrigger = Unsigned 8
+
+-- | Dual-factor handshake input bundle
+data HandshakeIn = HandshakeIn
+  { gestureID      :: ConsentTrigger  -- ^ Symbolic gesture/field ID
+  , biometricMatch :: Bool            -- ^ Biometric coherence status
+  , overrideFlag   :: Bool            -- ^ Scalar override permission
+  } deriving (Generic, NFDataX)
+
+-- | Handshake output bundle with diagnostic flags
+data HandshakeOut = HandshakeOut
+  { handshakeGranted :: Bool  -- ^ Final grant decision
+  , passedBiometric  :: Bool  -- ^ Biometric coherence passed
+  , matchedSymbol    :: Bool  -- ^ Symbolic ID was permitted
+  , overrideUsed     :: Bool  -- ^ Override flag was enabled
+  } deriving (Generic, NFDataX, Show, Eq)
 
 -- =============================================================================
 -- Constants
 -- =============================================================================
 
--- | Permitted symbolic IDs (gesture or field)
+-- | Permitted symbolic gesture/field IDs
 permittedIDs :: Vec 4 ConsentTrigger
 permittedIDs = $(listToVecTH [3, 4, 7, 9])
 
@@ -59,66 +77,89 @@ permittedIDs = $(listToVecTH [3, 4, 7, 9])
 -- Core Functions
 -- =============================================================================
 
--- | Top-level handshake gate
--- Output is True if: override OR (biometric AND permitted ID)
+-- | Handshake validation circuit
+-- Outputs rich diagnostic bundle for dashboard visualization
 handshakeGate
   :: HiddenClockResetEnable dom
-  => Signal dom ConsentTrigger
-  -> Signal dom Bool
-  -> Signal dom Bool
-  -> Signal dom Bool
-handshakeGate trigS bioS overrideS = output
+  => Signal dom HandshakeIn
+  -> Signal dom HandshakeOut
+handshakeGate = fmap validate
   where
-    isAllowed trig = any (== trig) permittedIDs
-    output = liftA3 (\t b o -> o || (b && isAllowed t)) trigS bioS overrideS
+    validate HandshakeIn{..} =
+      let
+        symbolOK = gestureID `elem` permittedIDs
+        grant = overrideFlag || (biometricMatch && symbolOK)
+      in
+        HandshakeOut
+          { handshakeGranted = grant
+          , passedBiometric = biometricMatch
+          , matchedSymbol = symbolOK
+          , overrideUsed = overrideFlag
+          }
 
 -- =============================================================================
 -- Synthesis Entry Point
 -- =============================================================================
 
--- | Top entity for Clash synthesis
+-- | Top-level wiring for Clash synthesis
 handshakeTop
   :: Clock System
   -> Reset System
   -> Enable System
-  -> Signal System ConsentTrigger
-  -> Signal System Bool
-  -> Signal System Bool
-  -> Signal System Bool
+  -> Signal System HandshakeIn
+  -> Signal System HandshakeOut
 handshakeTop = exposeClockResetEnable handshakeGate
+
+-- =============================================================================
+-- Field Cascade
+-- =============================================================================
+
+-- | Field Cascade: Only output true if handshake granted
+-- Extracts grant decision for downstream field emitter activation
+fieldTriggerFromHandshake
+  :: HiddenClockResetEnable dom
+  => Signal dom HandshakeOut
+  -> Signal dom Bool
+fieldTriggerFromHandshake = fmap handshakeGranted
 
 -- =============================================================================
 -- Test Data
 -- =============================================================================
 
--- | Test trigger IDs
-trigVec :: Vec 6 ConsentTrigger
-trigVec = $(listToVecTH [3, 5, 9, 2, 7, 4])
+-- | Test input vectors covering all logic paths
+inputVec :: Vec 6 HandshakeIn
+inputVec =
+  $(listToVecTH
+    [ HandshakeIn 3 True False   -- Permitted + bio = Grant
+    , HandshakeIn 5 True False   -- Invalid ID = Deny
+    , HandshakeIn 9 False True   -- Override = Grant
+    , HandshakeIn 2 True False   -- Invalid ID = Deny
+    , HandshakeIn 7 False False  -- No bio, no override = Deny
+    , HandshakeIn 4 True False   -- Permitted + bio = Grant
+    ])
 
--- | Test biometric coherence values
-biometricVec :: Vec 6 Bool
-biometricVec = $(listToVecTH [True, True, False, True, False, True])
-
--- | Test override flags
-overrideVec :: Vec 6 Bool
-overrideVec = $(listToVecTH [False, False, True, False, False, False])
-
--- | Expected handshake results
-expected :: Vec 6 Bool
-expected = $(listToVecTH [True, False, True, False, False, True])
+-- | Expected output vectors
+expectedOut :: Vec 6 HandshakeOut
+expectedOut =
+  $(listToVecTH
+    [ HandshakeOut True True True False    -- Grant: permitted + bio
+    , HandshakeOut False True False False  -- Deny: invalid ID
+    , HandshakeOut True False True True    -- Grant: override
+    , HandshakeOut False True False False  -- Deny: invalid ID
+    , HandshakeOut False False True False  -- Deny: no bio/override
+    , HandshakeOut True True True False    -- Grant: permitted + bio
+    ])
 
 -- =============================================================================
 -- Testbench
 -- =============================================================================
 
--- | Testbench validating all logic paths
-testBench :: Signal System Bool
-testBench = done
+-- | Testbench for handshake validation
+handshakeBench :: Signal System Bool
+handshakeBench = done
   where
     clk = tbSystemClockGen (not <$> done)
     rst = systemResetGen
-    stimTrig = stimuliGenerator clk rst trigVec
-    stimBio = stimuliGenerator clk rst biometricVec
-    stimOver = stimuliGenerator clk rst overrideVec
-    out = handshakeTop clk rst enableGen stimTrig stimBio stimOver
-    done = outputVerifier' clk rst expected out
+    inputStim = stimuliGenerator clk rst inputVec
+    outCheck = outputVerifier' clk rst expectedOut (handshakeTop clk rst enableGen inputStim)
+    done = outCheck
