@@ -112,6 +112,27 @@ overrideFlag = True ──▶ Override (highest priority)
 
 **Key Function:** `consentGate :: Signal dom ConsentInput -> Signal dom ConsentState`
 
+### RaConsentRouter.hs (Consent Channel Routing)
+
+Routes consent states to downstream trigger channels. Integrates with RaConsentFramework for complete consent pipeline.
+
+**Trigger Channels:**
+| Channel        | Activation Condition                           |
+|----------------|------------------------------------------------|
+| bioTrigger     | Permit OR Override                             |
+| gestureTrigger | Override only                                  |
+| fieldTrigger   | Permit AND coherenceGate high                  |
+
+**Truth Table:**
+| State    | Gate  | bioTrigger | gestureTrigger | fieldTrigger |
+|----------|-------|------------|----------------|--------------|
+| Permit   | False | True       | False          | False        |
+| Permit   | True  | True       | False          | True         |
+| Restrict | False | False      | False          | False        |
+| Override | True  | True       | True           | False        |
+
+**Key Function:** `consentRouterTop :: ... -> Signal System ConsentState -> Signal System Bool -> (Signal System Bool, Signal System Bool, Signal System Bool)`
+
 ---
 
 ### BiofieldLoopback.hs Details
