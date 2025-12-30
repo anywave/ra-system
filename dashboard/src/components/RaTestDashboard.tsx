@@ -22,7 +22,27 @@ interface TestModule {
 const fetchTestModules = async (): Promise<TestModule[]> => {
   const response = await fetch('/api/tests/modules')
   const data = await response.json()
-  return data
+  return [
+    ...data,
+    {
+      id: 'prompt22',
+      title: 'Ra.SonicFlux Harmonic Driver',
+      description: 'Real-time sonification of field emergence data.',
+      phase: 'phase1',
+      status: 'pending',
+      tokenUsage: null,
+      cost: null
+    },
+    {
+      id: 'prompt22-pwm',
+      title: 'Ra.SonicEmitter → PWM Output',
+      description: 'Cascaded scalar amplitude to PWM driver for chamber hardware.',
+      phase: 'phase1',
+      status: 'pending',
+      tokenUsage: null,
+      cost: null
+    }
+  ]
 }
 
 export default function RaTestDashboard() {

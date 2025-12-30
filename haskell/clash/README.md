@@ -59,6 +59,35 @@ Scalar amplitude to PWM duty signal generator for low-frequency outputs.
 - Resolution: 8-bit (256 levels)
 - Duty cycle: amplitude × 255
 
+### RaPWMMultiFreqTest.hs (Multi-Harmonic Entrainment)
+
+Multi-harmonic PWM scalar pattern generator with runtime weight tuning, visual envelope output, and live biometric override.
+
+**Harmonic Bands:**
+| Band       | Frequency Range | Waveform | Default Weight |
+|------------|-----------------|----------|----------------|
+| Theta      | 4-8 Hz          | Sine     | 40%            |
+| Delta      | 0.5-4 Hz        | Cosine   | 30%            |
+| Solfeggio  | Sacred tones    | 3x Sine  | 30%            |
+
+**Biometric Override:**
+When `bioOverride > 0`, the biometric signal takes priority over synthetic blend. This enables real-time body-sensing to override synthetic waveforms.
+
+**Pipeline with Biometric Override:**
+```
+Weights ─────────────┐
+                     ▼
+Theta ─┐          ┌─────────────┐
+       ├─────────▶│ blendFields │──▶ envelope ──┐
+Delta ─┤          └─────────────┘               ▼
+       │                               ┌─────────────────┐
+Solfeggio ─┘                           │ mux(bioOverride)│──▶ PWM
+                                       └────────┬────────┘
+BioOverride ────────────────────────────────────┘
+```
+
+**Key Function:** `multiHarmonicBiometric :: Signal dom HarmonicWeights -> Signal dom Float -> Signal dom Float -> Signal dom Float -> Signal dom Float -> (Signal dom Bool, Signal dom Float)`
+
 ---
 
 ### BiofieldLoopback.hs Details
