@@ -104,8 +104,13 @@ jobs:
 
       - name: Upload to Hackage
         env:
-          HACKAGE_USERNAME: ${{ secrets.HACKAGE_USERNAME }}
           HACKAGE_TOKEN: ${{ secrets.HACKAGE_PASSWORD }}
         run: |
-          # Use command-line args for authentication
-          cabal upload --publish -u "$HACKAGE_USERNAME" -p "$HACKAGE_TOKEN" sdist/*.tar.gz
+          # Use API token with curl for authentication
+          TARBALL=$(ls sdist/*.tar.gz)
+          echo "Uploading $TARBALL to Hackage..."
+          curl -X POST \
+            -H "Authorization: X-ApiKey $HACKAGE_TOKEN" \
+            -F "package=@$TARBALL" \
+            https://hackage.haskell.org/packages/
+          echo "Upload complete"
