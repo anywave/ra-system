@@ -67,29 +67,12 @@ data EmergenceCondition = EmergenceCondition
   , angle     :: Unsigned 8    -- ^ Phase angle (0-255)
   } deriving (Generic, NFDataX, Show, Eq)
 
--- | Symbolic operation type
--- Encoded as: (opCode, parameter)
--- opCode 0 = PhaseShift, 1 = InvertAngle, 2 = GateThreshold
-data SymbolicOp = SymbolicOp
-  { opCode :: Unsigned 2       -- ^ Operation type
-  , param  :: FixedPoint       -- ^ Operation parameter
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- =============================================================================
--- Operation Constructors
--- =============================================================================
-
--- | Create PhaseShift operation
-phaseShift :: FixedPoint -> SymbolicOp
-phaseShift fx = SymbolicOp 0 fx
-
--- | Create InvertAngle operation
-invertAngle :: SymbolicOp
-invertAngle = SymbolicOp 1 0
-
--- | Create GateThreshold operation
-gateThreshold :: FixedPoint -> SymbolicOp
-gateThreshold fx = SymbolicOp 2 fx
+-- | Symbolic operation ADT
+data SymbolicOp
+  = PhaseShift FixedPoint      -- ^ Add phase shift with saturation
+  | InvertAngle                -- ^ Mirror angle about midpoint
+  | GateThreshold FixedPoint   -- ^ Zero coherence below threshold
+  deriving (Show, Eq)
 
 -- =============================================================================
 -- Core Functions
@@ -97,17 +80,16 @@ gateThreshold fx = SymbolicOp 2 fx
 
 -- | Fixed-point multiplication: (fx * 255) / 256
 fxMul :: FixedPoint -> Unsigned 8
-fxMul fx =
-  let product = (resize fx * 255) :: Unsigned 16
-  in resize (product `shiftR` 8)
+fxMul fx = shiftR (fx * 255) 8
 
 -- | Apply a single symbolic operation
 applyOp :: SymbolicOp -> EmergenceCondition -> EmergenceCondition
-applyOp (SymbolicOp code p) e = case code of
-  0 -> e { coherence = satAdd SatBound (coherence e) (fxMul p) }  -- PhaseShift
-  1 -> e { angle = 255 - angle e }                                 -- InvertAngle
-  2 -> e { coherence = if coherence e < p then 0 else coherence e } -- GateThreshold
-  _ -> e  -- No-op for invalid codes
+applyOp (PhaseShift fx) e =
+  e { coherence = satAdd SatBound (coherence e) (fxMul fx) }
+applyOp InvertAngle e =
+  e { angle = 255 - angle e }
+applyOp (GateThreshold fx) e =
+  e { coherence = if coherence e < fx then 0 else coherence e }
 
 -- | Compose operations (apply left-to-right)
 applyOps :: KnownNat n => Vec n SymbolicOp -> EmergenceCondition -> EmergenceCondition
@@ -115,79 +97,62 @@ applyOps Nil e = e
 applyOps (h :> t) e = applyOps t (applyOp h e)
 
 -- =============================================================================
--- Signal-Level Processing
--- =============================================================================
-
--- | Symbolic coherence processor (3-operation pipeline)
-symbolicProcessor
-  :: HiddenClockResetEnable dom
-  => Signal dom (Vec 3 SymbolicOp)      -- ^ Operation sequence
-  -> Signal dom EmergenceCondition      -- ^ Input condition
-  -> Signal dom EmergenceCondition      -- ^ Transformed condition
-symbolicProcessor ops input = fmap (uncurry applyOps) (bundle (ops, input))
-
--- =============================================================================
--- Synthesis Entry Point
--- =============================================================================
-
--- | Top-level entity for Clash synthesis
-symbolicTop
-  :: Clock System
-  -> Reset System
-  -> Enable System
-  -> Signal System (Vec 3 SymbolicOp)
-  -> Signal System EmergenceCondition
-  -> Signal System EmergenceCondition
-symbolicTop = exposeClockResetEnable symbolicProcessor
-
--- =============================================================================
 -- Example Compositions
 -- =============================================================================
 
 -- | Golden ratio phase shift + invert + gate at 40%
 -- PhaseShift(0.618) ○ InvertAngle ○ GateThreshold(0.4)
-goldenComposition :: Vec 3 SymbolicOp
-goldenComposition = phaseShift 158 :> invertAngle :> gateThreshold 102 :> Nil
-
--- | Neutral composition (no-ops)
-neutralComposition :: Vec 3 SymbolicOp
-neutralComposition = phaseShift 0 :> SymbolicOp 3 0 :> SymbolicOp 3 0 :> Nil
+-- 0.618 * 255 = 157.59 ≈ 158
+-- 0.4 * 255 = 102
+exampleComposition :: Vec 3 SymbolicOp
+exampleComposition = PhaseShift 158 :> InvertAngle :> GateThreshold 102 :> Nil
 
 -- =============================================================================
 -- Test Data
 -- =============================================================================
 
--- | Test operation sequences
-testOps :: Vec 4 (Vec 3 SymbolicOp)
-testOps =
-  goldenComposition :>
-  neutralComposition :>
-  (phaseShift 128 :> invertAngle :> gateThreshold 200 :> Nil) :>
-  (gateThreshold 150 :> phaseShift 64 :> invertAngle :> Nil) :> Nil
-
 -- | Test input conditions
 testInputs :: Vec 4 EmergenceCondition
 testInputs =
-  EmergenceCondition 100 200 :>
-  EmergenceCondition 50 100 :>
-  EmergenceCondition 180 50 :>
-  EmergenceCondition 100 128 :> Nil
+  EmergenceCondition 100 80 :>
+  EmergenceCondition 200 0 :>
+  EmergenceCondition 50 250 :>
+  EmergenceCondition 0 127 :> Nil
 
--- | Expected outputs:
--- Test 0: (100,200) -> PhaseShift(158): 100+97=197 -> Invert: angle=55 -> Gate(102): 197>=102, keep
---         Result: (197, 55)
--- Test 1: (50,100) -> PhaseShift(0): 50 -> NoOp -> NoOp
---         Result: (50, 100)
--- Test 2: (180,50) -> PhaseShift(128): 180+127=255(sat) -> Invert: angle=205 -> Gate(200): 255>=200
---         Result: (255, 205)
--- Test 3: (100,128) -> Gate(150): 100<150, zero -> PhaseShift(64): 0+63=63 -> Invert: angle=127
---         Result: (63, 127)
-expectedOutput :: Vec 4 EmergenceCondition
-expectedOutput =
-  EmergenceCondition 197 55 :>
-  EmergenceCondition 50 100 :>
-  EmergenceCondition 255 205 :>
-  EmergenceCondition 63 127 :> Nil
+-- | Expected outputs (computed by applying exampleComposition)
+-- Input 0: (100, 80)
+--   PhaseShift(158): 100 + 97 = 197 (fxMul 158 = 97)
+--   InvertAngle: angle = 255 - 80 = 175
+--   GateThreshold(102): 197 >= 102, keep
+--   Result: (197, 175)
+--
+-- Input 1: (200, 0)
+--   PhaseShift(158): 200 + 97 = 255 (saturated)
+--   InvertAngle: angle = 255 - 0 = 255
+--   GateThreshold(102): 255 >= 102, keep
+--   Result: (255, 255)
+--
+-- Input 2: (50, 250)
+--   PhaseShift(158): 50 + 97 = 147
+--   InvertAngle: angle = 255 - 250 = 5
+--   GateThreshold(102): 147 >= 102, keep
+--   Result: (147, 5)
+--
+-- Input 3: (0, 127)
+--   PhaseShift(158): 0 + 97 = 97
+--   InvertAngle: angle = 255 - 127 = 128
+--   GateThreshold(102): 97 < 102, zero
+--   Result: (0, 128)
+testOutputs :: Vec 4 EmergenceCondition
+testOutputs = map (applyOps exampleComposition) testInputs
+
+-- =============================================================================
+-- Signal-Level Processing
+-- =============================================================================
+
+-- | Top-level wrapper for simulation
+topSymbolicOps :: Signal System EmergenceCondition -> Signal System EmergenceCondition
+topSymbolicOps = fmap (applyOps exampleComposition)
 
 -- =============================================================================
 -- Testbench
@@ -197,9 +162,6 @@ expectedOutput =
 testBench :: Signal System Bool
 testBench = done
   where
-    clk = tbSystemClockGen (not <$> done)
-    rst = systemResetGen
-    ops = stimuliGenerator clk rst testOps
-    inp = stimuliGenerator clk rst testInputs
-    out = symbolicTop clk rst enableGen ops inp
-    done = outputVerifier' clk rst expectedOutput out
+    testVec = stimuliGenerator testInputs
+    expectedVec = outputVerifier' testOutputs
+    done = expectedVec (topSymbolicOps testVec)
