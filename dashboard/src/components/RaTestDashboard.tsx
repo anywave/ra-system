@@ -134,6 +134,7 @@ export default function RaTestDashboard() {
   const [tokenStats, setTokenStats] = useState<{ tokensUsed: number; computeCost: number } | null>(null)
   const [bioResult, setBioResult] = useState<{ motion: boolean; haptic: boolean } | null>(null)
   const [aura, setAura] = useState<number[] | null>(null)
+  const [tones, setTones] = useState<number[] | null>(null)
 
   useEffect(() => {
     fetchTestModules().then(data => {
@@ -268,6 +269,16 @@ export default function RaTestDashboard() {
     })
     const { auraPattern } = await res.json()
     setAura(auraPattern)
+  }
+
+  const runHarmonicsTest = async () => {
+    const res = await fetch('/api/tests/musicharmonics', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ coherenceBand: [0, 64, 128, 255] })
+    })
+    const { overtoneFrequencies } = await res.json()
+    setTones(overtoneFrequencies)
   }
 
   const simulateHandshake = async () => {
@@ -518,6 +529,27 @@ export default function RaTestDashboard() {
     </Card>
   )
 
+  const renderOvertoneBands = (freqs: number[]) => (
+    <div className="grid grid-cols-4 gap-2 pt-2">
+      {freqs.map((val, i) => (
+        <div key={i} className="h-6 bg-gradient-to-r from-yellow-300 to-red-500 rounded flex items-center px-1" style={{ width: `${Math.min(val / 10, 150)}px` }}>
+          <span className="text-xs text-white truncate">{val} Hz</span>
+        </div>
+      ))}
+    </div>
+  )
+
+  const renderMusicChamberModule = () => (
+    <Card className="border-yellow-500 shadow">
+      <CardContent className="p-4 space-y-2">
+        <h2 className="font-semibold text-lg">Prompt 64: Music Chamber Harmonics</h2>
+        <p className="text-sm text-muted-foreground">Maps coherence bands to Solfeggio overtone frequencies.</p>
+        <Button onClick={runHarmonicsTest}>Run Overtone Mapper</Button>
+        {tones && renderOvertoneBands(tones)}
+      </CardContent>
+    </Card>
+  )
+
   const phases = ['phase1', 'phase2', 'phase3', 'phase4']
 
   const renderPhase = (phase: string) => (
@@ -542,6 +574,7 @@ export default function RaTestDashboard() {
           {renderTransferOverlay()}
           {renderBiofeedbackControl()}
           {renderAvatarFieldControl()}
+          {renderMusicChamberModule()}
           {renderTokenOverlay()}
         </>
       )}
