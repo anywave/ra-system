@@ -1,0 +1,566 @@
+[
+  {
+    "cycle": 0,
+    "or_level": 0.35,
+    "dor_level": 0.0,
+    "potential": 1.35,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.3054,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 1,
+    "or_level": 0.402,
+    "dor_level": 0.0,
+    "potential": 1.402,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.3594,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 2,
+    "or_level": 0.4498,
+    "dor_level": 0.0,
+    "potential": 1.4498,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.4093,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 3,
+    "or_level": 0.4939,
+    "dor_level": 0.0,
+    "potential": 1.4939,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.4555,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 4,
+    "or_level": 0.5343,
+    "dor_level": 0.0,
+    "potential": 1.5343,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.4981,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 5,
+    "or_level": 0.5716,
+    "dor_level": 0.0,
+    "potential": 1.5716,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.5374,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 6,
+    "or_level": 0.6059,
+    "dor_level": 0.0,
+    "potential": 1.6059,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.5737,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": []
+  },
+  {
+    "cycle": 7,
+    "or_level": 0.6374,
+    "dor_level": 0.0,
+    "potential": 1.6374,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.6072,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 8,
+    "or_level": 0.6664,
+    "dor_level": 0.0,
+    "potential": 1.6664,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.6382,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 9,
+    "or_level": 0.6931,
+    "dor_level": 0.0,
+    "potential": 1.6931,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.6667,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 10,
+    "or_level": 0.7176,
+    "dor_level": 0.0,
+    "potential": 1.7176,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.693,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 11,
+    "or_level": 0.7402,
+    "dor_level": 0.0,
+    "potential": 1.7402,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.7173,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 12,
+    "or_level": 0.761,
+    "dor_level": 0.0,
+    "potential": 1.761,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.7396,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 13,
+    "or_level": 0.7801,
+    "dor_level": 0.0,
+    "potential": 1.7801,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.7603,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 14,
+    "or_level": 0.7977,
+    "dor_level": 0.0,
+    "potential": 1.7977,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.7793,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 15,
+    "or_level": 0.8139,
+    "dor_level": 0.0,
+    "potential": 1.8139,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.7968,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 16,
+    "or_level": 0.8288,
+    "dor_level": 0.0,
+    "potential": 1.8288,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.8129,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 17,
+    "or_level": 0.8425,
+    "dor_level": 0.0,
+    "potential": 1.8425,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.8278,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": []
+  },
+  {
+    "cycle": 18,
+    "or_level": 0.8551,
+    "dor_level": 0.0,
+    "potential": 1.8551,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.8414,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 19,
+    "or_level": 0.8667,
+    "dor_level": 0.0,
+    "potential": 1.8667,
+    "flux_coherence": 1.0,
+    "emergence_score": 1.854,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 20,
+    "or_level": 0.8773,
+    "dor_level": 0.12,
+    "potential": 1.7573,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5274,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 21,
+    "or_level": 0.8872,
+    "dor_level": 0.12,
+    "potential": 1.7672,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5367,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 22,
+    "or_level": 0.8962,
+    "dor_level": 0.12,
+    "potential": 1.7762,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5453,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 23,
+    "or_level": 0.9045,
+    "dor_level": 0.12,
+    "potential": 1.7845,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5532,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 24,
+    "or_level": 0.9121,
+    "dor_level": 0.12,
+    "potential": 1.7921,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5604,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 25,
+    "or_level": 0.9192,
+    "dor_level": 0.12,
+    "potential": 1.7992,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5671,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 26,
+    "or_level": 0.9256,
+    "dor_level": 0.12,
+    "potential": 1.8056,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5733,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 27,
+    "or_level": 0.9316,
+    "dor_level": 0.12,
+    "potential": 1.8116,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5789,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 28,
+    "or_level": 0.9371,
+    "dor_level": 0.12,
+    "potential": 1.8171,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5842,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 29,
+    "or_level": 0.9421,
+    "dor_level": 0.12,
+    "potential": 1.8221,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.589,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 30,
+    "or_level": 0.9467,
+    "dor_level": 0.12,
+    "potential": 1.8267,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5934,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 31,
+    "or_level": 0.951,
+    "dor_level": 0.12,
+    "potential": 1.831,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.5974,
+    "emergence_class": "STABLE_FRAGMENT",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 32,
+    "or_level": 0.9549,
+    "dor_level": 0.12,
+    "potential": 1.8349,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.6012,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 33,
+    "or_level": 0.9585,
+    "dor_level": 0.12,
+    "potential": 1.8385,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.6046,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 34,
+    "or_level": 0.9618,
+    "dor_level": 0.12,
+    "potential": 1.8418,
+    "flux_coherence": 0.88,
+    "emergence_score": 1.6078,
+    "emergence_class": "ALPHA_EMERGENCE",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 35,
+    "or_level": 0.9649,
+    "dor_level": 0.3,
+    "potential": 1.6649,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1456,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 36,
+    "or_level": 0.9677,
+    "dor_level": 0.3,
+    "potential": 1.6677,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1477,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 37,
+    "or_level": 0.9703,
+    "dor_level": 0.3,
+    "potential": 1.6703,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1496,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 38,
+    "or_level": 0.9727,
+    "dor_level": 0.3,
+    "potential": 1.6727,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1514,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 39,
+    "or_level": 0.9748,
+    "dor_level": 0.3,
+    "potential": 1.6748,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.153,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 40,
+    "or_level": 0.9769,
+    "dor_level": 0.3,
+    "potential": 1.6769,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1545,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 41,
+    "or_level": 0.9787,
+    "dor_level": 0.3,
+    "potential": 1.6787,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1559,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 42,
+    "or_level": 0.9804,
+    "dor_level": 0.3,
+    "potential": 1.6804,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1572,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 43,
+    "or_level": 0.982,
+    "dor_level": 0.3,
+    "potential": 1.682,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1584,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 44,
+    "or_level": 0.9834,
+    "dor_level": 0.3,
+    "potential": 1.6834,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1594,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 45,
+    "or_level": 0.9847,
+    "dor_level": 0.3,
+    "potential": 1.6847,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1604,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 46,
+    "or_level": 0.986,
+    "dor_level": 0.3,
+    "potential": 1.686,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1614,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 47,
+    "or_level": 0.9871,
+    "dor_level": 0.3,
+    "potential": 1.6871,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1622,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 48,
+    "or_level": 0.9881,
+    "dor_level": 0.3,
+    "potential": 1.6881,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.163,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  },
+  {
+    "cycle": 49,
+    "or_level": 0.9891,
+    "dor_level": 0.3,
+    "potential": 1.6891,
+    "flux_coherence": 0.7,
+    "emergence_score": 1.1637,
+    "emergence_class": "BASELINE_STABILITY",
+    "events": [
+      "Blue luminescence detected (coherence spike)"
+    ]
+  }
+]
