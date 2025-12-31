@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 """
-Prompt 12: Consent-Gated Shadow Harmonics - Python Test Harness
+Prompt 12: Consent-Gated Shadow Harmonics - Python Test Harness (Patch 12B/12C)
 
 Tests the RaShadowConsent Clash module for:
 - Shadow fragment consent gating
 - Therapeutic feedback generation
 - Session state tracking
 - Safety alert triggers
+- Session persistence via tokens (12B)
+- Emotional charge decay (12B)
+- Multi-fragment priority queue (12C)
+- Crypto override interface stub (Prompt 33)
 
 Codex References:
 - REICH_ORGONE_ACCUMULATOR.md: DOR/armoring detection
@@ -15,6 +19,8 @@ Codex References:
 
 import json
 import sys
+import heapq
+import hashlib
 from dataclasses import dataclass, field, asdict
 from enum import Enum, auto
 from typing import Optional, List, Tuple
@@ -63,7 +69,7 @@ class FeedbackIntensity(Enum):
 
 @dataclass
 class ShadowFragment:
-    """Shadow fragment schema matching Clash ShadowFragment type."""
+    """Shadow fragment schema matching Clash ShadowFragment type (12B extended)."""
     fragment_id: int = 0
     fragment_form: int = 0       # Spherical harmonic l value
     inversion: InversionState = InversionState.NORMAL
@@ -74,18 +80,36 @@ class ShadowFragment:
     origin_fragment: int = 0     # Link to originating fragment
     harmonic_mismatch: float = 0.0  # Distance from dominant mode
     emotional_charge: float = 0.5   # 0.0-1.0
+    integration_count: int = 0   # Cumulative integration cycles (12B)
+    last_session_token: str = "" # Last session token (12B)
+
+    def priority(self) -> tuple:
+        """Calculate priority for queue ordering (12C).
+        Higher charge/mismatch = higher priority, lower alpha = safer first."""
+        return (-self.emotional_charge, -self.harmonic_mismatch, self.alpha)
+
+
+@dataclass
+class ConsentOverride:
+    """Consent override with crypto signature stub (Prompt 33)."""
+    source: str = ""
+    reason: str = ""
+    timestamp: str = ""
+    signature_hash: str = ""     # Crypto signature (Prompt 33)
+    operator_key_id: str = ""    # Public key ID (Prompt 33)
+
 
 @dataclass
 class SessionState:
-    """Session state for shadow work tracking."""
+    """Session state for shadow work tracking (12B extended)."""
     coherence: float = 0.5       # Current coherence level
     licensed_operator: bool = False
     override_active: bool = False
-    override_source: str = ""
-    override_reason: str = ""
+    consent_override: Optional[ConsentOverride] = None
     shadow_progress: float = 0.0  # Session progress 0.0-1.0
     resonance_delta: float = 0.0  # Change since last cycle
     cycle_count: int = 0
+    session_token: str = ""      # Persistence token (12B)
 
 @dataclass
 class TherapeuticFeedback:
@@ -99,13 +123,46 @@ class TherapeuticFeedback:
 
 @dataclass
 class ShadowConsentOutput:
-    """Complete output from shadow consent processing."""
+    """Complete output from shadow consent processing (12B extended)."""
     gating_result: GatingResult = GatingResult.BLOCK_NO_CONSENT
     emergence_allowed: bool = False
     feedback: TherapeuticFeedback = field(default_factory=TherapeuticFeedback)
     session_update: SessionState = field(default_factory=SessionState)
+    fragment_update: Optional[ShadowFragment] = None  # Updated fragment (12B)
     safety_alert: bool = False
     cycle_count: int = 0
+
+
+# ============================================================================
+# ShadowQueue - Multi-Fragment Priority Queue (Patch 12C)
+# ============================================================================
+
+class ShadowQueue:
+    """Priority queue for multi-fragment shadow processing (12C)."""
+
+    def __init__(self):
+        self._queue: List[Tuple[tuple, int, ShadowFragment]] = []
+        self._counter = 0
+
+    def add_fragment(self, fragment: ShadowFragment) -> None:
+        """Add fragment to queue with priority ordering."""
+        # Use counter for stable sorting
+        heapq.heappush(self._queue, (fragment.priority(), self._counter, fragment))
+        self._counter += 1
+
+    def next_fragment(self) -> Optional[ShadowFragment]:
+        """Get next highest-priority fragment."""
+        if self._queue:
+            _, _, fragment = heapq.heappop(self._queue)
+            return fragment
+        return None
+
+    def is_empty(self) -> bool:
+        """Check if queue is empty."""
+        return len(self._queue) == 0
+
+    def __len__(self) -> int:
+        return len(self._queue)
 
 
 # ============================================================================
@@ -114,7 +171,7 @@ class ShadowConsentOutput:
 
 class ShadowModule:
     """
-    Consent-gated shadow fragment processing.
+    Consent-gated shadow fragment processing (Patch 12B/12C).
 
     Implements Ra.Gates consent gating with therapeutic feedback.
     """
@@ -122,9 +179,28 @@ class ShadowModule:
     # Safety thresholds (matching Clash constants)
     COHERENCE_SAFE_ACCESS = 0.66    # Kaali/Beck threshold
     CHARGE_WARNING_THRESHOLD = 0.75
+    EMOTIONAL_CHARGE_DECAY = 0.95   # 5% decay per cycle (12B)
+    EMOTIONAL_CHARGE_FLOOR = 0.15   # Minimum after decay (12B)
     COHERENCE_BOOST = 0.05
     COHERENCE_DECAY = 0.02
     PROGRESS_INCREMENT = 0.1
+
+    @staticmethod
+    def generate_session_token() -> str:
+        """Generate unique session token (12B)."""
+        return f"sess-{datetime.utcnow().timestamp()}"
+
+    @staticmethod
+    def verify_signature(override: ConsentOverride) -> bool:
+        """Verify crypto signature (stub - Prompt 33).
+
+        Full implementation will verify:
+        1. Signature authenticity
+        2. Public key in authorized_keys[]
+        3. Timestamp freshness (< 24h)
+        """
+        # Stub: Returns True if signature hash is non-empty
+        return bool(override.signature_hash)
 
     @staticmethod
     def should_allow(fragment: ShadowFragment, session: SessionState) -> GatingResult:
@@ -134,7 +210,7 @@ class ShadowModule:
         Conditions for ALLOW:
         1. Consent state is THERAPEUTIC
         2. Licensed operator present
-        3. Override active (if required)
+        3. Override active (if required) with valid signature
         4. Coherence >= 0.66 (Kaali/Beck threshold)
         """
         # Condition 1: Must have therapeutic consent
@@ -145,9 +221,13 @@ class ShadowModule:
         if not session.licensed_operator:
             return GatingResult.BLOCK_NO_OPERATOR
 
-        # Condition 3: If override required, must be active
-        if fragment.requires_override and not session.override_active:
-            return GatingResult.BLOCK_NO_OVERRIDE
+        # Condition 3: If override required, must be active with valid signature
+        if fragment.requires_override:
+            if not session.override_active:
+                return GatingResult.BLOCK_NO_OVERRIDE
+            # Verify signature if override present (Prompt 33 interface)
+            if session.consent_override and not ShadowModule.verify_signature(session.consent_override):
+                return GatingResult.BLOCK_NO_OVERRIDE
 
         # Condition 4: Coherence must be sufficient
         if session.coherence < ShadowModule.COHERENCE_SAFE_ACCESS:
@@ -156,12 +236,35 @@ class ShadowModule:
         return GatingResult.ALLOW
 
     @staticmethod
-    def apply_override(session: SessionState, source: str, reason: str) -> SessionState:
-        """Apply emergency override to session."""
+    def apply_override(session: SessionState, source: str, reason: str,
+                      signature_hash: str = "", operator_key_id: str = "") -> SessionState:
+        """Apply emergency override to session with crypto signature (Prompt 33)."""
         session.override_active = True
-        session.override_source = source
-        session.override_reason = reason
+        session.consent_override = ConsentOverride(
+            source=source,
+            reason=reason,
+            timestamp=datetime.utcnow().isoformat() + "Z",
+            signature_hash=signature_hash or hashlib.sha256(f"{source}:{reason}".encode()).hexdigest()[:16],
+            operator_key_id=operator_key_id or "key_001"
+        )
         return session
+
+    @staticmethod
+    def apply_charge_decay(charge: float) -> float:
+        """Apply emotional charge decay (12B).
+        Decay by 5% per cycle, floor at 0.15."""
+        decayed = charge * ShadowModule.EMOTIONAL_CHARGE_DECAY
+        return max(ShadowModule.EMOTIONAL_CHARGE_FLOOR, decayed)
+
+    @staticmethod
+    def update_fragment(fragment: ShadowFragment, session: SessionState,
+                       allowed: bool) -> ShadowFragment:
+        """Update fragment state after processing (12B)."""
+        if allowed:
+            fragment.emotional_charge = ShadowModule.apply_charge_decay(fragment.emotional_charge)
+            fragment.integration_count += 1
+            fragment.last_session_token = session.session_token
+        return fragment
 
     @staticmethod
     def prompt(fragment: ShadowFragment, gating: GatingResult) -> TherapeuticFeedback:
@@ -222,11 +325,16 @@ class ShadowModule:
     @staticmethod
     def evaluate(fragment: ShadowFragment, session: SessionState) -> ShadowConsentOutput:
         """
-        Complete shadow consent evaluation.
+        Complete shadow consent evaluation (12B/12C).
 
-        Returns full output with gating, feedback, session update, and safety alerts.
+        Returns full output with gating, feedback, session update, fragment update,
+        and safety alerts.
         """
         output = ShadowConsentOutput()
+
+        # Ensure session has a token (12B)
+        if not session.session_token:
+            session.session_token = ShadowModule.generate_session_token()
 
         # Step 1: Consent gating
         output.gating_result = ShadowModule.should_allow(fragment, session)
@@ -235,16 +343,16 @@ class ShadowModule:
         # Step 2: Generate feedback
         output.feedback = ShadowModule.prompt(fragment, output.gating_result)
 
-        # Step 3: Update session state
+        # Step 3: Update session state (12B - includes token)
         new_session = SessionState(
             coherence=session.coherence,
             licensed_operator=session.licensed_operator,
             override_active=session.override_active,
-            override_source=session.override_source,
-            override_reason=session.override_reason,
+            consent_override=session.consent_override,
             shadow_progress=session.shadow_progress,
             resonance_delta=session.resonance_delta,
-            cycle_count=session.cycle_count + 1
+            cycle_count=session.cycle_count + 1,
+            session_token=session.session_token
         )
 
         if output.emergence_allowed:
@@ -261,7 +369,12 @@ class ShadowModule:
         output.session_update = new_session
         output.cycle_count = new_session.cycle_count
 
-        # Step 4: Safety alerts
+        # Step 4: Update fragment state (12B - charge decay, integration count)
+        output.fragment_update = ShadowModule.update_fragment(
+            fragment, new_session, output.emergence_allowed
+        )
+
+        # Step 5: Safety alerts
         output.safety_alert = (
             fragment.emotional_charge >= ShadowModule.CHARGE_WARNING_THRESHOLD or
             session.coherence < 0.3 or
@@ -442,6 +555,136 @@ def test_shadow_type_prompts():
 
 
 # ============================================================================
+# Patch 12B/12C Tests
+# ============================================================================
+
+def test_emotional_charge_decay():
+    """Test: Emotional charge decays by 5% per successful integration (12B)."""
+    initial_charge = 0.8
+    fragment = ShadowFragment(
+        fragment_id=20,
+        consent_state=ConsentState.THERAPEUTIC,
+        shadow_type=ShadowType.REPRESSED,
+        emotional_charge=initial_charge
+    )
+    session = SessionState(coherence=0.75, licensed_operator=True)
+
+    output = ShadowModule.evaluate(fragment, session)
+
+    # Charge should decay by 5%
+    expected_charge = initial_charge * 0.95
+    assert output.fragment_update is not None
+    assert abs(output.fragment_update.emotional_charge - expected_charge) < 0.01
+    print("  [PASS] emotional_charge_decay")
+    return output
+
+def test_charge_decay_floor():
+    """Test: Emotional charge floors at 0.15 (12B)."""
+    fragment = ShadowFragment(
+        fragment_id=21,
+        consent_state=ConsentState.THERAPEUTIC,
+        shadow_type=ShadowType.REPRESSED,
+        emotional_charge=0.16  # Just above floor
+    )
+    session = SessionState(coherence=0.75, licensed_operator=True)
+
+    # Process multiple times to hit floor
+    for _ in range(5):
+        output = ShadowModule.evaluate(fragment, session)
+        fragment = output.fragment_update
+        session = output.session_update
+
+    assert fragment.emotional_charge >= 0.15
+    print("  [PASS] charge_decay_floor")
+    return fragment
+
+def test_session_token_persistence():
+    """Test: Session token persists across cycles (12B)."""
+    fragment = ShadowFragment(
+        fragment_id=22,
+        consent_state=ConsentState.THERAPEUTIC,
+        shadow_type=ShadowType.ANCESTRAL
+    )
+    session = SessionState(coherence=0.75, licensed_operator=True)
+
+    output1 = ShadowModule.evaluate(fragment, session)
+    token1 = output1.session_update.session_token
+
+    # Process again with same session
+    output2 = ShadowModule.evaluate(fragment, output1.session_update)
+    token2 = output2.session_update.session_token
+
+    assert token1 == token2  # Token should persist
+    assert token1.startswith("sess-")
+    print("  [PASS] session_token_persistence")
+    return token1
+
+def test_integration_count_increment():
+    """Test: Integration count increments on successful emergence (12B)."""
+    fragment = ShadowFragment(
+        fragment_id=23,
+        consent_state=ConsentState.THERAPEUTIC,
+        shadow_type=ShadowType.COLLECTIVE,
+        integration_count=5
+    )
+    session = SessionState(coherence=0.75, licensed_operator=True)
+
+    output = ShadowModule.evaluate(fragment, session)
+
+    assert output.fragment_update.integration_count == 6
+    print("  [PASS] integration_count_increment")
+    return output
+
+def test_shadow_queue_priority():
+    """Test: Shadow queue orders by priority (12C)."""
+    queue = ShadowQueue()
+
+    # Add fragments with different charges
+    f1 = ShadowFragment(fragment_id=1, emotional_charge=0.3)
+    f2 = ShadowFragment(fragment_id=2, emotional_charge=0.9)  # Highest priority
+    f3 = ShadowFragment(fragment_id=3, emotional_charge=0.6)
+
+    queue.add_fragment(f1)
+    queue.add_fragment(f2)
+    queue.add_fragment(f3)
+
+    # Should get highest charge first
+    first = queue.next_fragment()
+    assert first.fragment_id == 2
+    assert first.emotional_charge == 0.9
+
+    second = queue.next_fragment()
+    assert second.fragment_id == 3
+
+    third = queue.next_fragment()
+    assert third.fragment_id == 1
+
+    assert queue.is_empty()
+    print("  [PASS] shadow_queue_priority")
+    return True
+
+def test_crypto_override_signature():
+    """Test: Crypto override includes signature (Prompt 33 interface)."""
+    session = SessionState(coherence=0.75, licensed_operator=True)
+
+    session = ShadowModule.apply_override(
+        session,
+        source="THERAPIST_001",
+        reason="Deep shadow integration",
+        signature_hash="abc123def456",
+        operator_key_id="key_therapist_001"
+    )
+
+    assert session.override_active
+    assert session.consent_override is not None
+    assert session.consent_override.signature_hash == "abc123def456"
+    assert session.consent_override.operator_key_id == "key_therapist_001"
+    assert ShadowModule.verify_signature(session.consent_override)
+    print("  [PASS] crypto_override_signature")
+    return session
+
+
+# ============================================================================
 # CLI Dashboard
 # ============================================================================
 
@@ -562,6 +805,13 @@ def main():
         ("Override Allows", test_override_allows),
         ("High Charge Warning", test_high_charge_warning),
         ("Shadow Type Prompts", test_shadow_type_prompts),
+        # Patch 12B/12C tests
+        ("Emotional Charge Decay (12B)", test_emotional_charge_decay),
+        ("Charge Decay Floor (12B)", test_charge_decay_floor),
+        ("Session Token Persistence (12B)", test_session_token_persistence),
+        ("Integration Count Increment (12B)", test_integration_count_increment),
+        ("Shadow Queue Priority (12C)", test_shadow_queue_priority),
+        ("Crypto Override Signature (P33)", test_crypto_override_signature),
     ]
 
     passed = 0

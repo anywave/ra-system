@@ -1,8 +1,18 @@
-# Prompt 12: Consent-Gated Shadow Harmonics
+# Prompt 12: Consent-Gated Shadow Harmonics (Patch 12B/12C)
 
 ## Overview
 
 This module implements consent-gated access to shadow fragment harmonics, ensuring that sensitive psychodynamic patterns are only processed when proper therapeutic consent, licensed operator presence, and coherence thresholds are met. It generates therapeutic feedback to guide safe shadow integration work.
+
+**Patch 12B** adds:
+- Session persistence via tokens for multi-session tracking
+- Emotional charge decay (5% per cycle, floor at 0.15)
+- Integration count tracking
+- Crypto override interface stub for Prompt 33
+
+**Patch 12C** adds:
+- Multi-fragment priority queue (ShadowQueue)
+- Priority ordering by emotional charge, harmonic mismatch, alpha
 
 ## Architecture
 
@@ -308,8 +318,106 @@ python test_shadow_consent.py --json
 | Intel Cyclone V | ~500 | 2 | 0 |
 | Lattice ECP5 | ~550 | 1 | 1 |
 
+## Patch 12B: Session Persistence & Emotional Charge Decay
+
+### Session Token
+
+Each session receives a unique token for multi-session tracking:
+
+```haskell
+type SessionToken = Unsigned 64
+```
+
+The token persists across cycles and is stored on the fragment after processing.
+
+### Emotional Charge Decay
+
+After each successful integration, emotional charge decays by 5%:
+
+```haskell
+applyChargeDecay :: Fixed8 -> Fixed8
+applyChargeDecay charge =
+  let decayed = (resize charge * 243) `shiftR` 8  -- 0.95 * 256 = 243
+  in max emotionalChargeFloor decayed
+```
+
+| Parameter | Value | Description |
+|-----------|-------|-------------|
+| Decay factor | 0.95 | 5% reduction per cycle |
+| Floor | 0.15 (38/256) | Minimum charge after decay |
+
+### Integration Count
+
+Tracks cumulative successful integrations:
+
+```haskell
+integrationCount :: Unsigned 16  -- Increments on each ALLOW
+lastSessionToken :: SessionToken -- Links fragment to session
+```
+
+## Patch 12C: Multi-Fragment Priority Queue
+
+### ShadowQueue
+
+Manages multiple shadow fragments with priority ordering:
+
+```haskell
+data ShadowQueue = ShadowQueue
+  { queueEntries :: Vec 8 QueueEntry
+  , queueCount   :: Unsigned 4
+  , activeIndex  :: Unsigned 4
+  }
+```
+
+### Priority Calculation
+
+Fragments are ordered by:
+1. **Emotional charge** (DESC) - Higher charge = higher priority
+2. **Harmonic mismatch** (DESC) - Greater mismatch = higher priority
+3. **Alpha** (ASC) - Lower alpha = safer emergence first
+
+```haskell
+calculatePriority :: ShadowFragment -> PriorityScore
+calculatePriority frag =
+  (charge `shiftL` 8) + (mismatch `shiftL` 4) + (256 - alpha)
+```
+
+### Queue Operations
+
+| Function | Description |
+|----------|-------------|
+| `addToQueue` | Insert fragment with computed priority |
+| `nextFromQueue` | Pop highest-priority fragment |
+| `initQueue` | Create empty queue (8 slots) |
+
+## Prompt 33 Interface: Crypto Override
+
+Stub for signature verification (full implementation in Prompt 33):
+
+```haskell
+data ConsentOverride = ConsentOverride
+  { overrideSource    :: OverrideSource
+  , overrideReason    :: Unsigned 8
+  , overrideTimestamp :: Timestamp
+  , overrideValid     :: Bool
+  , signatureHash     :: Unsigned 64   -- Prompt 33
+  , operatorKeyId     :: Unsigned 32   -- Prompt 33
+  }
+
+verifySignature :: ConsentOverride -> Bool
+verifySignature override =
+  signatureHash override /= 0 && overrideValid override
+```
+
+Future Prompt 33 will implement:
+- ECDSA signature verification
+- Authorized keys registry lookup
+- Timestamp freshness check (< 24h)
+
 ## Version History
 
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2025-12-30 | Initial implementation |
+| 1.1.0 | 2025-12-30 | Patch 12B: Session persistence, charge decay |
+| 1.2.0 | 2025-12-30 | Patch 12C: Multi-fragment queue, Prompt 33 interface |

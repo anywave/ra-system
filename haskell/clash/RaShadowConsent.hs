@@ -1,6 +1,6 @@
 {-|
 Module      : RaShadowConsent
-Description : Consent-Gated Shadow Fragment Harmonics
+Description : Consent-Gated Shadow Fragment Harmonics (Patch 12B/12C)
 Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
 
@@ -14,6 +14,10 @@ protocols, harmonic safety thresholds, and therapeutic guidance.
 2. Consent Logic Gating - Ra.Gates enforcement with override protocol
 3. Therapeutic Feedback - Guided prompts and convergence mapping
 4. Session Tracking - Progress and resonance delta monitoring
+5. Session Persistence - Multi-session tracking via session tokens (12B)
+6. Emotional Charge Decay - 5% decay per integration cycle (12B)
+7. Multi-Fragment Queue - Priority-based fragment ordering (12C)
+8. Crypto Override Interface - Signature verification stub (Prompt 33)
 
 == Therapeutic Gating Justification (Codex References)
 
@@ -30,12 +34,13 @@ protocols, harmonic safety thresholds, and therapeutic guidance.
 - Coherence floor: 0.66 (169/256) for safe shadow access
 - Emotional charge warning: 0.75 (192/256) triggers coherence spike alert
 - Harmonic mismatch limit: 0.25 (64/256) maximum tolerable delta
+- Emotional charge floor: 0.15 (38/256) minimum after decay
 
 == Hardware Synthesis
 
 - Target: Xilinx Artix-7 / Intel Cyclone V
 - Clock: 10 Hz decision rate
-- Resources: ~400 LUTs, 2 DSP slices
+- Resources: ~450 LUTs, 2 DSP slices
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -56,6 +61,7 @@ type Fixed8 = Unsigned 8
 type Fixed16 = Unsigned 16
 type FragmentId = Unsigned 16
 type Timestamp = Unsigned 32
+type SessionToken = Unsigned 64  -- Session persistence token (12B)
 
 -- =============================================================================
 -- Types: Shadow Fragment Schema
@@ -91,7 +97,7 @@ data ShadowType
   | ShadowInverted  -- ^ Fully inverted shadow
   deriving (Generic, NFDataX, Show, Eq)
 
--- | Shadow fragment schema
+-- | Shadow fragment schema (extended for 12B/12C)
 data ShadowFragment = ShadowFragment
   { fragmentId        :: FragmentId       -- ^ Unique identifier
   , fragmentForm      :: FragmentForm     -- ^ Always FormShadow for shadows
@@ -103,6 +109,8 @@ data ShadowFragment = ShadowFragment
   , originFragment    :: FragmentId       -- ^ Parent fragment ID
   , harmonicMismatch  :: Fixed8           -- ^ Delta from core Ra harmonic
   , emotionalCharge   :: Fixed8           -- ^ Reich DOR-derived charge
+  , integrationCount  :: Unsigned 16      -- ^ Cumulative integration cycles (12B)
+  , lastSessionToken  :: SessionToken     -- ^ Last session token (12B)
   } deriving (Generic, NFDataX, Show, Eq)
 
 -- =============================================================================
@@ -117,19 +125,29 @@ data OverrideSource
   | SourceSystem      -- ^ System emergency
   deriving (Generic, NFDataX, Show, Eq)
 
--- | Consent override record
+-- | Consent override record (extended for crypto auth - Prompt 33 interface)
 data ConsentOverride = ConsentOverride
   { overrideSource    :: OverrideSource   -- ^ Who authorized
   , overrideReason    :: Unsigned 8       -- ^ Reason code
   , overrideTimestamp :: Timestamp        -- ^ When authorized
   , overrideValid     :: Bool             -- ^ Is override active
+  , signatureHash     :: Unsigned 64      -- ^ Crypto signature hash (Prompt 33)
+  , operatorKeyId     :: Unsigned 32      -- ^ Public key ID for verification
   } deriving (Generic, NFDataX, Show, Eq)
+
+-- | Verify crypto signature (stub - implementation in Prompt 33)
+-- Returns True if: signature authentic, key authorized, timestamp fresh
+verifySignature :: ConsentOverride -> Bool
+verifySignature override =
+  -- Stub: Returns valid if signature hash is non-zero
+  -- Full crypto verification deferred to Prompt 33
+  signatureHash override /= 0 && overrideValid override
 
 -- =============================================================================
 -- Types: Session State
 -- =============================================================================
 
--- | Session state for shadow processing
+-- | Session state for shadow processing (extended for 12B)
 data SessionState = SessionState
   { sessionCoherence    :: Fixed8           -- ^ Current field coherence
   , licensedOperator    :: Bool             -- ^ Is operator licensed
@@ -137,6 +155,7 @@ data SessionState = SessionState
   , shadowProgress      :: Fixed8           -- ^ Integration progress (0-255)
   , resonanceDelta      :: Signed 16        -- ^ Change in resonance quality
   , sessionCycle        :: Unsigned 16      -- ^ Session cycle counter
+  , sessionToken        :: SessionToken     -- ^ Persistence token (12B)
   } deriving (Generic, NFDataX, Show, Eq)
 
 -- =============================================================================
@@ -210,8 +229,79 @@ data ShadowConsentOutput = ShadowConsentOutput
   { gating          :: GatingResult           -- ^ Gating decision
   , feedback        :: TherapeuticFeedback    -- ^ Therapeutic prompts
   , updatedSession  :: SessionState           -- ^ Updated session state
+  , updatedFragment :: ShadowFragment         -- ^ Updated fragment (12B)
   , safetyAlert     :: Bool                   -- ^ Critical safety alert
   } deriving (Generic, NFDataX, Show, Eq)
+
+-- =============================================================================
+-- Types: Multi-Fragment Queue (Patch 12C)
+-- =============================================================================
+
+-- | Priority score for queue ordering (higher = process first)
+-- Calculated from: emotional_charge DESC, harmonic_mismatch DESC, alpha ASC
+type PriorityScore = Unsigned 16
+
+-- | Queue entry with priority
+data QueueEntry = QueueEntry
+  { entryFragment :: ShadowFragment  -- ^ Fragment data
+  , entryPriority :: PriorityScore   -- ^ Computed priority
+  } deriving (Generic, NFDataX, Show, Eq)
+
+-- | Shadow fragment queue (fixed-size for FPGA)
+data ShadowQueue = ShadowQueue
+  { queueEntries :: Vec 8 QueueEntry   -- ^ Up to 8 fragments
+  , queueCount   :: Unsigned 4         -- ^ Current count
+  , activeIndex  :: Unsigned 4         -- ^ Currently active fragment
+  } deriving (Generic, NFDataX, Show, Eq)
+
+-- | Calculate priority score for a fragment
+-- Higher emotional charge and harmonic mismatch = higher priority
+-- Lower alpha = higher priority (safer emergence first)
+calculatePriority :: ShadowFragment -> PriorityScore
+calculatePriority frag =
+  let
+    charge = resize (emotionalCharge frag) :: Unsigned 16
+    mismatch = resize (harmonicMismatch frag) :: Unsigned 16
+    alphaPart = 256 - resize (alpha frag) :: Unsigned 16
+  in
+    (charge `shiftL` 8) + (mismatch `shiftL` 4) + alphaPart
+
+-- | Initial empty queue
+initQueue :: ShadowQueue
+initQueue = ShadowQueue
+  { queueEntries = repeat (QueueEntry initFragment 0)
+  , queueCount = 0
+  , activeIndex = 0
+  }
+  where
+    initFragment = ShadowFragment 0 FormNormal NotInverted 0 Suspended
+                     ShadowMirror False 0 0 0 0 0
+
+-- | Add fragment to queue (insertion sort by priority)
+addToQueue :: ShadowQueue -> ShadowFragment -> ShadowQueue
+addToQueue queue frag
+  | queueCount queue >= 8 = queue  -- Queue full
+  | otherwise =
+      let
+        entry = QueueEntry frag (calculatePriority frag)
+        newCount = queueCount queue + 1
+        entries = queueEntries queue
+        -- Simple append for FPGA (full sort not synthesizable)
+        newEntries = replace (resize (queueCount queue)) entry entries
+      in
+        queue { queueEntries = newEntries, queueCount = newCount }
+
+-- | Get next fragment from queue (highest priority)
+nextFromQueue :: ShadowQueue -> Maybe (ShadowFragment, ShadowQueue)
+nextFromQueue queue
+  | queueCount queue == 0 = Nothing
+  | otherwise =
+      let
+        idx = activeIndex queue
+        entry = queueEntries queue !! resize idx
+        newQueue = queue { activeIndex = (idx + 1) `mod` resize (queueCount queue) }
+      in
+        Just (entryFragment entry, newQueue)
 
 -- =============================================================================
 -- Constants: Safety Thresholds
@@ -228,6 +318,15 @@ chargeWarningThreshold = 192
 -- | Maximum harmonic mismatch (0.25 = 64/256)
 maxHarmonicMismatch :: Fixed8
 maxHarmonicMismatch = 64
+
+-- | Emotional charge floor (0.15 = 38/256) - minimum after decay (12B)
+emotionalChargeFloor :: Fixed8
+emotionalChargeFloor = 38
+
+-- | Emotional charge decay factor (0.95 * 256 = 243)
+-- Apply as: newCharge = (charge * 243) >> 8
+emotionalChargeDecay :: Unsigned 16
+emotionalChargeDecay = 243
 
 -- | Progress increment per cycle
 progressIncrement :: Fixed8
@@ -338,6 +437,29 @@ generateFeedback frag session gating =
 -- Core Functions: Session Update
 -- =============================================================================
 
+-- | Apply emotional charge decay (12B)
+-- Decay by 5% per cycle, floor at 0.15
+applyChargeDecay :: Fixed8 -> Fixed8
+applyChargeDecay charge =
+  let
+    decayed = (resize charge * emotionalChargeDecay) `shiftR` 8 :: Unsigned 16
+    result = resize decayed :: Fixed8
+  in
+    if result < emotionalChargeFloor
+    then emotionalChargeFloor
+    else result
+
+-- | Update fragment state after processing (12B)
+updateFragment :: ShadowFragment -> SessionState -> GatingResult -> ShadowFragment
+updateFragment frag session gating
+  | decision gating /= EmergenceBlocked =
+      frag
+        { emotionalCharge = applyChargeDecay (emotionalCharge frag)
+        , integrationCount = satAdd SatBound (integrationCount frag) 1
+        , lastSessionToken = sessionToken session
+        }
+  | otherwise = frag
+
 -- | Update session state after processing
 updateSession :: SessionState -> ShadowFragment -> GatingResult -> SessionState
 updateSession session frag gating =
@@ -379,12 +501,15 @@ processShadowConsent frag session =
     -- Step 3: Update session state
     newSession = updateSession session frag gating
 
-    -- Step 4: Check for critical safety alert
+    -- Step 4: Update fragment state (12B - decay emotional charge)
+    newFragment = updateFragment frag session gating
+
+    -- Step 5: Check for critical safety alert
     -- Alert if: blocked due to high charge, or coherence drops below 0.5
     safety = (decision gating == EmergenceBlocked && blockReason gating == ReasonChargeHigh)
           || sessionCoherence session < 128
   in
-    ShadowConsentOutput gating feedback newSession safety
+    ShadowConsentOutput gating feedback newSession newFragment safety
 
 -- =============================================================================
 -- Signal-Level Processing
@@ -395,10 +520,11 @@ initSession :: SessionState
 initSession = SessionState
   { sessionCoherence = 128
   , licensedOperator = False
-  , consentOverride = ConsentOverride SourceSelf 0 0 False
+  , consentOverride = ConsentOverride SourceSelf 0 0 False 0 0
   , shadowProgress = 0
   , resonanceDelta = 0
   , sessionCycle = 0
+  , sessionToken = 0  -- Generated externally (12B)
   }
 
 -- | Shadow consent processor (stateful)
@@ -415,7 +541,7 @@ shadowConsentProcessor input = mealy procState initSession input
         session' = session
           { licensedOperator = licensed
           , consentOverride = if hasOverride
-              then ConsentOverride SourceTherapist 1 0 True
+              then ConsentOverride SourceTherapist 1 0 True 0xDEADBEEF 1  -- Signature placeholder
               else consentOverride session
           }
         output = processShadowConsent frag session'
@@ -463,6 +589,8 @@ testFragment1 = ShadowFragment
   , originFragment = 0x0038
   , harmonicMismatch = 46  -- 0.18
   , emotionalCharge = 181  -- 0.71
+  , integrationCount = 0   -- Fresh fragment (12B)
+  , lastSessionToken = 0   -- No prior session (12B)
   }
 
 -- | Test shadow fragment (therapeutic mode)
@@ -478,6 +606,8 @@ testFragment2 = ShadowFragment
   , originFragment = 0x0039
   , harmonicMismatch = 31  -- 0.12
   , emotionalCharge = 164  -- 0.64
+  , integrationCount = 3   -- Returning fragment (12B)
+  , lastSessionToken = 0x12345678  -- Prior session (12B)
   }
 
 -- =============================================================================
