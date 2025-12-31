@@ -12,6 +12,8 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 | 11 | RaGroupCoherence | Multi-avatar scalar entrainment | Yes | Phase 1 | Verified |
 | 12 | RaShadowConsent | Consent-gated shadow harmonics | Yes | Phase 2 | Verified |
 | 13 | RaDreamPhaseScheduler | Scalar dream induction & symbols | Yes | Phase 1 | Verified |
+| 14 | RaLucidNavigation | Lucid scalar navigation wayfinding | Yes | Phase 2 | Verified |
+| 15 | RaBridgeSync | Multi-user harmonic entanglement | Yes | Phase 2 | Verified |
 | 17 | BiofieldLoopback | Biofield loopback feedback system | Testbench.hs | Phase 1 | Verified |
 | 22 | RaSonicFlux | Real-time harmonic driver | Yes | Phase 1 | Verified |
 | 22+ | RaSonicEmitter | Full hardware PWM pipeline | Yes | Phase 1 | Verified |
@@ -66,6 +68,8 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 
 ### Phase 2 Modules (Consent Pipeline)
 - [Prompt 12 Guide](./Prompt12_ShadowConsent.md) - Shadow consent gating
+- [Prompt 14 Guide](./Prompt14_LucidNavigation.md) - Lucid scalar navigation
+- [Prompt 15 Guide](./Prompt15_BridgeSync.md) - Multi-user entanglement
 - [Prompt 31 Guide](./Prompt31_ConsentTransformer.md) - Quorum voting
 - [Prompt 32 Guide](./Prompt32_ConsentFramework.md) - Consent gating
 - [Prompt 33 Guide](./Prompt33_BiometricMatcher.md) - Template matching
@@ -120,7 +124,9 @@ Response format:
 ## Last Updated
 
 - **Date**: 2025-12-30
-- **Modules**: 31 total, 25 with testbenches
+- **Modules**: 33 total, 27 with testbenches
 - **Dashboard Panels**: 13 interactive controls
-- **Guides**: 27 prompt guides (22 numbered + 5 supporting)
+- **Guides**: 29 prompt guides (24 numbered + 5 supporting)
 - **Prompt 13 Tests**: 15 tests (9 core + 6 Patch 13A)
+- **Prompt 14 Tests**: 8 tests (lucid navigation)
+- **Prompt 15 Tests**: 10 tests (entanglement)
