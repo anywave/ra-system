@@ -10,6 +10,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 | 9 | RaOrgoneScalar | Orgone field scalar stability | Yes | Phase 1 | Verified |
 | 10 | RaScalarResonance | Scalar resonance biofeedback loop | Yes | Phase 1 | Verified |
 | 11 | RaGroupCoherence | Multi-avatar scalar entrainment | Yes | Phase 1 | Verified |
+| 12 | RaShadowConsent | Consent-gated shadow harmonics | Yes | Phase 2 | Verified |
 | 17 | BiofieldLoopback | Biofield loopback feedback system | Testbench.hs | Phase 1 | Verified |
 | 22 | RaSonicFlux | Real-time harmonic driver | Yes | Phase 1 | Verified |
 | 22+ | RaSonicEmitter | Full hardware PWM pipeline | Yes | Phase 1 | Verified |
@@ -62,6 +63,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 - [Prompt 64 Guide](./Prompt64_MusicChamberHarmonics.md) - Solfeggio mapping
 
 ### Phase 2 Modules (Consent Pipeline)
+- [Prompt 12 Guide](./Prompt12_ShadowConsent.md) - Shadow consent gating
 - [Prompt 31 Guide](./Prompt31_ConsentTransformer.md) - Quorum voting
 - [Prompt 32 Guide](./Prompt32_ConsentFramework.md) - Consent gating
 - [Prompt 33 Guide](./Prompt33_BiometricMatcher.md) - Template matching
@@ -116,6 +118,6 @@ Response format:
 ## Last Updated
 
 - **Date**: 2025-12-30
-- **Modules**: 29 total, 23 with testbenches
+- **Modules**: 30 total, 24 with testbenches
 - **Dashboard Panels**: 12 interactive controls
-- **Guides**: 25 prompt guides (20 numbered + 5 supporting)
+- **Guides**: 26 prompt guides (21 numbered + 5 supporting)
