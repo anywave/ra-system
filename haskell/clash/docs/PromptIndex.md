@@ -11,6 +11,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 | 10 | RaScalarResonance | Scalar resonance biofeedback loop | Yes | Phase 1 | Verified |
 | 11 | RaGroupCoherence | Multi-avatar scalar entrainment | Yes | Phase 1 | Verified |
 | 12 | RaShadowConsent | Consent-gated shadow harmonics | Yes | Phase 2 | Verified |
+| 13 | RaDreamPhaseScheduler | Scalar dream induction & symbols | Yes | Phase 1 | Verified |
 | 17 | BiofieldLoopback | Biofield loopback feedback system | Testbench.hs | Phase 1 | Verified |
 | 22 | RaSonicFlux | Real-time harmonic driver | Yes | Phase 1 | Verified |
 | 22+ | RaSonicEmitter | Full hardware PWM pipeline | Yes | Phase 1 | Verified |
@@ -49,6 +50,7 @@ Central reference for all Ra System Clash modules with prompt compliance testing
 - [Prompt 09 Guide](./Prompt09_OrgoneScalar.md) - Orgone field stability
 - [Prompt 10 Guide](./Prompt10_ScalarResonance.md) - Scalar biofeedback
 - [Prompt 11 Guide](./Prompt11_GroupCoherence.md) - Group coherence
+- [Prompt 13 Guide](./Prompt13_DreamPhaseScheduler.md) - Dream induction
 - [Prompt 17 Guide](./Prompt17_BiofieldLoopback.md) - Biofield resonance
 - [Prompt 22 Guide](./Prompt22_SonicFlux.md) - Audio scalar output
 - [Prompt 35 Guide](./Prompt35_FieldTransferBus.md) - Tesla field transfer
@@ -118,6 +120,6 @@ Response format:
 ## Last Updated
 
 - **Date**: 2025-12-30
-- **Modules**: 30 total, 24 with testbenches
-- **Dashboard Panels**: 12 interactive controls
-- **Guides**: 26 prompt guides (21 numbered + 5 supporting)
+- **Modules**: 31 total, 25 with testbenches
+- **Dashboard Panels**: 13 interactive controls
+- **Guides**: 27 prompt guides (22 numbered + 5 supporting)
