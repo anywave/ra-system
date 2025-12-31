@@ -1,0 +1,113 @@
+{
+  "test_suite": "scalar_resonance_biofeedback",
+  "prompt_id": 10,
+  "scenarios": {
+    "improving": {
+      "cycles": 8,
+      "final_coherence": 0.8,
+      "final_tension": 0.19999999999999996,
+      "final_mode": "REINFORCE",
+      "final_chakra": 5,
+      "phi_sync_count": 8,
+      "events": [
+        "Stabilization protocol engaged",
+        "Phi synchronization at 639Hz/8.44Hz",
+        "Phi synchronization at 639Hz/8.19Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 639Hz/7.98Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 639Hz/7.82Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 852Hz/7.7Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 852Hz/7.62Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 852Hz/7.58Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 852Hz/7.59Hz"
+      ]
+    },
+    "stressed": {
+      "cycles": 8,
+      "final_coherence": 0.2075,
+      "final_tension": 0.81,
+      "final_mode": "STABILIZE",
+      "final_chakra": 1,
+      "phi_sync_count": 8,
+      "events": [
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 639Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 639Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 639Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 639Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 417Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 417Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 417Hz/8.76Hz",
+        "DOR clearing mode activated",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 417Hz/8.76Hz"
+      ]
+    },
+    "meditative": {
+      "cycles": 8,
+      "final_coherence": 0.8517147547539671,
+      "final_tension": 0.14815437103836074,
+      "final_mode": "PEAK_PULSE",
+      "final_chakra": 4,
+      "phi_sync_count": 8,
+      "events": [
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.64Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.66Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.68Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.69Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.68Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.66Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.64Hz",
+        "Peak coherence - phi pulse emitted",
+        "Phi synchronization at 741Hz/7.62Hz"
+      ]
+    },
+    "volatile": {
+      "cycles": 8,
+      "final_coherence": 0.5009468999568085,
+      "final_tension": 0.5208317990497866,
+      "final_mode": "ADJUST",
+      "final_chakra": 2,
+      "phi_sync_count": 8,
+      "events": [
+        "Phi synchronization at 639Hz/7.83Hz",
+        "Phi synchronization at 639Hz/7.83Hz",
+        "Stabilization protocol engaged",
+        "Phi synchronization at 852Hz/7.83Hz",
+        "Phi synchronization at 852Hz/7.83Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 852Hz/7.83Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 639Hz/7.83Hz",
+        "Coherence reinforcement active",
+        "Phi synchronization at 528Hz/7.83Hz",
+        "Phi synchronization at 528Hz/7.83Hz"
+      ]
+    }
+  }
+}
