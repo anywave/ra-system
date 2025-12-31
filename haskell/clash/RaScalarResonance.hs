@@ -4,73 +4,8 @@ Description : Scalar resonance biofeedback loop for healing
 Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
 
-Prompt 10: Scalar resonance-based healing feedback loop using biometric
-input to drive chakra alignment, harmonic output generation, and
-adaptive coherence tracking.
-
-== Input Layer: Biometric → Scalar Feedback
-
-@
-biometric_input = {
-  hrv: 52,                    -- Heart rate variability
-  eeg_alpha: 0.43,            -- Alpha wave power (0-1)
-  skin_conductance: 0.88,     -- GSR normalized
-  breath_variability: 0.31    -- Breath pattern variance
-}
-@
-
-== Processing Pipeline
-
-1. Coherence Analysis: Normalize biometrics to coherence level
-2. Chakra Drift Extraction: FFT phase shift per energy center
-3. Scalar Alignment: Query Ra.Scalar for inverse Δ(ankh) correction
-4. Harmonic Output: Generate audio/visual/tactile feedback
-5. Feedback Loop: Adapt based on coherence delta
-
-== Chakra Mapping
-
-| Index | Center    | Frequency | Color     |
-|-------|-----------|-----------|-----------|
-| 0     | Root      | 396 Hz    | Red       |
-| 1     | Sacral    | 417 Hz    | Orange    |
-| 2     | Solar     | 528 Hz    | Yellow    |
-| 3     | Heart     | 528 Hz    | Green     |
-| 4     | Throat    | 639 Hz    | Blue      |
-| 5     | Third Eye | 741 Hz    | Indigo    |
-| 6     | Crown     | 852 Hz    | Violet    |
-
-== Scalar Alignment Logic
-
-@
-target_coordinate = Ra.Scalar.query(chakra_index, -drift_value)
-entrainment_window = define_phase_window(emotional_tension)
-@
-
-== Feedback Adaptation
-
-@
-delta_coherence = new_coherence - previous_coherence
-if delta_coherence > 0:
-    reinforce_scalar_alignment()
-else:
-    shift_Ra_coordinate()
-    adjust_frequency_intervals()
-@
-
-== Precision Handling
-
-@
-Biometric Input:     8-bit normalized (0-255)
-Chakra Drift:        Signed 16-bit (-32768 to +32767)
-Coherence Level:     8-bit (0-255 = 0.0-1.0)
-Frequency Output:    16-bit Hz value
-@
-
-== Hardware Synthesis
-
-- Xilinx Artix-7: ~200 LUTs, 2 DSP slices
-- Clock: 100 MHz system clock
-- Latency: 2-3 cycles for alignment decision
+Prompt 10 v1.1: Enhanced with raw normalization, 10Hz gating, access gating,
+session FSM, safety limits, and explicit output buses.
 -}
 
 {-# LANGUAGE NoImplicitPrelude #-}
@@ -83,410 +18,309 @@ module RaScalarResonance where
 import Clash.Prelude
 import qualified Prelude as P
 
--- =============================================================================
 -- Types
--- =============================================================================
-
--- | Fixed-point 8-bit normalized (0-255 = 0.0-1.0)
 type Fixed8 = Unsigned 8
-
--- | Signed drift value (scaled: ±10000 = ±1.0)
 type DriftValue = Signed 16
-
--- | Frequency in Hz
 type FreqHz = Unsigned 16
-
--- | Chakra index (0-6)
 type ChakraIndex = Index 7
-
--- | 7-element chakra drift vector
 type ChakraDrift = Vec 7 DriftValue
+type SampleCounter = Unsigned 7
+type DORTimer = Unsigned 5
 
--- | Biometric input bundle
-data BiometricInput = BiometricInput
-  { hrv              :: Fixed8    -- ^ Heart rate variability (0-255)
-  , eegAlpha         :: Fixed8    -- ^ EEG alpha power (0-255)
-  , skinConductance  :: Fixed8    -- ^ GSR normalized (0-255)
-  , breathVariability :: Fixed8   -- ^ Breath pattern variance (0-255)
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- | Coherence state from biometric analysis
-data CoherenceState = CoherenceState
-  { coherenceLevel    :: Fixed8       -- ^ Overall coherence (0-255)
-  , emotionalTension  :: Fixed8       -- ^ Tension level (0-255)
-  , chakraDrift       :: ChakraDrift  -- ^ Per-chakra drift values
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- | Scalar alignment command
-data ScalarCommand = ScalarCommand
-  { targetChakra    :: ChakraIndex   -- ^ Chakra requiring alignment
-  , polarityValue   :: DriftValue    -- ^ Inverse drift for correction
-  , targetPotential :: DriftValue    -- ^ Ra scalar potential
-  , entrainLow      :: Unsigned 16   -- ^ Entrainment window start (ms)
-  , entrainHigh     :: Unsigned 16   -- ^ Entrainment window end (ms)
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- | Harmonic output bundle
-data HarmonicOutput = HarmonicOutput
-  { primaryFreq   :: FreqHz       -- ^ Primary healing frequency
-  , secondaryFreq :: FreqHz       -- ^ Harmonic support frequency
-  , carrierFreq   :: FreqHz       -- ^ Theta carrier (4-5 Hz)
-  , colorIndex    :: ChakraIndex  -- ^ Visual color selection
-  , tactileIntensity :: Fixed8    -- ^ Haptic intensity (0-255)
-  , phiSync       :: Bool         -- ^ Phi breath sync enabled
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- | Feedback loop state
-data FeedbackState = FeedbackState
-  { prevCoherence   :: Fixed8        -- ^ Previous coherence level
-  , coherenceDelta  :: Signed 16     -- ^ Change in coherence
-  , adaptationMode  :: AdaptMode     -- ^ Current adaptation state
-  , cycleCount      :: Unsigned 16   -- ^ Feedback cycle counter
-  } deriving (Generic, NFDataX, Show, Eq)
-
--- | Adaptation mode
-data AdaptMode
-  = Reinforce      -- ^ Positive response, reinforce alignment
-  | Adjust         -- ^ Negative response, shift Ra coordinate
-  | PeakPulse      -- ^ Coherence derivative > threshold, emit pulse
-  | Stabilize      -- ^ Near target, maintain current output
+-- Access Gating (Prompt 8)
+data AccessResult = AccessOK | AccessDenied | AccessExpired | AccessPending
   deriving (Generic, NFDataX, Show, Eq)
 
--- | Complete resonance output
-data ResonanceOutput = ResonanceOutput
-  { scalarCmd     :: ScalarCommand   -- ^ Scalar alignment
-  , harmonicOut   :: HarmonicOutput  -- ^ Audio/visual/tactile
-  , feedback      :: FeedbackState   -- ^ Loop state
-  , validOutput   :: Bool            -- ^ Output validity flag
+gateCheck :: AccessResult -> Bool
+gateCheck AccessOK = True
+gateCheck _ = False
+
+-- Session FSM
+data SessionState = SessionIdle | Baseline | Alignment | Entrainment | Integration | Complete
+  deriving (Generic, NFDataX, Show, Eq)
+
+baselineCycles, alignmentMinCycles, entrainmentMinCycles, integrationCycles :: Unsigned 16
+baselineCycles = 300
+alignmentMinCycles = 1200
+entrainmentMinCycles = 9000
+integrationCycles = 3000
+
+-- Raw Biometric Input
+data RawBiometric = RawBiometric
+  { hrvMs :: Unsigned 8, eegAlphaUv :: Unsigned 8
+  , gsrUs :: Unsigned 8, breathCpm :: Unsigned 8
   } deriving (Generic, NFDataX, Show, Eq)
 
--- =============================================================================
--- Constants: Solfeggio Frequencies
--- =============================================================================
+data BiometricInput = BiometricInput
+  { hrv :: Fixed8, eegAlpha :: Fixed8
+  , skinConductance :: Fixed8, breathVariability :: Fixed8
+  } deriving (Generic, NFDataX, Show, Eq)
 
--- | Healing frequencies per chakra (Hz)
+data CoherenceState = CoherenceState
+  { coherenceLevel :: Fixed8, emotionalTension :: Fixed8, chakraDrift :: ChakraDrift
+  } deriving (Generic, NFDataX, Show, Eq)
+
+data ScalarCommand = ScalarCommand
+  { targetChakra :: ChakraIndex, polarityValue :: DriftValue
+  , targetPotential :: DriftValue, entrainLow :: Unsigned 16
+  , entrainHigh :: Unsigned 16, dorClearing :: Bool
+  } deriving (Generic, NFDataX, Show, Eq)
+
+data AdaptMode = Reinforce | Adjust | PeakPulse | Stabilize | EmergencyStab
+  deriving (Generic, NFDataX, Show, Eq)
+
+-- Output Buses
+data AudioOutput = AudioOutput
+  { audioPrimary :: FreqHz, audioSecondary :: FreqHz, audioCarrier :: FreqHz
+  } deriving (Generic, NFDataX, Show, Eq)
+
+data RGB = RGB { red :: Unsigned 8, green :: Unsigned 8, blue :: Unsigned 8 }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data Pattern = PatternBreath | PatternWave | PatternPulse | PatternStatic
+  deriving (Generic, NFDataX, Show, Eq)
+
+data VisualOutput = VisualOutput { rgbColor :: RGB, pattern :: Pattern, intensity :: Fixed8 }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data PulseConfig = PulseConfig
+  { pulseFreq :: Unsigned 8, pulseDuty :: Unsigned 8, pulseIntensity :: Fixed8 }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data TactileOutput = TactileOutput { tactilePulse :: PulseConfig, tactileActive :: Bool }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data HarmonicOutput = HarmonicOutput
+  { audioOut :: AudioOutput, visualOut :: VisualOutput
+  , tactileOut :: TactileOutput, phiSync :: Bool }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data FeedbackState = FeedbackState
+  { prevCoherence :: Fixed8, coherenceDelta :: Signed 16
+  , adaptationMode :: AdaptMode, cycleCount :: Unsigned 16, dorTimer :: DORTimer }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data SystemState = SystemState
+  { sessionPhase :: SessionState, feedbackState :: FeedbackState
+  , phaseCycles :: Unsigned 16, sampleCounter :: SampleCounter, accessValid :: Bool }
+  deriving (Generic, NFDataX, Show, Eq)
+
+data ResonanceOutput = ResonanceOutput
+  { scalarCmd :: ScalarCommand, harmonicOut :: HarmonicOutput
+  , currentPhase :: SessionState, feedback :: FeedbackState
+  , validOutput :: Bool, safetyAlert :: Bool }
+  deriving (Generic, NFDataX, Show, Eq)
+
+-- Constants
 chakraFrequencies :: Vec 7 FreqHz
-chakraFrequencies =
-  396 :>   -- Root: Liberation
-  417 :>   -- Sacral: Undoing situations
-  528 :>   -- Solar: Transformation
-  528 :>   -- Heart: Love/DNA repair
-  639 :>   -- Throat: Relationships
-  741 :>   -- Third Eye: Awakening intuition
-  852 :>   -- Crown: Spiritual order
-  Nil
+chakraFrequencies = 396 :> 417 :> 528 :> 639 :> 741 :> 852 :> 963 :> Nil
 
--- | Harmonic support frequencies (perfect fifth below)
 harmonicSupport :: Vec 7 FreqHz
-harmonicSupport =
-  264 :>   -- Root support
-  278 :>   -- Sacral support
-  352 :>   -- Solar support
-  396 :>   -- Heart support (grounding)
-  426 :>   -- Throat support
-  494 :>   -- Third Eye support
-  568 :>   -- Crown support
-  Nil
+harmonicSupport = 264 :> 278 :> 352 :> 426 :> 494 :> 568 :> 642 :> Nil
 
--- | Theta carrier frequency (4.5 Hz scaled to integer: 45 = 4.5 Hz * 10)
-thetaCarrier :: FreqHz
-thetaCarrier = 45  -- Represents 4.5 Hz (scaled by 10)
+chakraColors :: Vec 7 RGB
+chakraColors = RGB 255 0 0 :> RGB 255 127 0 :> RGB 255 255 0 :> RGB 0 255 0 :>
+               RGB 0 127 255 :> RGB 75 0 130 :> RGB 148 0 211 :> Nil
 
--- | Coherence threshold for positive response
-coherenceThreshold :: Fixed8
-coherenceThreshold = 5  -- Delta > 5/255 = positive
+coherenceFloor, coherenceThreshold :: Fixed8
+coherenceFloor = 26
+coherenceThreshold = 5
 
--- | Peak resonance derivative threshold
+maxDORDuration :: DORTimer
+maxDORDuration = 30
+
+maxPolarityCap :: DriftValue
+maxPolarityCap = 64
+
 peakThreshold :: Signed 16
-peakThreshold = 31  -- ~0.12 scaled
+peakThreshold = 31
 
--- =============================================================================
--- Core Functions: Biometric Analysis
--- =============================================================================
+thetaCarrier :: FreqHz
+thetaCarrier = 78
 
--- | Calculate coherence level from biometrics
--- Formula: coherence = normalize(hrv, eeg_alpha, breath_variability)
+-- Normalization
+normalizeBiometrics :: RawBiometric -> BiometricInput
+normalizeBiometrics raw =
+  let hrvNorm = resize (satSub SatBound (hrvMs raw) 20) :: Unsigned 16
+      hrvScaled = satMul SatBound (resize hrvNorm) 2
+      eegNorm = resize (eegAlphaUv raw) :: Unsigned 16
+      eegScaled = satMul SatBound eegNorm 2 + (eegNorm `shiftR` 1)
+      breathNorm = resize (satSub SatBound (breathCpm raw) 4) :: Unsigned 16
+      breathScaled = satMul SatBound (resize breathNorm) 16
+  in BiometricInput (resize (min 255 hrvScaled)) (resize (min 255 eegScaled))
+                    (gsrUs raw) (resize (min 255 breathScaled))
+
+-- Sample Gating (10 Hz)
+sampleGate :: SampleCounter -> Bool
+sampleGate counter = counter == 0
+
+nextSampleCounter :: SampleCounter -> SampleCounter
+nextSampleCounter c = if c >= 99 then 0 else c + 1
+
+-- Coherence
 calculateCoherence :: BiometricInput -> Fixed8
 calculateCoherence bio =
-  let
-    -- Weighted average: HRV (40%), EEG Alpha (35%), Breath (25%)
-    hrvVal = resize (hrv bio) :: Unsigned 16
-    eegVal = resize (eegAlpha bio) :: Unsigned 16
-    breathVal = resize (breathVariability bio) :: Unsigned 16
-    weighted = (hrvVal * 40 + eegVal * 35 + breathVal * 25) `div` 100
-  in
-    resize weighted
+  let hrvVal = resize (hrv bio) :: Unsigned 16
+      eegVal = resize (eegAlpha bio) :: Unsigned 16
+      breathVal = resize (breathVariability bio) :: Unsigned 16
+  in resize ((hrvVal * 40 + eegVal * 35 + breathVal * 25) `div` 100)
 
--- | Calculate emotional tension from HRV and skin conductance
--- Higher skin conductance + lower HRV = higher tension
 calculateTension :: BiometricInput -> Fixed8
 calculateTension bio =
-  let
-    scVal = resize (skinConductance bio) :: Unsigned 16
-    hrvInv = 255 - resize (hrv bio) :: Unsigned 16
-    tension = (scVal + hrvInv) `div` 2
-  in
-    resize tension
+  let scVal = resize (skinConductance bio) :: Unsigned 16
+      hrvInv = 255 - resize (hrv bio) :: Unsigned 16
+  in resize ((scVal * 60 + hrvInv * 40) `div` 100)
 
--- | Extract chakra drift from EEG alpha (simplified FFT phase model)
--- In full implementation, this would use actual FFT
 extractChakraDrift :: BiometricInput -> Fixed8 -> ChakraDrift
 extractChakraDrift bio tension =
-  let
-    alpha = resize (eegAlpha bio) :: Signed 16
-    sc = resize (skinConductance bio) :: Signed 16
-    tensionS = resize tension :: Signed 16
+  let alpha = resize (eegAlpha bio) :: Signed 16
+      sc = resize (skinConductance bio) :: Signed 16
+      tensionS = resize tension :: Signed 16
+      baseDrift = alpha - 128
+  in (baseDrift + (sc `shiftR` 4)) :> (baseDrift - (sc `shiftR` 5)) :>
+     (baseDrift + (tensionS `shiftR` 3)) :> (negate (tensionS `shiftR` 2)) :>
+     (baseDrift `shiftR` 1) :> (baseDrift `shiftR` 2) :> (baseDrift `shiftR` 3) :> Nil
 
-    -- Generate drift pattern based on biometrics
-    -- Higher tension affects heart/solar primarily
-    baseDrift = alpha - 128  -- Center around 0
-
-    -- Per-chakra modulation
-    root     = baseDrift + (sc `shiftR` 4)
-    sacral   = baseDrift - (sc `shiftR` 5)
-    solar    = baseDrift + (tensionS `shiftR` 3)
-    heart    = negate (tensionS `shiftR` 2)  -- Heart most affected by tension
-    throat   = baseDrift `shiftR` 1
-    thirdEye = baseDrift `shiftR` 2
-    crown    = baseDrift `shiftR` 3
-  in
-    root :> sacral :> solar :> heart :> throat :> thirdEye :> crown :> Nil
-
--- | Process biometric input to coherence state
 processBiometrics :: BiometricInput -> CoherenceState
-processBiometrics bio =
-  let
-    coh = calculateCoherence bio
-    tension = calculateTension bio
-    drift = extractChakraDrift bio tension
-  in
-    CoherenceState coh tension drift
+processBiometrics bio = CoherenceState (calculateCoherence bio) (calculateTension bio)
+                                       (extractChakraDrift bio (calculateTension bio))
 
--- =============================================================================
--- Core Functions: Scalar Alignment
--- =============================================================================
+-- Session FSM
+sessionStep :: SessionState -> Unsigned 16 -> Fixed8 -> SessionState
+sessionStep phase cycles coherence = case phase of
+  SessionIdle -> SessionIdle
+  Baseline | cycles >= baselineCycles -> Alignment
+           | otherwise -> Baseline
+  Alignment | cycles >= alignmentMinCycles && coherence >= 128 -> Entrainment
+            | otherwise -> Alignment
+  Entrainment | cycles >= entrainmentMinCycles && coherence >= 179 -> Integration
+              | otherwise -> Entrainment
+  Integration | cycles >= integrationCycles -> Complete
+              | otherwise -> Integration
+  Complete -> Complete
 
--- | Find chakra with maximum drift magnitude
+-- Scalar Alignment
 findMaxDrift :: ChakraDrift -> (ChakraIndex, DriftValue)
-findMaxDrift drift = foldr maxMag (0, drift !! 0) indexed
-  where
-    indexed = zip indicesI drift
-    maxMag (i, v) (maxI, maxV) =
-      if abs v > abs maxV then (i, v) else (maxI, maxV)
+findMaxDrift drift = foldr maxMag (0, drift !! 0) (zip indicesI drift)
+  where maxMag (i, v) (maxI, maxV) = if abs v > abs maxV then (i, v) else (maxI, maxV)
 
--- | Generate scalar alignment command
-scalarAlign :: CoherenceState -> ScalarCommand
-scalarAlign state =
-  let
-    (idx, maxDrift) = findMaxDrift (chakraDrift state)
-    polar = negate maxDrift  -- Inverse for correction
-    tension = resize (emotionalTension state) :: Unsigned 16
+saturatePolarity :: DriftValue -> DriftValue
+saturatePolarity p | p > maxPolarityCap = maxPolarityCap
+                   | p < negate maxPolarityCap = negate maxPolarityCap
+                   | otherwise = p
 
-    -- Entrainment window based on tension (higher tension = wider window)
-    entrLow = 3000 + (tension * 2)   -- 3.0-3.5s
-    entrHigh = 5500 + (tension * 3)  -- 5.5-6.3s
-  in
-    ScalarCommand idx polar polar entrLow entrHigh
+scalarAlign :: CoherenceState -> DORTimer -> ScalarCommand
+scalarAlign state dorTime =
+  let (idx, maxDrift) = findMaxDrift (chakraDrift state)
+      polar = saturatePolarity (negate maxDrift)
+      tension = resize (emotionalTension state) :: Unsigned 16
+      needsDOR = emotionalTension state > 179 && dorTime < maxDORDuration
+  in ScalarCommand idx polar polar (3000 + tension * 2) (5500 + tension * 3) needsDOR
 
--- =============================================================================
--- Core Functions: Harmonic Output
--- =============================================================================
+-- Harmonic Generation
+generateAudio :: ChakraIndex -> AudioOutput
+generateAudio idx = AudioOutput (chakraFrequencies !! idx) (harmonicSupport !! idx) thetaCarrier
 
--- | Generate harmonic output for target chakra
-generateHarmonics :: ChakraIndex -> Fixed8 -> HarmonicOutput
-generateHarmonics idx tension =
-  let
-    primary = chakraFrequencies !! idx
-    secondary = harmonicSupport !! idx
-    -- Tactile intensity inversely proportional to tension
-    tactile = satSub SatBound 255 tension
-  in
-    HarmonicOutput
-      { primaryFreq = primary
-      , secondaryFreq = secondary
-      , carrierFreq = thetaCarrier
-      , colorIndex = idx
-      , tactileIntensity = tactile
-      , phiSync = True  -- Always enable phi breath sync
-      }
+generateVisual :: ChakraIndex -> AdaptMode -> Fixed8 -> VisualOutput
+generateVisual idx mode coh = VisualOutput (chakraColors !! idx)
+  (case mode of
+     PeakPulse -> PatternPulse
+     Reinforce -> PatternWave
+     Stabilize -> PatternBreath
+     EmergencyStab -> PatternStatic
+     _ -> PatternBreath) coh
 
--- =============================================================================
--- Core Functions: Feedback Adaptation
--- =============================================================================
+generateTactile :: Fixed8 -> AdaptMode -> TactileOutput
+generateTactile tension mode =
+  let intens = satSub SatBound 255 tension
+      freq = case mode of
+               PeakPulse -> 40
+               Stabilize -> 10
+               _ -> 20
+  in TactileOutput (PulseConfig freq 128 intens) (intens > 30)
 
--- | Update feedback state based on coherence change
-updateFeedback :: Fixed8 -> FeedbackState -> FeedbackState
-updateFeedback newCoherence prev =
-  let
-    delta = resize newCoherence - resize (prevCoherence prev) :: Signed 16
+generateHarmonics :: ChakraIndex -> CoherenceState -> AdaptMode -> HarmonicOutput
+generateHarmonics idx state mode = HarmonicOutput (generateAudio idx)
+  (generateVisual idx mode (coherenceLevel state))
+  (generateTactile (emotionalTension state) mode) True
 
-    mode = if delta > resize peakThreshold
-           then PeakPulse
-           else if delta > resize coherenceThreshold
-           then Reinforce
-           else if delta < negate (resize coherenceThreshold)
-           then Adjust
-           else Stabilize
-  in
-    FeedbackState
-      { prevCoherence = newCoherence
-      , coherenceDelta = delta
-      , adaptationMode = mode
-      , cycleCount = satAdd SatBound (cycleCount prev) 1
-      }
+-- Feedback
+updateFeedback :: Fixed8 -> FeedbackState -> Bool -> FeedbackState
+updateFeedback newCoh prev dorActive =
+  let delta = resize newCoh - resize (prevCoherence prev) :: Signed 16
+      mode = if newCoh < coherenceFloor then EmergencyStab
+             else if delta > resize peakThreshold then PeakPulse
+             else if delta > resize coherenceThreshold then Reinforce
+             else if delta < negate (resize coherenceThreshold) then Adjust
+             else Stabilize
+      newDor = if dorActive && dorTimer prev < maxDORDuration then dorTimer prev + 1
+               else if not dorActive then 0 else dorTimer prev
+  in FeedbackState newCoh delta mode (satAdd SatBound (cycleCount prev) 1) newDor
 
--- | Adjust scalar command based on feedback
-adaptScalarCommand :: ScalarCommand -> AdaptMode -> ScalarCommand
-adaptScalarCommand cmd mode = case mode of
-  Adjust ->
-    -- Shift polarity slightly
-    cmd { polarityValue = satAdd SatBound (polarityValue cmd) 50 }
-  PeakPulse ->
-    -- Boost entrainment window
-    cmd { entrainHigh = satAdd SatBound (entrainHigh cmd) 500 }
-  _ -> cmd
+-- Main Processing
+initSystemState :: SystemState
+initSystemState = SystemState SessionIdle (FeedbackState 128 0 Stabilize 0 0) 0 0 False
 
--- =============================================================================
--- Main Processing Function
--- =============================================================================
+processResonance :: RawBiometric -> AccessResult -> SystemState -> (SystemState, ResonanceOutput)
+processResonance rawBio access state =
+  let shouldProcess = sampleGate (sampleCounter state)
+      nextCounter = nextSampleCounter (sampleCounter state)
+      hasAccess = gateCheck access || accessValid state
+      newPhase = if hasAccess && sessionPhase state == SessionIdle then Baseline else sessionPhase state
+      (newState, output) = if shouldProcess && hasAccess
+        then processActive rawBio state { sessionPhase = newPhase, accessValid = hasAccess }
+        else (state { sampleCounter = nextCounter }, makeIdleOutput state)
+  in (newState { sampleCounter = nextCounter }, output)
 
--- | Complete scalar resonance processing
-processResonance :: BiometricInput -> FeedbackState -> ResonanceOutput
-processResonance bio prevFeedback =
-  let
-    -- Step 1: Analyze biometrics
-    cohState = processBiometrics bio
+processActive :: RawBiometric -> SystemState -> (SystemState, ResonanceOutput)
+processActive rawBio state =
+  let bio = normalizeBiometrics rawBio
+      cohState = processBiometrics bio
+      nextPhase = sessionStep (sessionPhase state) (phaseCycles state) (coherenceLevel cohState)
+      resetCycles = nextPhase /= sessionPhase state
+      cmd = scalarAlign cohState (dorTimer (feedbackState state))
+      newFb = updateFeedback (coherenceLevel cohState) (feedbackState state) (dorClearing cmd)
+      harmonics = generateHarmonics (targetChakra cmd) cohState (adaptationMode newFb)
+      safety = adaptationMode newFb == EmergencyStab || dorTimer newFb >= maxDORDuration
+      newCycles = if resetCycles then 0 else phaseCycles state + 1
+  in (state { sessionPhase = nextPhase, feedbackState = newFb, phaseCycles = newCycles },
+      ResonanceOutput cmd harmonics nextPhase newFb True safety)
 
-    -- Step 2: Scalar alignment
-    baseCmd = scalarAlign cohState
+makeIdleOutput :: SystemState -> ResonanceOutput
+makeIdleOutput state = ResonanceOutput (ScalarCommand 0 0 0 3000 5500 False)
+  (HarmonicOutput (AudioOutput 528 352 78) (VisualOutput (RGB 0 128 0) PatternStatic 64)
+                  (TactileOutput (PulseConfig 10 64 32) False) False)
+  (sessionPhase state) (feedbackState state) False False
 
-    -- Step 3: Update feedback
-    newFeedback = updateFeedback (coherenceLevel cohState) prevFeedback
+-- Signal Processing
+resonanceProcessor :: HiddenClockResetEnable dom => Signal dom (RawBiometric, AccessResult) -> Signal dom ResonanceOutput
+resonanceProcessor = mealy (\st (raw, acc) -> processResonance raw acc st) initSystemState
 
-    -- Step 4: Adapt scalar command
-    finalCmd = adaptScalarCommand baseCmd (adaptationMode newFeedback)
+{-# ANN scalarResonanceTop (Synthesize { t_name = "scalar_resonance_unit"
+  , t_inputs = [PortName "clk", PortName "rst", PortName "en"
+              , PortProduct "bio_raw" [PortName "hrv_ms", PortName "eeg_uv", PortName "gsr_us", PortName "breath_cpm"]
+              , PortName "access_result"]
+  , t_output = PortProduct "resonance_out" [PortName "scalar_cmd"
+              , PortProduct "audio" [PortName "primary_hz", PortName "secondary_hz", PortName "carrier_hz"]
+              , PortProduct "visual" [PortName "rgb", PortName "pattern", PortName "intensity"]
+              , PortProduct "tactile" [PortName "pulse_config", PortName "active"]
+              , PortName "session_phase", PortName "feedback", PortName "valid", PortName "safety_alert"]}) #-}
+scalarResonanceTop :: Clock System -> Reset System -> Enable System
+                   -> Signal System RawBiometric -> Signal System AccessResult -> Signal System ResonanceOutput
+scalarResonanceTop clk rst en rawBio access =
+  exposeClockResetEnable resonanceProcessor clk rst en (bundle (rawBio, access))
 
-    -- Step 5: Generate harmonics
-    harmonics = generateHarmonics (targetChakra finalCmd) (emotionalTension cohState)
+testRawInputs :: Vec 4 RawBiometric
+testRawInputs = RawBiometric 85 45 128 12 :> RawBiometric 130 80 60 14 :>
+                RawBiometric 40 30 220 8 :> RawBiometric 100 55 150 10 :> Nil
 
-    -- Validate output (all biometric inputs present)
-    valid = hrv bio > 0 && eegAlpha bio > 0
-  in
-    ResonanceOutput
-      { scalarCmd = finalCmd
-      , harmonicOut = harmonics
-      , feedback = newFeedback
-      , validOutput = valid
-      }
-
--- =============================================================================
--- Signal-Level Processing
--- =============================================================================
-
--- | Scalar resonance processor (stateful)
-resonanceProcessor
-  :: HiddenClockResetEnable dom
-  => Signal dom BiometricInput
-  -> Signal dom ResonanceOutput
-resonanceProcessor input = mealy procState initFeedback input
-  where
-    initFeedback = FeedbackState 128 0 Stabilize 0
-
-    procState :: FeedbackState -> BiometricInput -> (FeedbackState, ResonanceOutput)
-    procState fb bio =
-      let output = processResonance bio fb
-      in (feedback output, output)
-
--- =============================================================================
--- Synthesis Entry Points
--- =============================================================================
-
--- | Top-level entity for Clash synthesis
-{-# ANN scalarResonanceTop
-  (Synthesize
-    { t_name   = "scalar_resonance_unit"
-    , t_inputs = [ PortName "clk"
-                 , PortName "rst"
-                 , PortName "en"
-                 , PortProduct "bio_in"
-                    [ PortName "hrv"
-                    , PortName "eeg_alpha"
-                    , PortName "skin_cond"
-                    , PortName "breath_var"
-                    ]
-                 ]
-    , t_output = PortProduct "resonance_out"
-                    [ PortName "scalar_cmd"
-                    , PortName "harmonic_out"
-                    , PortName "feedback"
-                    , PortName "valid"
-                    ]
-    })
-#-}
-scalarResonanceTop
-  :: Clock System
-  -> Reset System
-  -> Enable System
-  -> Signal System BiometricInput
-  -> Signal System ResonanceOutput
-scalarResonanceTop = exposeClockResetEnable resonanceProcessor
-
--- | Combinational alignment unit (stateless)
-scalarAlignTop
-  :: Clock System
-  -> Reset System
-  -> Enable System
-  -> Signal System CoherenceState
-  -> Signal System ScalarCommand
-scalarAlignTop = exposeClockResetEnable (fmap scalarAlign)
-
--- =============================================================================
--- Test Data
--- =============================================================================
-
--- | Test biometric inputs
-testInputs :: Vec 4 BiometricInput
-testInputs =
-  -- Test 0: Balanced, moderate coherence
-  BiometricInput 128 110 100 80 :>
-
-  -- Test 1: High HRV, low tension -> high coherence
-  BiometricInput 200 180 50 150 :>
-
-  -- Test 2: Low HRV, high tension -> heart chakra drift
-  BiometricInput 60 90 220 40 :>
-
-  -- Test 3: Mixed signals
-  BiometricInput 140 70 150 120 :>
-
-  Nil
-
--- | Expected chakra targets based on drift analysis
--- Test 0: Balanced -> minimal drift
--- Test 1: High coherence -> crown/third eye
--- Test 2: High tension -> heart (index 3)
--- Test 3: Mixed -> varies
-
--- =============================================================================
--- Testbench
--- =============================================================================
-
--- | Testbench for scalar resonance validation
 testBench :: Signal System Bool
-testBench = done
-  where
-    clk = tbSystemClockGen (not <$> done)
-    rst = systemResetGen
-    stim = stimuliGenerator clk rst testInputs
-    out = scalarResonanceTop clk rst enableGen stim
-    -- Verify valid outputs
-    done = register clk rst enableGen False (validOutput <$> out)
+testBench = done where
+  clk = tbSystemClockGen (not <$> done)
+  rst = systemResetGen
+  out = scalarResonanceTop clk rst enableGen (stimuliGenerator clk rst testRawInputs) (pure AccessOK)
+  done = register clk rst enableGen False (validOutput <$> out)
 
--- =============================================================================
--- Utility Functions
--- =============================================================================
-
--- | Get chakra name
 chakraName :: ChakraIndex -> String
 chakraName 0 = "Root"
 chakraName 1 = "Sacral"
@@ -497,17 +331,10 @@ chakraName 5 = "Third Eye"
 chakraName 6 = "Crown"
 chakraName _ = "Unknown"
 
--- | Get color for chakra
-chakraColor :: ChakraIndex -> String
-chakraColor 0 = "red"
-chakraColor 1 = "orange"
-chakraColor 2 = "yellow"
-chakraColor 3 = "green"
-chakraColor 4 = "blue"
-chakraColor 5 = "indigo"
-chakraColor 6 = "violet"
-chakraColor _ = "white"
-
--- | Format Ra coordinate string
-formatRaCoord :: ChakraIndex -> DriftValue -> String
-formatRaCoord idx polar = "Ra(" P.++ show (fromEnum idx) P.++ ", " P.++ show polar P.++ ")"
+phaseName :: SessionState -> String
+phaseName SessionIdle = "IDLE"
+phaseName Baseline = "BASELINE"
+phaseName Alignment = "ALIGNMENT"
+phaseName Entrainment = "ENTRAINMENT"
+phaseName Integration = "INTEGRATION"
+phaseName Complete = "COMPLETE"

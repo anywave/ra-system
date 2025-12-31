@@ -1,7 +1,15 @@
 #!/usr/bin/env python3
 """
 Ra System - Scalar Resonance Biofeedback Test Harness
-Prompt 10: Scalar Resonance Biofeedback Loop for Healing
+Prompt 10 v1.1: Scalar Resonance Biofeedback Loop for Healing
+
+Enhancements:
+1. Raw biometric normalization (20-150ms HRV, 0-100uV EEG, 0-5uS GSR, 4-20cpm)
+2. 10 Hz sample rate gating simulation
+3. Prompt 8 access gating integration
+4. Session state machine (Baseline -> Alignment -> Entrainment -> Integration -> Complete)
+5. Safety limits (30s DOR max, 0.1 coherence floor, +/-0.25 polarity cap)
+6. Explicit output buses (Audio, Visual, Haptic)
 
 This harness validates the RaScalarResonance.hs Clash module by simulating
 biometric input processing, coherence calculation, and harmonic output generation.
@@ -13,6 +21,27 @@ from dataclasses import dataclass, field, asdict
 from typing import List, Tuple, Optional
 from enum import Enum
 import sys
+
+# ============================================================================
+# Constants (Codex-aligned v1.1)
+# ============================================================================
+
+# Safety limits
+COHERENCE_FLOOR = 0.1       # Minimum coherence before emergency stabilize
+MAX_DOR_DURATION = 30       # Maximum DOR clearing seconds
+MAX_POLARITY_CAP = 0.25     # Maximum polarity value (+/-)
+
+# Session phase durations (cycles at 10 Hz)
+BASELINE_CYCLES = 300       # 30 seconds
+ALIGNMENT_MIN_CYCLES = 1200 # 2 minutes
+ENTRAINMENT_MIN_CYCLES = 9000  # 15 minutes
+INTEGRATION_CYCLES = 3000   # 5 minutes
+
+# Raw biometric ranges
+HRV_RANGE = (20, 150)       # milliseconds
+EEG_RANGE = (0, 100)        # microvolts
+GSR_RANGE = (0, 5)          # microsiemens
+BREATH_RANGE = (4, 20)      # cycles per minute
 
 # ============================================================================
 # Constants (Codex-aligned)
