@@ -1,0 +1,97 @@
+{
+  "test_suite": "group_coherence",
+  "prompt_id": 11,
+  "scenarios": {
+    "aligned_triad": {
+      "avatars": 3,
+      "clusters": 1,
+      "dominant_mode": "(l=3, m=0)",
+      "coherence_vector": 0.5874333333333334,
+      "field_strength": 0.6999333333333333,
+      "symmetry": "Transitioning",
+      "inverted_count": 0,
+      "feedback_action": "STABILIZING",
+      "safety_alert": false,
+      "events": [
+        "Cluster (l=3, m=0): 3 avatars aligned",
+        "Optimal emergence window: T+5.00s to T+7.50s",
+        "Begin group breath at T+5.50s",
+        "-> Stabilizing group field..."
+      ]
+    },
+    "with_inverted": {
+      "avatars": 4,
+      "clusters": 2,
+      "dominant_mode": "(l=3, m=0)",
+      "coherence_vector": 0.478075,
+      "field_strength": 0.5905750000000001,
+      "symmetry": "Unstable",
+      "inverted_count": 1,
+      "feedback_action": "STABILIZING",
+      "safety_alert": false,
+      "events": [
+        "Cluster (l=3, m=0): 3 avatars aligned",
+        "User A7X5 is inverted - contributes counterpoint phase",
+        "Optimal emergence window: T+5.00s to T+6.00s",
+        "Begin group breath at T+5.50s",
+        "-> Stabilizing group field..."
+      ]
+    },
+    "mixed_clusters": {
+      "avatars": 6,
+      "clusters": 3,
+      "dominant_mode": "(l=3, m=0)",
+      "coherence_vector": 0.5566666666666666,
+      "field_strength": 0.6691666666666667,
+      "symmetry": "Transitioning",
+      "inverted_count": 0,
+      "feedback_action": "STABILIZING",
+      "safety_alert": false,
+      "events": [
+        "Cluster (l=3, m=0): 3 avatars aligned",
+        "Cluster (l=2, m=0): 2 avatars aligned",
+        "User C1 is an outlier",
+        "Optimal emergence window: T+5.00s to T+6.50s",
+        "Begin group breath at T+5.50s",
+        "-> Stabilizing group field..."
+      ]
+    },
+    "high_coherence": {
+      "avatars": 4,
+      "clusters": 1,
+      "dominant_mode": "(l=3, m=0)",
+      "coherence_vector": 0.891925,
+      "field_strength": 1.0,
+      "symmetry": "Stable",
+      "inverted_count": 0,
+      "feedback_action": "COHERENCE_ACHIEVED",
+      "safety_alert": false,
+      "events": [
+        "Cluster (l=3, m=0): 4 avatars aligned",
+        "Optimal emergence window: T+4.00s to T+8.00s",
+        "Begin group breath at T+4.50s",
+        "-> Peak coherence achieved!"
+      ]
+    },
+    "collapse": {
+      "avatars": 4,
+      "clusters": 4,
+      "dominant_mode": "(l=1, m=0)",
+      "coherence_vector": 0.02625,
+      "field_strength": 0.02625,
+      "symmetry": "Collapsed",
+      "inverted_count": 3,
+      "feedback_action": "RECENTER_FIELD",
+      "safety_alert": true,
+      "events": [
+        "User A2 is inverted - contributes counterpoint phase",
+        "User A3 is inverted - contributes counterpoint phase",
+        "User A4 is inverted - contributes counterpoint phase",
+        "Optimal emergence window: T+4.00s to T+8.00s",
+        "Begin group breath at T+4.50s",
+        "-> Re-centering field... standby...",
+        "!!! SAFETY ALERT: Field collapse or excessive inversions !!!"
+      ]
+    }
+  }
+}
