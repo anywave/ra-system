@@ -202,11 +202,117 @@ data DreamSchedulerOutput = DreamSchedulerOutput { phaseOutput, resonance, activ
   }) #-}
 ```
 
+## Patch 13A: Architect Clarifications
+
+### Hybrid EEG/HRV Phase Detection
+
+Phase detection uses combined biometric input with confidence scoring:
+
+```python
+@dataclass
+class BiometricInput:
+    delta_power: float   # 0.5-3.5 Hz
+    theta_power: float   # 3.5-7 Hz
+    alpha_power: float   # 7-12 Hz
+    beta_power: float    # 12-30 Hz
+    gamma_power: float   # 30-100 Hz (lucid marker)
+    hrv_coherence: float
+    hrv_rmssd: float
+```
+
+**Detection thresholds:**
+- EEG.delta > 60% -> PhaseDelta
+- EEG.theta > 45% -> PhaseTheta
+- EEG.alpha > 40% -> PhaseREM
+- confidence_score > 0.65 required for transition
+
+### Shadow Consent Bridge
+
+Shadow symbols route through Prompt 12 ShadowModule:
+
+```python
+result = ShadowConsentBridge.evaluate_shadow_symbol(
+    symbol=ArchetypalSymbol.MIRROR,
+    coherence=0.72,
+    has_operator=True
+)
+# Returns: ShadowConsentResult(allowed=True, gating_reason="ALLOW", ...)
+```
+
+Creates synthetic ShadowFragment:
+```json
+{
+  "id": "shadow-F13",
+  "origin": "dream",
+  "symbol": "mirror (reversed)",
+  "coherence": 0.72,
+  "consent_state": "THERAPEUTIC"
+}
+```
+
+### Fragment Storage Backend
+
+Session-scoped JSON storage:
+
+```
+dream_fragments/
+  {user_id}/
+    {session_timestamp}.json
+```
+
+**Session file format:**
+```json
+{
+  "user_id": "default",
+  "session_id": "20251230_153042",
+  "started": "2025-12-30T15:30:42",
+  "fragments": [...],
+  "summary": {...},
+  "ended": "2025-12-30T23:45:00"
+}
+```
+
+### Symbol-to-Fragment Dynamic Linking
+
+Uses semantic vector similarity (8-dimensional embeddings):
+
+```python
+similarity = SymbolLinker.cosine_similarity(symbol_vec, fragment_vec)
+# Threshold: similarity > 0.72 for linking
+```
+
+### Lucid Dream Marker Tracking
+
+Metadata-only tracking of gamma spikes (no induction):
+
+```python
+class LucidMarker:
+    timestamp: float
+    gamma_power: float           # Peak power
+    phase_when_detected: SleepPhase
+    coherence_at_detection: float
+    duration_seconds: float      # Min 3s
+```
+
+**Detection threshold:** gamma_power >= 0.25
+
+### Hardware Interface Stubs
+
+All marked `future_linked`:
+
+| Interface | Target |
+|-----------|--------|
+| `read_eeg_bands()` | OpenBCI, Muse headband |
+| `read_hrv_coherence()` | Polar, Garmin HRM |
+| `output_audio_entrainment()` | DAC/PWM driver |
+| `output_visual_entrainment()` | LED/display controller |
+| `trigger_haptic_pulse()` | Haptic motor driver |
+
 ## Python Test Harness
 
 ### test_dream_phase_scheduler.py
 
-**Test Scenarios:**
+**Core Test Scenarios:**
 
 | Scenario | Description | Expected |
 |----------|-------------|----------|
@@ -220,10 +326,21 @@ data DreamSchedulerOutput = DreamSchedulerOutput { phaseOutput, resonance, activ
 | `prompt_generator` | Random prompt creation | Valid format |
 | `symbol_mapping` | All symbols mapped | No missing concepts |
 
+**Patch 13A Test Scenarios:**
+
+| Scenario | Description | Expected |
+|----------|-------------|----------|
+| `hybrid_phase_detection` | EEG/HRV phase detection | Confidence > 0.65 |
+| `shadow_consent_bridge` | Prompt 12 integration | Coherence gating |
+| `fragment_storage` | JSON persistence | Save/load works |
+| `symbol_linker` | Cosine similarity | Threshold 0.72 |
+| `lucid_tracker` | Gamma spike detection | Marker logged |
+| `hardware_interface_stubs` | Device stubs | Returns valid data |
+
 **Usage:**
 
 ```bash
-# Full test suite
+# Full test suite (15 tests)
 python test_dream_phase_scheduler.py
 
 # Simulation with 20 cycles
@@ -276,3 +393,4 @@ Supports WebSocket for real-time updates.
 | Version | Date | Changes |
 |---------|------|---------|
 | 1.0.0 | 2025-12-30 | Initial implementation |
+| 1.1.0 | 2025-12-30 | Patch 13A: Architect clarifications - hybrid EEG/HRV detection, shadow consent bridge, fragment storage, symbol linking, lucid tracking, hardware stubs |
