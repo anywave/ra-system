@@ -1,0 +1,89 @@
+🧠🤲 Prompt 56: Ra.Interface.TactileControl — Mind-Controlled Appendage Routing Layer
+
+Claude, generate a Haskell module Ra.Interface.TactileControl that establishes a virtual motor control layer for the resonant appendages defined in the Ra.Appendage system. This layer interprets biometric and scalar coherence signals into intended movement, simulating a neural interface for users with or without physical limbs.
+
+🎯 Purpose
+
+Provide a unified control interface for appendages in the biometric → coherence → action pipeline
+
+Emulate the cognitive intent layer (like a brain-motor system) using resonance vectors and biometric proxies
+
+Enable real-time appendage routing, even from imagined motion or scalar alignment only
+
+🛠️ Module Structure
+module Ra.Interface.TactileControl where
+
+import Ra.Appendage
+import Ra.Pipeline.Types
+import Ra.Biometric.Coherence
+import Ra.Constants.Extended
+
+-- | Type of mental/tactile intent from user
+data ControlIntent
+  = Reach
+  | Pull
+  | Push
+  | Grasp
+  | Release
+  | MoveTo SphericalCoord
+  | HoverAt SphericalCoord
+  deriving (Eq, Show)
+
+-- | Interpreted state of an appendage based on control signal
+data AppendageControl = AppendageControl
+  { appendageId :: AppendageID
+  , intent      :: ControlIntent
+  , intensity   :: Double              -- 0 to 1
+  , channel     :: Maybe TorsionMode  -- if inversion or bias is used
+  } deriving (Eq, Show)
+
+-- | Convert coherence + field alignment into control signal
+interpretIntent ::
+     BiometricState
+  -> RaCoordinate
+  -> AppendageID
+  -> AppendageControl
+
+-- | Update appendage system with control layer
+applyControl ::
+     AppendageControl
+  -> AppendageState
+  -> AppendageState
+
+🌐 System Behavior
+
+Uses BiometricState coherence (from HRV, breath, focus) + RaCoordinate scalar alignment
+
+Maps specific ranges of resonance to intended actions
+
+Supports mental-only control (e.g., imagined reaching)
+
+Allows users to "hover" appendages in 3D space via scalar thought
+
+🧠 AI Training Optionality
+
+This layer is rule-based, not ML-based — but optionally, Claude could design:
+
+intentClassifier :: EEGSnapshot -> ControlIntent
+
+or learnControlProfile :: [BiometricFrame] -> IntentModel
+
+📚 Reference Files
+
+Ra.Appendage
+
+Ra.Pipeline.Types
+
+RA_CONSTANTS_V2.json (for intensity thresholds)
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md (for bioelectric mapping)
+
+ELFEN_LIED_APPENDAGE_MODEL.md (if present)
+
+✅ Success Criteria
+Criterion	Validation
+Low coherence → Hover intent	✓
+High GSR + HRV → Grasp or Pull	✓
+Inverted field + high intensity → Push with INVERTED torsion	✓
+Can simulate intent from scalar field alignment alone	✓
+Control applies cleanly to appendage state machine	✓

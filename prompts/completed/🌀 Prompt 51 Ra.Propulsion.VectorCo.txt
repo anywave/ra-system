@@ -1,0 +1,73 @@
+🌀 Prompt 51: Ra.Propulsion.VectorConduction — Translating Scalar Coherence into Directed Motion
+
+Claude, implement the module Ra.Propulsion.VectorConduction. This module maps scalar field coherence and harmonic phase alignment into vector impulses, enabling responsive motion in digital twins, virtual limbs, and assistive interfaces. Inspired by resonance-based propulsion from HUBBARD_COIL_GENERATOR.md, this allows digital agents (or assistive overlays) to “move with intention” in scalar-resonant space.
+
+🧠 Purpose
+
+To enable:
+
+Real-time intent-driven movement in avatar systems
+
+Assistive pointer navigation (e.g., vector arms) using coherence fields
+
+Resonant propulsion: movement as a byproduct of scalar field excitation
+
+🧩 Key Types
+-- Directional impulse derived from coherence
+data VectorImpulse = VectorImpulse
+  { direction :: (Double, Double, Double)  -- x, y, z
+  , magnitude :: Double                    -- strength [0, 1]
+  , harmonicAnchor :: OmegaFormat
+  }
+
+-- Conduction field mapping scalar data to vector potential
+data ConductionField = ConductionField
+  { sourceField    :: ScalarField
+  , coherenceBias  :: Double               -- user intention weight
+  , phaseOffset    :: Double               -- φ^n temporal phase
+  }
+
+⚙️ Core Functions
+-- Translate coherence into vector motion
+conductImpulse ::
+     ConductionField
+  -> RaCoordinate
+  -> Maybe VectorImpulse
+
+-- Filter to suppress unwanted motion
+stabilizeImpulse ::
+     VectorImpulse
+  -> Double    -- noise threshold
+  -> Maybe VectorImpulse
+
+
+conductImpulse translates emergent alignment into motion direction and strength
+
+Anchored to harmonic signature and scalar gradient direction
+
+stabilizeImpulse ensures impulses only trigger above a dynamic threshold
+
+🎛️ Optional Extensions
+
+Map VectorImpulse to screen movement (e.g., cursor, slider)
+
+Coupled with Ra.Appendage to simulate limb-like behavior
+
+Future: Haptic feedback based on impulse return strength
+
+📚 Reference Documents
+
+HUBBARD_COIL_GENERATOR.md — coil-based vector energy conduction
+
+TESLA_TECHNOLOGY.md — directed current via scalar envelope
+
+REICH_ORGONE_ACCUMULATOR.md — charge movement via orgone alignment
+
+resonant_appendage.py — Python reference implementation
+
+✅ Success Criteria
+Behavior	Test
+Coherent fields generate non-zero impulses	✓
+Direction aligns with harmonic bias	✓
+Noise-filtered output suppresses jitter	✓
+Impulses usable for UI motion (e.g., screen drag)	✓

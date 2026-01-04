@@ -1,0 +1,59 @@
+🔁 Prompt 48: Ra.Telemetry.RecoveryGraph — Topological Trail of Coherence Recovery
+
+Claude, implement the Ra.Telemetry.RecoveryGraph module. This system tracks the scalar field's recovery path after coherence disruption. It visualizes emergence state transitions, field realignments, and harmonic restorations as a topological trail—a kind of "memory map" of the chamber's field healing dynamics.
+
+🧠 Module Purpose
+
+Capture and render the field healing process as a persistent structure. Useful for diagnostics, training, consent gate debugging, and avatar-chamber trust visualization.
+
+📦 Key Data Types
+1. RecoveryEvent
+data RecoveryEvent = RecoveryEvent
+  { timestamp       :: UTCTime
+  , location        :: RaCoordinate
+  , coherenceValue  :: Double
+  , fluxValue       :: Double
+  , stateBefore     :: EmergenceResult
+  , stateAfter      :: EmergenceResult
+  , inversionShift  :: Maybe Inversion
+  }
+
+2. RecoveryGraph
+data RecoveryGraph = RecoveryGraph
+  { eventTrail      :: [RecoveryEvent]
+  , loopClosed      :: Bool
+  , dominantAxis    :: HarmonicAxis
+  , coherenceDelta  :: Double
+  }
+
+🌀 Core Function
+buildRecoveryGraph ::
+     [EmergenceResult]
+  -> [ScalarFieldSnapshot]
+  -> [InversionShift]
+  -> RecoveryGraph
+
+
+Computes trail of shifts in emergence → shows realignment direction
+
+Detects coherence minimum → tracks Δ to restoration
+
+Optionally encodes harmonic torsion loop (for full emergence loop closure)
+
+📚 Reference Inputs
+
+ra.pipeline.types — for EmergenceResult, Inversion
+
+SCALAR_TORSION_ANTIGRAVITY.md — torsion axis transitions
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md — frequency rebound patterns
+
+REICH_ORGONE_ACCUMULATOR.md — slow field recharge timescales
+
+✅ Success Criteria
+Goal	Test
+Detects sharp coherence drops → returns to baseline	✓
+Trail shows real emergence result transitions	✓
+Axis dominance changes are tracked over time	✓
+Graph loops on φ^n alignment (temporal closure)	✓
+Inversion shifts logged correctly	✓

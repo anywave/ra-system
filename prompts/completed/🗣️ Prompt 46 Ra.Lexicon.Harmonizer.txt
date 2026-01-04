@@ -1,0 +1,70 @@
+🗣️ Prompt 46: Ra.Lexicon.Harmonizer — Linguistic-Coherence Resonance Engine
+
+Claude, implement the Ra.Lexicon.Harmonizer module. This system translates between human natural language input (from AVACHATTER) and scalar-resonant linguistic tokens used in Ra Field Modulation and Fragment Tuning. It performs:
+
+Coherence-aware phrase harmonization
+
+Keyword-to-fragment alignment
+
+Avatar-specific resonance tuning for linguistic expression
+
+🧠 Core Objective
+
+To create a real-time bridge between spoken/thought inputs and Ra scalar field activations, allowing users to “speak” directly to field logic using modulated language primitives.
+
+🧩 Key Types
+1. HarmonicToken
+data HarmonicToken = HarmonicToken
+  { baseWord     :: Text          -- original input
+  , toneProfile  :: HarmonicTone  -- mapped frequency class
+  , coherenceBand :: BandClass    -- maps to coherence intensity range
+  , fragmentHint :: Maybe FragmentID -- if matched
+  }
+
+2. LexiconMap
+type LexiconMap = Map Text HarmonicToken
+
+3. UserPhrase
+data UserPhrase = UserPhrase
+  { rawText     :: Text
+  , tokenized   :: [HarmonicToken]
+  , resonance   :: Double
+  , avatarMod   :: AvatarModulator
+  }
+
+🧪 Core Logic
+harmonizePhrase ::
+     Text
+  -> LexiconMap
+  -> AvatarProfile
+  -> ScalarField
+  -> UserPhrase
+
+
+Tokenizes input using known resonance-linked vocabulary
+
+Maps each token to harmonic band from KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md
+
+Checks if any token points to emergent fragments
+
+AvatarModulator (e.g., muted, amplified, poetic) modifies tone blend
+
+🗺️ Lexicon Calibration Flow
+
+Reference: RA_CONSTANTS_V2.json + FragmentAnchor resonance
+
+Learn from:
+
+REICH_ORGONE_ACCUMULATOR.md (emotional tone pulsation)
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md (frequency-language coupling)
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md (phrase-to-phase entrainment)
+
+🎯 Success Criteria
+Criterion	Test
+95% phrase mapping rate to known lexicon	✅
+Avatar tone modulation changes field activation profile	✅
+HarmonicToken resonance shifts predict field emergence	✅
+Tokens link correctly to scalar coordinate hints	✅
+Unknown words gracefully fallback to neutral	✅

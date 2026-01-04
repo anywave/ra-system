@@ -1,0 +1,89 @@
+🧬 Prompt 62: Ra.Visualizer.AvatarField — Live Avatar Harmonic Field Visualizer
+
+Claude, create a Haskell module Ra.Visualizer.AvatarField
+This module synthesizes and renders the live scalar field around an avatar based on biometric input, coherence state, chamber tuning, and emergence resonance.
+
+📦 Module: Ra.Visualizer.AvatarField
+module Ra.Visualizer.AvatarField where
+
+import Ra.Chamber.Types
+import Ra.Pipeline.Coherence
+import Ra.Avatar.Signature
+import Ra.Scalar
+import Ra.Tuning
+import Ra.Visualizer.Types
+
+🧠 Purpose
+
+This module renders real-time harmonic fields around a user avatar based on:
+
+Biometric resonance data
+
+Avatar signature (base harmonic seed)
+
+Chamber configuration (field shaping)
+
+Fragment interactions and emergence activity
+
+The output:
+A dynamic, spatial scalar field projection that can be rendered in 3D (for AR/VR), 2D (HUD), or encoded glyphically (e.g., field slice maps).
+
+🎯 Primary Output
+data AvatarFieldFrame = AvatarFieldFrame
+  { avatarId       :: AvatarID
+  , timestamp      :: UTCTime
+  , fieldSlices    :: [ScalarSlice]       -- horizontal/vertical cross-sections
+  , coherenceAura  :: Maybe AuraPattern   -- shows active coherence bands
+  , emergenceGlow  :: [GlowAnchor]        -- points of active emergence
+  , motionVector   :: Maybe (Theta, Phi)  -- current directional flow
+  }
+
+⚙️ Core Functions
+1. Generate Scalar Field Snapshot
+computeAvatarField :: 
+     AvatarSignature 
+  -> ChamberState 
+  -> CoherencePacket 
+  -> [EmergentContent]
+  -> AvatarFieldFrame
+
+
+Combines avatar harmonic root, current chamber settings, biometric coherence, and fragment emergence into a complete AvatarFieldFrame.
+
+2. Extract Spatial Slices
+fieldSlicesFromScalar :: ScalarField -> [ScalarSlice]
+
+
+Generates 2D or 3D slices (theta-phi cross-sections, radial shells) for real-time rendering.
+
+3. Aura Pattern Computation
+deriveAuraPattern :: CoherencePacket -> Maybe AuraPattern
+
+
+Transforms biometric coherence into visible auras (e.g., bands of φ-phase glow or turbulence).
+
+4. Active Emergence Glow Mapping
+mapEmergencePoints :: [EmergentContent] -> [GlowAnchor]
+
+
+Maps fragment emergence locations into glowing points on the avatar field (e.g., orbiting nodes, pulses, tendrils).
+
+📘 Reference Documents
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md — for coherence → aura link
+
+ELECTROMAGNETIC_HEALING_FREQUENCIES.md — maps frequency states to field colors
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md — used for harmonic layering
+
+TESLA_TECHNOLOGY.md + HUBBARD_COIL_GENERATOR.md — for scalar field shaping geometries
+
+✅ Success Criteria
+Requirement	Test
+Produces consistent spatial field from identical inputs	✓
+Aura reflects coherence state accurately	✓
+Scalar slices can be rendered in Ra.Visualizer.Shell	✓
+Emergence glow points align with fragment events	✓
+Module performance suitable for real-time usage	✓
+
+W

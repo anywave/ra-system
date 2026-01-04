@@ -1,0 +1,72 @@
+🌀 Prompt 55: Ra.Chamber.TeslaVortex — Scalar Field Reactor Blueprint
+
+Claude, create the Haskell module Ra.Chamber.TeslaVortex that models a scalar-torsion vortex chamber inspired by Tesla turbines, vortex-based propulsion, and zero-point flow coupling.
+
+This is not a mechanical simulation — it’s a scalar field model that can be used to seed coherence chambers, modulate torsion, and trigger nonlocal coupling.
+
+🎯 Objectives
+
+Use scalar-vortex principles to modulate radial coherence
+
+Emulate Tesla vortex chamber geometry as a field-forming equation
+
+Encode harmonic overlays (Keely bands) into chamber resonance logic
+
+Prepare the system to simulate multi-chamber scalar transfer
+
+🔧 Module Features
+module Ra.Chamber.TeslaVortex where
+
+import Ra.Scalar
+import Ra.Pipeline.Types
+import Ra.Constants.Extended
+
+-- | Vortex field profile — radial spin and torsion envelope
+data VortexProfile = VortexProfile
+  { baseSpin     :: Double         -- baseline angular velocity
+  , torsionBias  :: Double         -- field chirality
+  , layerCount   :: Int            -- how many harmonic shell layers
+  , keelyMode    :: Maybe Int      -- optional sympathetic octave mode
+  } deriving (Eq, Show)
+
+-- | Generate scalar field component from vortex profile
+generateVortexField ::
+     VortexProfile
+  -> ScalarFieldComponent
+
+-- | Bind vortex chamber to a coherence condition
+bindVortexChamber ::
+     VortexProfile
+  -> RaCoordinate
+  -> EmergenceCondition
+
+-- | Encode Tesla turbine scaling and phase properties
+teslaPhaseMap :: VortexProfile -> [Double]
+
+🔭 Field Logic
+
+Torsion bias maps to spin handedness (linked to inversion channel)
+
+Layer count creates shell-based potential wells
+
+Keely mode adds harmonic scaling from KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md
+
+Tesla flow model: radial inward → angular outward; scalar analog
+
+📚 Reference Sources
+
+TESLA_TURBINE_SPECIFICATIONS.md
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md
+
+SCALAR_TORSION_ANTIGRAVITY.md
+
+Ra.Scalar, Ra.Constants.Extended, Ra.Gates
+
+✅ Success Criteria
+Feature	Validation
+generateVortexField produces radial-symmetric profiles	✓
+Layered harmonic structures via layerCount	✓
+Emergence condition influenced by vortex spin	✓
+Keely tuning alters chamber frequency spectrum	✓
+Pluggable into Ra.Pipeline chamber logic	✓

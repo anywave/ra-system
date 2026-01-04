@@ -1,0 +1,71 @@
+🔊 Prompt 50: Ra.Fragment.EchoField — Modeling Memory Reverberation and Latent Resonance
+
+Claude, implement the module Ra.Fragment.EchoField. This simulates the echo field — the residual energetic imprint left behind after a fragment emerges (partially or fully) and especially when it decays or reverts. This echo carries both informational and psychoenergetic properties and can re-trigger emergence or modulate future coherence patterns.
+
+🎯 Purpose
+
+To simulate how a fragment, once emerged, leaves behind a scalar acoustic imprint (like a bell ring fading). These echoes are crucial for:
+
+Modeling phantom fragment presence (e.g., deja vu-like effects)
+
+Managing resonance overlaps in chambers
+
+Supporting passive gating for low-coherence users
+
+🧩 Key Types
+data EchoField = EchoField
+  { fragmentId     :: FragmentId
+  , decayRate      :: Double       -- [0, 1] how fast it fades
+  , baseIntensity  :: Double       -- initial emergence alpha
+  , harmonicMemory :: OmegaFormat  -- Harmonic signature
+  , timestampPhiN  :: Int          -- φ^n time of echo start
+  }
+
+data EchoInfluence = EchoInfluence
+  { boostFactor  :: Double         -- Temporary coherence gain
+  , harmonicPull :: Maybe OmegaFormat
+  , triggerChance :: Double        -- Chance of ghost emergence
+  }
+
+⚙️ Core Functions
+generateEchoField ::
+     EmergentContent   -- Fragment that just decayed or reverted
+  -> Int               -- Current φ^n time index
+  -> EchoField
+
+evaluateEchoInfluence ::
+     EchoField
+  -> Int               -- Current φ^n time
+  -> Maybe EchoInfluence
+
+
+Echoes fade over φ^n time using exponential decay
+
+EchoInfluence boosts coherence or gates if intensity > threshold
+
+Echoes can amplify future related fragments
+
+🔗 Integration Targets
+
+Ra.Scheduler (for φ^n ticks)
+
+Ra.Gates (to bias access result)
+
+Ra.Scalar (to inject temporary scalar coherence from echoes)
+
+Ra.Music (for spectral echo generation)
+
+📚 Reference Documents
+
+MORAY_RADIANT_ENERGY.md — residual fields after radiant discharge
+
+ELECTROMAGNETIC_HEALING_FREQUENCIES.md — waveform persistence
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md — harmonic field echo patterns
+
+✅ Success Criteria
+Behavior	Test
+EchoField fades over φ^n time	✓
+High-intensity fragments produce longer-lasting echoes	✓
+Echo can re-trigger emergence at reduced alpha	✓
+Echo resonance influences future gating	✓

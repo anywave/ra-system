@@ -1,0 +1,99 @@
+✅ Prompt 8: Sympathetic Harmonic Fragment Access Modeling
+
+Claude, model how sympathetic resonance between scalar fields and user-specific frequencies can modulate fragment access and emergence strength, based on Keely’s vibratory physics and Ra scalar harmonic structure.
+
+🧠 Goal:
+
+Design a harmonic alignment algorithm where fragments emerge more easily when the user’s biometric or ambient vibratory state matches their encoded harmonic signature.
+
+This models “sympathetic unlocking” — similar to how a tuning fork vibrates when matched by another.
+
+📘 Core References:
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md
+→ Use triune structure: tonic, dominant, enharmonic vibrations
+→ Reference "thirds" and concordant/discordant frequency logic
+
+RA_CONSTANTS_V2.json
+→ Extract fragment harmonics (l, m) or defined frequency triplets
+
+Ra.Scalar & Ra.Gates
+→ Gate logic, reluctance fields, emergence thresholds
+
+🧮 Components Claude Must Define:
+1. Fragment Harmonic Signature
+
+Each Ra fragment should have:
+
+{
+  "harmonic_signature": {
+    "tonic": 528,
+    "dominant": 396,
+    "enharmonic": 639
+  }
+}
+
+
+Derived from spherical harmonic parameters (l, m) or predefined
+
+Frequencies can be auditory (Hz) or abstract scalar phase ratios
+
+2. User Resonance Profile
+
+Computed from biometric data (see Prompt 7) or external environment input:
+
+{
+  "user_profile": {
+    "dominant_freq": 396,
+    "hrv_resonance": 0.62,
+    "coherence_score": 0.84
+  }
+}
+
+3. Resonance Matching Algorithm
+
+Claude must implement:
+
+match_score = harmonic_similarity(fragment_signature, user_profile)
+
+Use ratios, not absolute frequencies
+
+Weight similarity of tonic/dominant/enharmonic
+
+Use spectral coherence formula or cosine similarity
+
+4. Access Modulation Logic
+
+Claude must model how match_score affects:
+
+AccessResult (FULL, PARTIAL, BLOCKED)
+
+Emergence alpha
+
+Inversion probability (if mismatch occurs)
+
+Also account for “guardian harmonics”:
+
+Some fragments resist emergence unless a specific frequency is present (e.g., a parent fragment must be resonating)
+
+🎼 Tonal Access Map (Example Table):
+Match Score	AccessResult	Emergence Alpha	Description
+≥ 0.90	FULL	1.0	Perfect harmonic match — fragment flows freely
+0.60–0.89	PARTIAL	0.4–0.9	Partial match — blurred or previewed access
+0.30–0.59	BLOCKED	0.0	Low coherence — fragment dormant
+< 0.30	SHADOW	varies	Inverted or suppressed fragment emerges instead
+✅ Success Criteria:
+
+Claude’s output must:
+
+Define full harmonic_signature structure
+
+Include clear match_score computation method
+
+Show how result plugs into Ra access gating (Ra.Gates)
+
+Reference Keely’s vibratory triads accurately
+
+Model sympathetic unlocking and resistance cases
+
+Enable chaining (e.g., fragments requiring harmony with others to unlock)

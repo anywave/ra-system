@@ -1,0 +1,131 @@
+✋ Prompt 57: Ra.Shell.LimbGestures — Torsion‑Based Gesture Recognition for Scalar Control
+
+Claude, implement the Haskell module Ra.Shell.LimbGestures.
+This system detects and interprets gesture patterns from torsion‑influenced sensory input (biometric, intent vectors, and field resonance). It outputs gesture intents that tie directly into Ra.Interface.TactileControl to enable coherent, field‑aware movements of appendages (virtual or physical).
+
+🎯 Purpose
+
+To build a gesture recognition layer that:
+
+Works with scalar and torsional data
+
+Maps spatiotemporal evolution of field vectors into gestural classes
+
+Integrates tightly with Ra’s control pipelines
+
+Enables intuitive, resonance‑driven motion (e.g., open, grab, point, wave)
+
+📦 Module Overview
+module Ra.Shell.LimbGestures where
+
+import Ra.Interface.TactileControl
+import Ra.Pipeline.Types
+import Ra.Scalar
+import Ra.Shell.Types
+
+🧠 Core Types
+✅ Gesture Classification
+data Gesture
+  = OpenHand
+  | CloseHand
+  | Point
+  | SwipeLeft
+  | SwipeRight
+  | RaiseArm
+  | LowerArm
+  | CircleMotion
+  | HoldStill
+  deriving (Eq, Show)
+
+✅ Gesture Confidence & Context
+data GestureEvent = GestureEvent
+  { gestureType     :: Gesture
+  , confidenceScore :: Double   -- [0..1]
+  , timestampPhiN   :: Int      -- φ^n tick index
+  , spatialVector   :: (Double, Double, Double)
+  }
+
+🧠 Core Functions
+🎤 1. Gesture Detection
+detectGesture ::
+     [ScalarVectorTrack]    -- time series of vector motion
+  -> Maybe GestureEvent
+
+
+Uses the trajectory of vector impulses over recent φ^n frames
+
+Looks for characteristic patterns (swipes, raises, circles)
+
+Confidence increases with pattern consistency
+
+🧠 2. Gesture → Intent Mapping
+mapGestureToIntent ::
+     GestureEvent
+  -> ControlIntent
+
+
+Converts a gesture into a control intent
+
+Examples:
+
+OpenHand → Release
+
+CloseHand → Grasp
+
+SwipeRight → MoveTo (x+1, y, z)
+
+CircleMotion → HoverAt currentLocation
+
+⚙️ Gesture Recognition Logic
+
+Track displacement vectors over φ^n ticks
+
+Build short‑term memory of spatial motion
+
+Recognize patterns via:
+
+Directional continuity
+
+Temporal thresholds
+
+Harmonic alignment context
+
+Coherence confidence floor
+
+Example pattern rules:
+
+Pattern	Recognition	Output Gesture
+△ small jitter then outward	OpenHand	Open
+▲ inward collapse	CloseHand	Grasp
+→ consistent x axis move	SwipeRight	Move Along X
+⟳ circular torsion	CircleMotion	Hover/Raise Spiral
+📚 Reference Sources
+
+Ra.Interface.TactileControl — to integrate output
+
+Ra.Propulsion.VectorConduction — to track motion vectors
+
+Ra.Pipeline.Types — to obtain time series of coherence and vector states
+
+SCALAR_TORSION_ANTIGRAVITY.md — for spin and torsion signal behaviors
+
+Ra.Scalar — for harmonic context
+
+✅ Success Criteria
+Criterion	Test
+Gesture is consistently recognized with accuracy ≥ 0.7	✓
+Confidence score reflects coherence of pattern	✓
+Mapping to intent is correct semantically	✓
+Handles null/noise with Nothing	✓
+Ties cleanly into interpretIntent for control	✓
+🧪 Suggested HSpec Test Sketch
+describe "Ra.Shell.LimbGestures.detectGesture" $ do
+  it "detects OpenHand on outward vector burst" $ do
+    let track = [vecSmall, vecOutward, vecOutward]
+    gesture <- detectGesture track
+    gestureType gesture `shouldBe` OpenHand
+    confidenceScore gesture `shouldSatisfy` (>0.5)
+
+  it "returns Nothing on noise" $ do
+    let track = [vecRand, vecRand]
+    detectGesture track `shouldBe` Nothing

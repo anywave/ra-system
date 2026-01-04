@@ -1,0 +1,99 @@
+🎼 Prompt 22: Ra.SonicFlux – Real-Time Harmonic Sonification of Scalar Emergence
+🧭 Purpose
+
+Implement a real-time audio sonification module (Ra.SonicFlux) that maps scalar emergence events (from Ra.Emergence or Ra.Pipeline) into rich, harmonic sound signatures. This transforms the scalar field into an experiential feedback loop, allowing users (or researchers) to hear and track scalar coherence and emergence quality over time.
+
+This also serves as a foundation for biometric-instrument coherence training, holographic tuning feedback, or musical synthesis based on fragment interaction.
+
+🧩 Module: Ra.SonicFlux
+Key Responsibilities:
+
+Ingest emergence data: RaCoordinate, EmergenceResult, alpha, Inversion, and temporal context
+
+Transform scalar + harmonic values into:
+
+Pitch (frequency range mapping)
+
+Amplitude/dynamics (from emergence alpha)
+
+Timbre (from ChamberType or avatar)
+
+Phase coherence (for stereo or 3D spatial panning)
+
+Output control signals to external DSP/audio layer, or to Ra.Music
+
+📈 Data Mapping
+Ra Input Component	Mapped Audio Parameter	Notes
+theta, phi	Spatialization (L/R/3D pan)	azimuth/elevation
+h, radius	Pitch base + modulation	map to frequency domain
+harmonic (l, m)	Timbre spectrum shape	generate overtone profiles
+alpha	Volume / brightness	fade in/out intensity
+Inversion	Phase inversion / detuning	harmonic cancellation
+TemporalPhase	Modulate LFO or beat sync	time-linked effects
+ChamberType or AvatarId	Instrument / synth voice	optional custom profile
+🧪 Example Output
+-- SonicOutput: what Ra.SonicFlux emits
+data SonicOutput = SonicOutput
+  { frequency     :: Double        -- in Hz
+  , amplitude     :: Double        -- normalized [0,1]
+  , panPosition   :: (Double, Double)  -- stereo or spatial coordinates
+  , timbreProfile :: [Double]      -- harmonic series weights
+  , phaseMod      :: Maybe Double  -- optional phase distortion
+  , envelopeType  :: EnvelopeKind  -- e.g., Smooth, Sharp, Pulse
+  , sourceFragment :: Maybe FragmentId
+  }
+
+🛠️ Core Functions
+-- Main sonification entrypoint
+sonifyEmergence
+  :: EmergenceContext  -- contains RaCoordinate, alpha, inversion, etc.
+  -> ChamberType
+  -> AvatarId
+  -> SonicOutput
+
+-- Converts spherical coord to stereo panning
+mapPan :: RaCoordinate -> (Double, Double)
+
+-- Translates harmonic mode (l, m) to overtone profile
+harmonicTimbre :: HarmonicMode -> [Double]
+
+-- Phase-to-LFO mod
+temporalModulation :: TemporalPhase -> Double
+
+🧪 Success Criteria
+Criterion	Description
+✅ Correct pitch mapping	Emergence coordinate reliably determines pitch
+✅ Timbre varies by harmonic	(l,m) values shift harmonic spectrum
+✅ Real-time update	SonicOutput produced within 10–20 ms of event
+✅ Spatial coherence	Stereo/3D output tracks angular values
+✅ Inversion suppression	Inverted events produce phase-inverted signals
+✅ Coherence-driven intensity	alpha affects volume/envelope
+✅ Extendable	Compatible with Ra.Music, Ra.Pipeline
+📂 References to Use
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md → for overtone series, additive synthesis inspiration
+
+TESLA_TECHNOLOGY.md → for scalar → waveform transduction models
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md → for frequency band mapping
+
+SCALAR_TORSION_ANTIGRAVITY.md → for node/harmonic field intersections
+
+🧪 HSpec Tests Sketch
+describe "Ra.SonicFlux.sonifyEmergence" $ do
+  it "maps low radius to low pitch" $
+    frequency (sonifyEmergence lowCoord context ...) `shouldSatisfy` (< 200)
+
+  it "maps alpha to amplitude" $
+    amplitude (sonifyEmergence highAlpha context ...) `shouldBe` 1.0
+
+  it "inverts phase for shadow fragments" $
+    phaseMod (sonifyEmergence invertedCoord context ...) `shouldSatisfy` isNegative
+
+🧠 Architectural Notes
+
+You may output SonicOutput to JSON stream for external synthesizers (e.g., SuperCollider, Max/MSP)
+
+Can optionally feed Ra.Music if a notation mapping is needed
+
+Consider creating a SonicAvatarProfile system for per-avatar voice tuning

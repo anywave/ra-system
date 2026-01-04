@@ -1,0 +1,70 @@
+✅ Prompt 18: Ra Attractors and Emergence Modulation
+
+Context:
+Inspired by the Death Note metaphor ("Shinigami love apples"), this prompt extends the Ra scalar framework to include metaphysical attractors—objects, stimuli, or archetypes that can induce, modulate, or gate fragment emergence via coherence manipulation.
+
+Task for Claude:
+Design a Haskell module Ra.Attractors and a Python counterpart (if needed), implementing the concept of attractors as scalar influence agents. These are symbolic or energetic tokens that increase or alter the emergence potential of certain fragments.
+
+🧩 Requirements
+
+Attractor Type System
+
+Create a type Attractor with:
+
+symbol :: String (e.g., "apple")
+
+flavor :: PhaseComponent (e.g., emotional, sensory, archetypal)
+
+enticementLevel :: CoherenceWeight
+
+targetFragments :: [FragmentId] or filters (e.g., "shadow only", "guardian-gated")
+
+Attractor Logic
+
+Function applyAttractor :: Attractor -> EmergenceCondition -> EmergenceCondition
+
+Modify potential and/or flux
+
+Adjust inversion or temporalPhase if attractor is strong enough
+
+Optional gating override
+
+Metaphysical Reference Model
+
+Reference:
+
+The metaphor of “apples” in Death Note
+
+Ra scalar emergence thresholds
+
+Shadow vs normal fragments
+
+Optional tie-in to guardian harmonics
+
+Test Cases
+
+Show how:
+
+A fragment that wouldn’t normally emerge can be coaxed with a specific attractor
+
+A shadow fragment’s emergence becomes possible when enticed
+
+Multiple attractors can compete or synchronize (constructive/destructive modulation)
+
+📁 Reference Documents
+
+Claude may consult:
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md — for archetypal resonance
+
+RA_SCALAR.hs — for emergence modeling
+
+Any scalar prompt output already provided (coherence, fragment gating, inversion logic)
+
+✅ Success Criteria
+Goal	Evidence
+Attractors influence emergence	applyAttractor changes the outcome in evaluateEmergence
+Attractors modulate inversion or gating	Inversion flips allowed when attractor matches fragment
+Concept aligns with Ra metaphysics	Clear tie to scalar resonance, coherence, and thresholds
+Optional: supports real-time modulation	Prepared for integration with Ra.Pipeline or Ra.Music

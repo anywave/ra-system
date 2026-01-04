@@ -1,0 +1,90 @@
+🧠 Prompt 45: Ra.Entangle.BioMap — Bio-Fragment Entanglement Topology Mapper
+
+Claude, implement the Ra.Entangle.BioMap module. This system constructs and updates a real-time entanglement graph between:
+
+The user's biometric coherence nodes
+
+Scalar field concentrations (Ra coordinates)
+
+Fragment anchors from Ra.Memory
+
+Chamber field structures from Ra.Chamber
+
+This allows the AVACHATTER protocol to visualize and traverse emergent memory linkages, resonance corridors, and identity gradients.
+
+🧩 Core Concepts
+
+Fragments have positions (Ra coordinates), resonance thresholds, and harmonic fingerprints
+
+Users emit biometric coherence pulses (heart, breath, neural signatures)
+
+Entanglement links form when coherence matches fragment resonance
+
+Topology evolves based on live field readings and memory emergence
+
+🧬 Functional Scope
+1. EntangledFragment
+data EntangledFragment = EntangledFragment
+  { fragmentId     :: FragmentID
+  , anchorCoord    :: RaCoordinate
+  , resonanceScore :: Double
+  , activeLink     :: Bool
+  }
+
+2. BioNode
+data BioNode = BioNode
+  { userRegion     :: BodyZone
+  , coherenceValue :: Double
+  , phaseSignature :: PhaseCode
+  }
+
+3. EntangleGraph
+type EntangleGraph = Map BioNode [EntangledFragment]
+
+🧪 Entanglement Logic
+linkFragments ::
+     [BioNode]
+  -> [FragmentAnchor]
+  -> ScalarField
+  -> EntangleGraph
+
+
+Uses harmonic distance from Ra.Spherical
+
+Computes matching ∆phase signatures
+
+Only links fragments where:
+
+coherence > floor
+
+phase alignment within ±0.15
+
+potential flux > local minimum threshold
+
+📊 Visualization
+
+Send EntangleGraph structure to:
+
+Ra.Visualizer.Graph for network diagram (nodes + links)
+
+Ra.Chamber.Router to bias field resonance toward active fragments
+
+Ra.Pipeline.Infer for narrative feedback
+
+📘 Referential Inputs
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md: phase matching and identity tones
+
+SCALAR_TORSION_ANTIGRAVITY.md: zero-point intersections and binding potential
+
+REICH_ORGONE_ACCUMULATOR.md: pulsation envelopes and node attractors
+
+✅ Success Criteria
+Test	Outcome
+Coherence aligns with fragment → active link formed	✅
+Phase mismatch → link fails gracefully	✅
+Fragment emergence raises resonance on matching BioNode	✅
+Real-time update ≤ 250ms	✅
+Supports ≥ 25 concurrent entangled links	✅
+
+N

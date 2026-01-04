@@ -1,0 +1,70 @@
+Prompt 34: Claude, Design a Scalar-Interactive Surface Shader System with Biometric Coherence Coupling
+Objective:
+
+Create a system where digital surfaces, interfaces, and textures respond dynamically to user scalar state (via Ra coherence model) and environmental torsion fields. This is ideal for things like “responsive UI halos,” “coherence-modulated material textures,” or “consent-aware digital membranes.”
+
+Source References:
+
+SCALAR_TORSION_ANTIGRAVITY.md — Use: torsion-induced refractive index shifts, spin-induced structural transformations
+
+ELECTROMAGNETIC_HEALING_FREQUENCIES.md — Use: frequency ranges to associate surface resonance to user state
+
+Ra.Biometrics.Pipeline — Use: coherence value, field stability, bioharmonic alignment
+
+Ra.Visualizer.Surfaces — New module (or extension of .Shell)
+
+Deliverables:
+
+Shader State Model:
+
+data SurfaceState = 
+  SurfaceState 
+    { coherenceLevel :: Double
+    , torsionSpin    :: SpinState  -- Clockwise | Counter
+    , resonanceFreq  :: Double     -- Hz
+    , permissionGate :: ConsentLevel
+    }
+
+
+Surface Style Resolver:
+
+resolveSurfaceStyle :: SurfaceState -> ShaderParams
+
+
+Maps scalar state to:
+
+Refractive distortion (torsionSpin)
+
+Hue shift (resonanceFreq)
+
+Alpha transparency / hardness (coherenceLevel)
+
+Interactivity zone (permissionGate = Suspended, Passive, Engaged)
+
+Consent Surface Overlay:
+
+When permissionGate == Suspended, show translucent “bio-dome” field
+
+Override shaders show turbulence if user coherence < 0.2
+
+Environment Surface Hooks:
+
+Surfaces store base BioHarmonicSignature
+
+When touched or hovered, surfaces check:
+
+alignment :: BiometricSnapshot -> Bool
+
+If aligned: increase bloom/emissive state
+
+If misaligned: introduce turbulence visual
+
+Success Criteria:
+
+Surfaces visibly react within 200ms of biometric changes
+
+“Suspended consent” overlays appear automatically and retract on restoration
+
+Scalar spin toggles correctly invert shaders across torsion axes
+
+Surfaces return to neutral state after inactivity timeout (e.g., 30s)

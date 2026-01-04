@@ -1,0 +1,76 @@
+🌀 Prompt 43: Ra.Projection.Map — Dynamic Scalar Field Grid Projection
+
+Claude, implement a module Ra.Projection.Map that projects the scalar field's emergence gradients across the full 810-state Ra coordinate space. The goal is to track live potential evolution and visualize emergent “hot zones.”
+
+📐 Context
+
+The Ra field is composed of:
+
+27 Repitan θ slices
+
+6 φ segments (azimuth)
+
+5 harmonic depths (h-levels)
+
+Which gives:
+810 coordinate points → full discrete field coverage.
+
+🧭 Functionality Goals
+1. Grid Projection Function
+projectScalarField :: ScalarField -> Map RaCoordinate EmergenceAlpha
+
+
+Output is a map: RaCoordinate → EmergenceAlpha [0.0 – 1.0]
+
+Uses: potential, flux coherence, window modulation
+
+2. Gradient Overlay
+computeGradientFlow :: ScalarField -> Map RaCoordinate GradientVector
+
+
+Show vector shift of potential from point-to-point
+
+Useful for tracing attractors and energy “valleys”
+
+3. Inversion Field Visualization
+inversionZones :: ScalarField -> [RaCoordinate]
+
+
+Identify “shadow emergence” pockets where Inversion = INVERTED
+
+🔁 Update Mechanics
+
+Hook into Ra.Pipeline.updateField
+
+Optionally debounce updates to ~1Hz (configurable)
+
+🎨 Optional Integration: Ra.Visualizer.Shell
+
+Color-code alpha values (e.g., black → blue → gold)
+
+Vector overlays = mini-arrows for gradient flow
+
+UI filtering: show only above threshold (e.g., α > 0.3)
+
+🔧 Test Sketch
+prop_projectAlphaBounded :: ScalarField -> Bool
+prop_projectAlphaBounded sf = all inRange (Map.elems $ projectScalarField sf)
+  where inRange α = α >= 0.0 && α <= 1.0
+
+📘 Reference Files
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md: harmonic motion basis
+
+MORAY_RADIANT_ENERGY.md: energy flow models
+
+GOLOD_RUSSIAN_PYRAMIDS.md: energy concentration patterns
+
+🧪 Success Criteria
+
+Field projection for all 810 states produced within < 200ms
+
+Alpha values smoothly transition as field updates
+
+Inverted zones are sparse but visible under debug
+
+Gradient vectors reflect physically coherent flow (no abrupt divergence unless simulated)

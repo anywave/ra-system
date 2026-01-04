@@ -1,0 +1,102 @@
+✅ Prompt 12: Consent-Gated Shadow Harmonics for Therapeutic Emergence
+
+Claude, implement a shadow harmonic extension for Ra scalar emergence, enabling safe integration of suppressed or inverted content (trauma fragments) via consent-aware field thresholds and resonance matching.
+
+📘 Core References:
+
+Ra.Scalar → Fragment structure, inversion state
+
+Ra.Emergence → EmergentContent, Inversion, EmergenceType
+
+Ra.Gates → AccessResult, ConsentState, session overrides
+
+REICH_ORGONE_ACCUMULATOR.md → Emotional charge layers & dissipation
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md → Bioelectrical trauma gating
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md → Harmonic dissonance & restoration
+
+🧠 Goal:
+
+Enable the system to safely access, present, and integrate shadow fragments — emotional content stored in inverted scalar fields — only with active user consent, adaptive thresholds, and safety overrides.
+
+🧮 Claude Must Implement:
+1. Shadow Fragment Class
+
+Extend EmergentContent:
+
+{
+  "fragment_id": "T38-Shadow",
+  "form": "SHADOW",
+  "inversion": "INVERTED",
+  "alpha": 0.42,
+  "consent_state": "SUSPENDED",
+  "shadow_type": "Mirror | Obscured | Inverted",
+  "requires_override": true
+}
+
+
+Track shadow metadata:
+
+origin_fragment: normal version this was inverted from
+
+harmonic mismatch: Δ(harmonic) from core field
+
+emotional charge: inferred from emergence tension
+
+2. Consent Logic Extension
+
+Ra.Gates must:
+
+Detect if shadow fragment would emerge
+
+Block unless:
+
+Explicit consent state is THERAPEUTIC
+
+Session is guided by licensed_operator (flag true)
+
+Field coherence > COHERENCE_SAFE_ACCESS (e.g., 0.66)
+
+Special override form:
+
+{
+  "consent_override": {
+    "source": "avatar_therapist",
+    "reason": "Shadow integration request approved",
+    "timestamp": ...
+  }
+}
+
+3. Therapeutic Feedback Module
+
+Claude generates:
+
+Field-safe instructions (“This memory may feel dissonant. Breathe slowly…”)
+
+Visual harmonic guide (showing convergence path)
+
+Integration prompt (“Would you like to reflect on this with your guide?”)
+
+Claude tracks:
+
+shadow_progress: % of integration over time
+
+resonance match delta: improving or degrading?
+
+✅ Success Criteria:
+
+Claude must:
+
+Detect potential emergence of shadow fragment
+
+Gate emergence based on consent state and safety
+
+Present shadow content only under safe, guided conditions
+
+Provide real-time integration feedback
+
+Log all shadow interactions for therapist/session review
+
+Reference at least one file (e.g., KAALI_BECK or REICH) to justify trauma gating logic
+

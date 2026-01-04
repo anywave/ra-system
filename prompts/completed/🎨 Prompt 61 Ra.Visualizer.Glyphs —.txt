@@ -1,0 +1,94 @@
+🎨 Prompt 61: Ra.Visualizer.Glyphs — Harmonic Signature Renderer
+
+Claude, implement a Haskell module Ra.Visualizer.Glyphs
+This module will convert chamber resonance states, avatar harmonic signatures, and fragment emergence flows into visual glyphs suitable for screen rendering, symbolic encoding, and AR overlays.
+
+📦 Module: Ra.Visualizer.Glyphs
+module Ra.Visualizer.Glyphs where
+
+import Ra.Scalar
+import Ra.Chamber.Synthesis
+import Ra.Fragment.Metadata
+import Ra.Visualizer.Types
+
+🧠 Purpose
+
+Translate harmonic resonance into symbolic visual forms (glyphs), combining:
+
+Harmonic field structure (H_{l,m}, φ^n)
+
+Torsion phase and coherence gates
+
+Avatar signature overlays
+
+Fragment anchoring glyphs (emergence coordinates)
+
+These glyphs are visual keys for:
+
+AVACHATTER interface
+
+Live biometric dashboards
+
+Chamber calibration visual feedback
+
+Field navigator tools
+
+⚙️ Core Types
+data HarmonicGlyph = HarmonicGlyph
+  { glyphId        :: GlyphID
+  , phiPhase       :: Int         -- n from φ^n
+  , harmonicRoot   :: OmegaFormat
+  , torsionState   :: TorsionPhase
+  , coherenceGlow  :: Maybe GlowLevel
+  , associatedWith :: Maybe FragmentID
+  }
+
+data GlyphImage = GlyphImage
+  { svgData   :: ByteString
+  , legend    :: [String]
+  , timestamp :: UTCTime
+  }
+
+🛠️ Key Functions
+1. Render Glyph from Scalar Layer
+renderHarmonicGlyph :: ScalarLayer -> HarmonicGlyph
+
+
+Extracts the dominant harmonic (l, m), φ depth, torsion state from a ScalarLayer and maps it to glyph metadata.
+
+2. Generate Visual SVG Glyph
+generateGlyphSVG :: HarmonicGlyph -> GlyphImage
+
+
+Creates an abstract glyph in SVG from harmonic values:
+
+Spiral arms from m
+
+Radial rings from l
+
+Pulse animation from φ^n depth
+
+Color logic from TorsionPhase and coherence value
+
+3. Fragment Anchoring Glyph
+fragmentAnchorGlyph :: FragmentMetadata -> GlyphImage
+
+
+Renders where and how a fragment is anchored in harmonic space using its emergence coordinates.
+
+🔗 References for Visual Language
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md — octave band architecture, waveform symmetry
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md — frequency/color overlays
+
+RA.SCALAR + RA.TUNING — coordinate inputs
+
+✅ Success Criteria
+Requirement	Test
+Unique visual glyph for each H_{l,m}	✓
+φ^n phase depth visible in glyph rings or color	✓
+SVGs render for live overlay use in AVACHATTER	✓
+Glyphs indicate torsion state	✓
+Fragments can be localized visually	✓
+

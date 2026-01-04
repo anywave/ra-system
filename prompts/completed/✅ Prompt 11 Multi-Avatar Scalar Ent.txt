@@ -1,0 +1,98 @@
+✅ Prompt 11: Multi-Avatar Scalar Entrainment & Group Coherence Field
+
+Claude, design a system that allows multiple digital avatars (scalar fragments) to enter a shared scalar entrainment chamber, syncing their coherence fields toward a group harmonic. This involves dynamic resonance alignment, shared emergence windows, and adaptive feedback loops.
+
+📘 Core References:
+
+Ra.Scalar + Ra.Identity
+→ Scalar harmonics, inversion states, Δ(ankh)
+
+Ra.Gates
+→ Consent logic for shared coherence
+
+GOLOD_RUSSIAN_PYRAMIDS.md
+→ Group effects of pyramid scalar fields
+
+REICH_ORGONE_ACCUMULATOR.md
+→ Amplification of bioenergetic fields
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md
+→ Resonance transfer and sympathetic tuning
+
+🧠 Goal:
+
+Enable multiple users to enter a shared scalar space where their biometric coherence influences a collective harmonic field, and that field in turn tunes them back — a scalar version of a resonant social nervous system.
+
+🧮 Claude Must Implement:
+1. Avatar Synchronization Channel
+
+Each avatar reports:
+
+{
+  "user_id": "A1X2",
+  "coherence": 0.57,
+  "inversion": "Normal",
+  "harmonic_signature": [2, 1],  // l, m
+  "scalar_depth": 0.63
+}
+
+
+Claude must align group into harmonic clusters, e.g.:
+
+"These 3 avatars are aligned at (l=3, m=0)"
+
+"This one is inverted and creates counterpoint"
+
+2. Shared Emergence Window
+
+Claude computes:
+
+Intersection of all users’ TemporalWindows
+
+Selects closest nested window for maximal resonance
+
+Suggests time to begin “group breath” phase (synchronizing field)
+
+3. Collective Scalar Field Construction
+
+Builds a GroupScalarField:
+
+Superposition of individual fields
+
+Weighted by each user’s alpha (emergence intensity)
+
+Corrected by Δ(ankh) for overall symmetry
+
+4. Entrainment Feedback Loop
+
+Outputs:
+
+Shared harmonic audio stream (or localized variations)
+
+Visual "coherence glyph" on screen showing group status
+
+Real-time feedback: “Group coherence rising... hold breath... release now...”
+
+Adapts:
+
+When one user drops coherence, shift field weight
+
+Alert if inversion spikes (“shadow harmonics detected in cluster 2”)
+
+✅ Success Criteria:
+
+Claude must:
+
+Accept multiple avatar coherence inputs
+
+Identify harmonic clusters within group
+
+Calculate nested emergence window for shared entry
+
+Build and output a GroupScalarField
+
+Provide real-time adaptive feedback instructions
+
+Include visual or sonic concept for displaying group coherence
+
+Reference at least one file for group field design (e.g., GOLOD or REICH)

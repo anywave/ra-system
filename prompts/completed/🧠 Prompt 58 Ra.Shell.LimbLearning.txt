@@ -1,0 +1,89 @@
+🧠 Prompt 58: Ra.Shell.LimbLearning — Adaptive Gesture Personalization Engine
+
+Claude, implement the Haskell module Ra.Shell.LimbLearning.
+This module enables per-user learning and refinement of gesture patterns, improving responsiveness and inclusivity (especially for neurodiverse or physically atypical users). It augments the Ra.Shell.LimbGestures recognizer.
+
+🎯 Purpose
+
+Adapt gesture classification to individual motor signatures
+
+Provide user-calibrated mappings (learned from small samples)
+
+Fuse machine-learned heuristics with Ra coherence & torsion analysis
+
+Enable “custom gesture” programming (e.g., nod = hover, blink = select)
+
+📦 Module Overview
+module Ra.Shell.LimbLearning where
+
+import Ra.Shell.LimbGestures
+import Ra.Pipeline.Types
+import Ra.User.Identity
+import Data.Map (Map)
+
+🧠 Core Types
+type UserID = UUID
+
+data GestureModel = GestureModel
+  { gestureTemplate :: [ScalarVectorTrack]  -- known path
+  , tolerance       :: Double               -- how much deviation to allow
+  , overrideIntent  :: Maybe ControlIntent  -- optional mapping override
+  }
+
+type UserGestureLibrary = Map Gesture GestureModel
+
+⚙️ Key Functions
+🎤 1. Learn From Gesture Examples
+learnGesture ::
+     UserID
+  -> Gesture
+  -> [ScalarVectorTrack]
+  -> RaState UserGestureLibrary
+
+
+Captures user’s motion path for a known gesture label
+
+Stores template in per-user map
+
+🔍 2. Match Personalized Gesture
+matchUserGesture ::
+     UserID
+  -> [ScalarVectorTrack]
+  -> Maybe GestureEvent
+
+
+Compares incoming signal with known user templates
+
+Uses shape, angle, coherence slope similarity
+
+Returns matching GestureEvent with confidence
+
+🧠 3. Custom Gesture Bindings
+overrideGestureIntent ::
+     UserID
+  -> Gesture
+  -> ControlIntent
+  -> RaState UserGestureLibrary
+
+
+Enables SwipeLeft → Execute(RotateChamber -30°) for one user
+
+Stored and recalled per identity
+
+📚 Reference Sources
+
+Ra.Shell.LimbGestures — base recognizer
+
+Ra.User.Identity — links to RaPersona
+
+SCALAR_TORSION_ANTIGRAVITY.md — to tune sensitivity
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md — for biomotion influence
+
+✅ Success Criteria
+Feature	Criterion
+Learns from 3–5 user gesture samples	✓
+Matches personalized input with ≥ 80% confidence	✓
+Supports optional override of output intent	✓
+Handles multiple users without interference	✓
+Respects coherence bounds to avoid false positives	✓

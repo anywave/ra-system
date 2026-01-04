@@ -1,0 +1,168 @@
+✅ Prompt 20: Biophysical Field Chamber Resonance Map
+
+Prompt Title:
+Biophysical Field Chamber Resonance Map (Ra.Chamber.Tuning)
+
+Instructions for Claude:
+
+Claude, please design a dynamic resonance mapping system that allows a user's biometric state to actively modulate the configuration and behavior of their scalar coherence chamber, using field principles drawn from multiple sources.
+
+🔬 Incorporate These Source References:
+Source File	Use
+SCALAR_TORSION_ANTIGRAVITY.md	Scalar torsion geometry, spin-polarized field structures
+RIFE_LAKHOVSKY_SPECIFICATIONS.md	Therapeutic frequency bands, cellular resonance windows
+WATER_SCIENCE.md	Memory encoding in water/plasma substrates (biofield persistence)
+REICH_ORGONE_ACCUMULATOR.md (optional)	Layered material field accumulation
+KAALI_BECK_BLOOD_ELECTRIFICATION.md (optional)	Electro-biofield entrainment
+⚙️ System Specification:
+
+You are designing a Haskell module called:
+Ra.Chamber.Tuning
+
+This module takes inputs from the Ra.Pipeline.Biometric stream and outputs a resonance map used by:
+
+Ra.Chamber.Runtime (chamber instance configuration)
+
+Ra.Music.Soundfield (coherence → tone/field conversion)
+
+Ra.Visualizer.Shell (coherence shell rendering)
+
+📐 Define the Following Structures:
+
+ResonanceShell
+A multi-layer structure that defines field zones around the user:
+
+data ResonanceShell = ResonanceShell
+  { layerId         :: Int
+  , harmonicCarrier :: Double      -- Hz
+  , coherenceBand   :: (Double, Double)  -- coherence threshold to activate
+  , torsionFactor   :: Double      -- spin polarity modifier (from -1 to +1)
+  , fluidMemorySeed :: Maybe Text  -- water-plasma imprint (optional)
+  }
+
+
+ChamberTuningProfile
+A full snapshot of the chamber’s current field resonance:
+
+data ChamberTuningProfile = ChamberTuningProfile
+  { timestamp     :: UTCTime
+  , userId        :: UUID
+  , biometricHash :: Text
+  , activeShells  :: [ResonanceShell]
+  , ambientMode   :: ChamberAmbientMode  -- e.g., "Therapeutic", "Exploratory"
+  , feedbackTone  :: Maybe Frequency  -- Audible output for sync
+  }
+
+
+generateTuningProfile :: BiometricState -> IO ChamberTuningProfile
+Core function that maps biometric input to profile output.
+
+🎯 Rules & Constraints:
+
+Coherence values below φ / ANKH ≈ 0.3183 should trigger low-stability shells (soft field, therapeutic mode).
+
+ResonanceShells activate only if user’s coherence is in band.
+
+Scalar torsion spin factor flips when coherence < 0.2 (inverse torsion).
+
+At coherence > 0.85, activate an upper harmonic shell seeded with memory from prior peak (fluid memory carryover).
+
+Optionally imprint user intent into fluidMemorySeed via Ra.Intent.Token (if available).
+
+✅ Success Criteria:
+Goal	Test
+Coherence modulates chamber profile	Simulate biometric states, observe shell changes
+Chamber emits therapeutic frequencies	Frequencies match Rife/Lakhovsky mappings
+Shells reflect torsion spin dynamics	Polarity flips match coherence thresholds
+Profile contains all required metadata	Timestamp, user, mode, frequency, etc.
+generateTuningProfile is deterministic per biometric input	Same input = same shell config (unless seeded random used)
+Integration-ready with Ra.Music and Ra.Visualizer	Interfaces match downstream use
+
+
+
+
+Also reference:
+Here's a complete HSpec test sketch for Ra.Chamber.Tuning, focused on validating that the generateTuningProfile function behaves correctly under key biometric conditions.
+
+✅ test/Spec/Chamber/TuningSpec.hs
+{-# LANGUAGE OverloadedStrings #-}
+
+module Spec.Chamber.TuningSpec where
+
+import Test.Hspec
+import Data.Time
+import Data.UUID (nil)
+import Ra.Chamber.Tuning
+import Ra.Pipeline.Types (BiometricState(..))
+import Ra.Chamber.Types (ResonanceShell(..), ChamberTuningProfile(..))
+import qualified Data.Text as T
+
+spec :: Spec
+spec = describe "Ra.Chamber.Tuning.generateTuningProfile" $ do
+
+  it "creates a valid profile with low coherence (therapeutic shell only)" $ do
+    now <- getCurrentTime
+    let lowCoherence = BiometricState
+          { coherenceLevel = 0.25
+          , heartRate = 72
+          , respirationRate = 14
+          , gsrLevel = 0.8
+          , biometricSeed = "test-low"
+          }
+    profile <- generateTuningProfile lowCoherence
+
+    profile `shouldSatisfy` \p ->
+      length (activeShells p) >= 1 &&
+      all (\s -> torsionFactor s < 0) (activeShells p) &&
+      ambientMode p == "Therapeutic"
+
+  it "activates high-harmonic shell at coherence > 0.85" $ do
+    now <- getCurrentTime
+    let highCoherence = BiometricState
+          { coherenceLevel = 0.92
+          , heartRate = 64
+          , respirationRate = 12
+          , gsrLevel = 0.4
+          , biometricSeed = "test-high"
+          }
+    profile <- generateTuningProfile highCoherence
+
+    profile `shouldSatisfy` \p ->
+      any (\s -> harmonicCarrier s > 500.0) (activeShells p) &&
+      ambientMode p == "Exploratory"
+
+  it "sets fluid memory seed if prior peak exists" $ do
+    let testBio = BiometricState
+          { coherenceLevel = 0.89
+          , heartRate = 60
+          , respirationRate = 11
+          , gsrLevel = 0.3
+          , biometricSeed = "carry-memory"
+          }
+    profile <- generateTuningProfile testBio
+
+    profile `shouldSatisfy` \p ->
+      any (\s -> fluidMemorySeed s /= Nothing) (activeShells p)
+
+  it "creates deterministic shell layout for same biometric input" $ do
+    let input = BiometricState
+          { coherenceLevel = 0.45
+          , heartRate = 70
+          , respirationRate = 15
+          , gsrLevel = 0.5
+          , biometricSeed = "stable-seed"
+          }
+    p1 <- generateTuningProfile input
+    p2 <- generateTuningProfile input
+    (activeShells p1) `shouldBe` (activeShells p2)
+
+
+🧪 What This Validates:
+Scenario	Validated
+Coherence < 0.3183	Inverted torsion, therapeutic ambient mode
+Coherence > 0.85	High-frequency shell appears
+Memory seeding	Shell retains fluidMemorySeed
+Determinism	Same biometric input → same profile
+
+
+

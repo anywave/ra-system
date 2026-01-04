@@ -1,0 +1,68 @@
+Prompt 33: Claude, Generate a Biometric-to-Avatar Scalar Expression Pipeline Using Torsion and Radiant Parameters
+Objective:
+
+Design a real-time pipeline that takes live biometric input and maps it to visible avatar field expressions in AVACHATTER using principles from scalar torsion physics, morphogenetic coherence, and radiant frequency modulation. This powers an expressive biofield halo or avatar aura layer.
+
+Source References:
+
+SCALAR_TORSION_ANTIGRAVITY.md — Use: spin-polarized charge separation, massless torsion field effects, aether-mediated field rotation
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md — Use: harmonic bandpass correlation, biofrequency radiant zones, antenna-like biological entrainment
+
+Ra.Visualizer.AvatarField — Output system (live visual shell modulation)
+
+Ra.Biometrics.Pipeline — Biometric input sampler
+
+Deliverables:
+
+Pipeline Function:
+
+expressAvatarField :: BiometricSnapshot -> AvatarFieldModulation
+
+
+Converts coherence, HRV, respiration phase, and scalar tension into:
+
+Hue shift
+
+Torsion spiral density
+
+Oscillation tempo
+
+Radiant bloom expansion
+
+Field Model:
+
+Avatar fields are expressed as nested torsion shells.
+
+Each shell oscillates at a BioHarmonic(n), defined by:
+
+data BioHarmonic = Alpha | Theta | PhiCrown | RootShift | AnkhFold
+
+
+Use scalar spin polarity from SCALAR_TORSION_ANTIGRAVITY.md to calculate shell spin (clockwise = coherent, counter = disrupted)
+
+Resonance Zone Model:
+
+Divide avatar space into zones (Crown, Chest, Root, etc.)
+
+Each reacts to biometric deltas:
+
+HRV drop = torsion field turbulence at chest
+
+Respiration coherence = bloom expansion at crown
+
+Breath-hold = spin halt in solar plexus
+
+Fallback Static Rendering:
+
+If real-time loop unavailable, create a declarative avatar field state from most recent BiometricSnapshot
+
+Success Criteria:
+
+Avatar visually expresses changes in user coherence within 0.2s latency
+
+Scalar spin flips (torsion reversal) when coherence crosses φ/ankh threshold
+
+Radiant field hues match predicted BioHarmonic zones from Lakhovsky bands
+
+Field amplitude resets after user disengagement

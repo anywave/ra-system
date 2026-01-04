@@ -1,0 +1,81 @@
+🌐 Prompt 59: Ra.Shell.ResonantGestures — Biometric-Attuned Gesture Access
+
+Claude, create a new Haskell module Ra.Shell.ResonantGestures
+This module extends Ra.Shell.LimbLearning to conditionally unlock gestures based on real-time coherence, torsion polarity, and user field phase alignment.
+
+🧠 Purpose
+
+Ensure gestures are only accepted when the user’s scalar field is in a resonant or permissioned state
+
+Prevent accidental activation from muscle spasms, mimicry, or “hollow intent”
+
+Enable fragments or interfaces that respond only to biometric-authenticated motion
+
+📦 Module Overview
+module Ra.Shell.ResonantGestures where
+
+import Ra.Shell.LimbLearning
+import Ra.Biometrics.Resonance
+import Ra.Pipeline.Types
+import Ra.Gates.Coherence
+
+🧬 Core Types
+data ResonantGesture = ResonantGesture
+  { userId       :: UserID
+  , gesture      :: Gesture
+  , gestureData  :: [ScalarVectorTrack]
+  , resonance    :: FluxCoherence
+  , torsionPhase :: TorsionState  -- Normal | Inverted | Null
+  , matched      :: Bool
+  , authorized   :: Bool
+  }
+
+🔐 Key Functions
+1. Check Gesture Against Biometric Thresholds
+authorizeResonantGesture ::
+     UserID
+  -> [ScalarVectorTrack]
+  -> RaState (Maybe ResonantGesture)
+
+
+Returns Nothing if:
+
+Coherence < COHERENCE_FLOOR (≈ φ / ANKH)
+
+Torsion = INVERTED and gesture is not whitelisted for inversion
+
+Returns Just ResonantGesture if:
+
+Matches user gesture template (from Ra.Shell.LimbLearning)
+
+Resonance ≥ personalized threshold (from Ra.Biometrics.Resonance)
+
+Field phase aligns with permitted emergence window
+
+2. Set Required Resonance Threshold Per Gesture
+setGestureResonanceGate ::
+     UserID
+  -> Gesture
+  -> FluxCoherence
+  -> RaState ()
+
+
+Allows customizing the required field stability per gesture
+
+E.g., “Open Portal” gesture requires coherence ≥ 0.75
+
+🔗 Reference Inputs
+
+Biometrics: Ra.Biometrics.Resonance → resonanceScore :: UserID -> RaState FluxCoherence
+
+Temporal: Ra.Scalar.TemporalWindow → ensure gesture aligns with φ^n phase
+
+Permissioning: Ra.Gates.AccessResult → full/partial/blocked gate for user intent
+
+✅ Success Criteria
+Condition	Test
+Gesture only executes if coherence ≥ required	✓
+Gesture suppressed if torsion = INVERTED (unless allowed)	✓
+Gesture recognized via user-personalized model	✓
+Logs emergence conditions for audit	✓
+Works alongside non-resonant gestures without interference	✓

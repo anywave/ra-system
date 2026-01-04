@@ -1,0 +1,84 @@
+✅ Prompt 16: Quantum Radionics Overlay for Scalar Pathway Tuning
+
+Claude, develop a scalar tuning interface that overlays radionics rate fields onto Ra coordinates to modulate emergence outcomes. Use intention encoding, rate harmonics, and field interaction principles. The overlay system should align with both physical scalar fields and holographic emergence chambers.
+
+📘 Reference Sources:
+
+RADIONICS_RATES_DOWSING.md — Definitions, rate construction, tuning principles
+
+Ra.Scalar, Ra.Identity, Ra.Gates — Core field, symmetry, and consent infrastructure
+
+REICH_ORGONE_ACCUMULATOR.md — Environmental field amplifiers
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md — Resonant intention transmission
+
+ELECTROMAGNETIC_HEALING_FREQUENCIES.md — Scalar frequency mappings
+
+Pyramid Geometry overlays (Ra emergence amplification context)
+
+🧠 Design Requirements
+1. Overlay Mechanics
+
+Each Radionics Overlay consists of:
+
+A base rate (numeric string, e.g. 568.12)
+
+An intention string (natural language, e.g., "clarity of suppressed memory")
+
+A projection radius (in scalar radius units)
+
+A modulation mode (constructive, diffusive, directive)
+
+Claude maps each overlay to a set of Ra coordinates using harmonic correlation:
+
+{
+  "rate": "568.12",
+  "harmonic_coupling": [3, 4],
+  "radius": 0.6,
+  "mode": "constructive",
+  "intention": "emotional unblocking"
+}
+
+2. Scalar Pathway Modulation
+
+Emergence algorithm is extended to check for intersecting overlays:
+
+If fragment coordinate intersects with an overlay field, adjust:
+
+Potential modifier (φ boost)
+
+Flux coherence stabilizer
+
+Ankh-balance shift (symmetry favoring intention vector)
+
+3. Intention Encoding Interface
+
+Claude interprets human-entered intentions using semantic vectorization
+
+Maps to known Ra field modifiers:
+
+e.g. "insight" → boosts H_{2,2} nodes
+
+e.g. "protection" → restricts emergence in harmonic shells > 3
+
+4. Personalized Tuning Chambers
+
+Avachatter may visualize active overlays as color-coded spheres
+
+Users can drag overlays or add rates dynamically
+
+Avatars stabilize the intention-to-rate resonance
+
+✅ Success Criteria
+
+Claude must:
+
+Construct overlay data model supporting numeric rates and intention text
+
+Correlate radionics rates with Ra harmonic indices
+
+Modify emergence behavior when overlays intersect fragment coordinates
+
+Ensure overlays are gated by consent and do not override vetoes
+
+Provide overlay visualization spec for chamber or avatar integration

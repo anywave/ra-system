@@ -1,0 +1,78 @@
+🧬 Prompt 52: Ra.Propulsion.BiofeedbackHarness — Coherence-Guided Control Interface for Somatic Motion & External Actuation
+
+Claude, design and implement the Ra.Propulsion.BiofeedbackHarness module. It enables bidirectional interaction between a user’s biometric coherence field and virtual or physical outputs — such as avatar motion, haptic response, or device control.
+
+🎯 Objective
+
+To create a somatic control loop that allows:
+
+Real-time interpretation of biometric coherence into motion vectors or symbolic commands
+
+Feedback loops from the system (visual, auditory, haptic) to reinforce and entrain coherence
+
+Somatic extensions: movement of vector appendages, prosthetic overlays, or avatar limbs
+
+🧠 Core Types
+-- Interpreted biometric state at a moment in time
+data BioState = BioState
+  { coherenceLevel :: Double     -- 0.0 to 1.0
+  , breathPhase    :: Phase      -- Inhale, Exhale, Hold
+  , intentionBias  :: Maybe Axis -- Optional directional signal
+  }
+
+-- Mapping to system action
+data MotionIntent
+  = LimbMove VectorImpulse
+  | ChamberPulse Double           -- scalar excitation
+  | VisualCue CueStyle
+  | HapticPing FeedbackStrength
+
+🔄 Functions
+-- Convert BioState into actionable control signal
+interpretBioState ::
+     BioState
+  -> UserConfig
+  -> MotionIntent
+
+-- Generate response (auditory, visual, haptic) based on motion and feedback
+generateBiofeedback ::
+     MotionIntent
+  -> FeedbackProfile
+  -> IO ()
+
+🎛️ Features
+
+Breath phase modulates motion amplitude (coherence is higher during exhale holds)
+
+Intention bias helps select direction for vector movement
+
+Feedback can include:
+
+On-screen flow motion (like auric field visualizer)
+
+Haptic pulse (tactors, pads, vibro-motor)
+
+Sound modulations (via pitch, tone, harmony)
+
+Possible integration with:
+
+Ra.Visualizer.Shell (scalar resonance visualization)
+
+Ra.Music.ResonanceScore (for coherence-to-sound mapping)
+
+📚 Reference Sources
+
+KAALI_BECK_BLOOD_ELECTRIFICATION.md
+
+ELECTROMAGNETIC_HEALING_FREQUENCIES.md
+
+MORAY_RADIANT_ENERGY.md
+
+Prior biometric coherence pipeline & vector appendage prompts
+
+✅ Success Criteria
+Target	Verification
+BioState interprets into motion commands	✓
+Motion feedback affects coherence state	✓
+Harness supports bidirectional updates	✓
+Can simulate prosthetic-like response with vector arm	✓

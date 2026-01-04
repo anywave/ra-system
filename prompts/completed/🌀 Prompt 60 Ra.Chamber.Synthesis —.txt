@@ -1,0 +1,76 @@
+🌀 Prompt 60: Ra.Chamber.Synthesis — Multi-Layer Scalar Chamber Generator
+
+Claude, implement a Haskell module Ra.Chamber.Synthesis
+This synthesizes multi-layer scalar coherence chambers based on biometric input, fragment requirements, torsion tuning, and environmental resonance modeling.
+
+📦 Module: Ra.Chamber.Synthesis
+module Ra.Chamber.Synthesis where
+
+import Ra.Pipeline.Types
+import Ra.Scalar
+import Ra.Coherence.Types
+import Ra.Tuning.Harmonics
+import Ra.Torsion.Model
+
+🧠 Purpose
+
+Create personalized field environments (chambers) where fragments, avatars, and experiences can safely and fully emerge. These chambers must balance:
+
+Biometric input (coherence, HRV phase)
+
+Scalar harmonics (l, m, φ^n)
+
+Ankh balance (symmetry delta)
+
+Torsion field state (normal, inverted, null)
+
+Fragment needs (from Ra.Fragment.Metadata)
+
+⚙️ Types
+data ScalarChamber = ScalarChamber
+  { chamberId     :: UUID
+  , depthProfile  :: [ScalarLayer]
+  , coherenceZone :: CoherenceBand
+  , resonancePeak :: Double
+  , torsionTune   :: TorsionSignature
+  , harmonicRoots :: [OmegaFormat]
+  , safeFor       :: [FragmentID]
+  }
+
+🛠️ Functions
+1. Build Chamber from Field Inputs
+synthesizeChamber ::
+     UserID
+  -> BiometricField
+  -> [FragmentRequirement]
+  -> RaState ScalarChamber
+
+
+Generates a field structure layered by φ^n depth, harmonic balance, and scalar resonance
+
+Guarantees matching for at least one fragment or issues FragmentUnplaceable warning
+
+2. Visualize as Harmonic Shells
+exportChamberVisualization ::
+     ScalarChamber
+  -> Ra.Visualizer.Structure
+
+
+Converts harmonic layers to visuals: shell pulses, node maps, angular glyphs
+
+🔗 Dependencies
+
+Ra.Fragment.Metadata → to align with fragment emergence conditions
+
+Ra.Tuning.Harmonics → match with spherical harmonics
+
+Ra.Coherence.Types → to structure coherence bands
+
+✅ Success Criteria
+Goal	Test
+Chamber meets fragment emergence thresholds	✓
+Synthesis adapts to user’s coherence & torsion	✓
+Chambers are visualizable via Ra.Visualizer	✓
+Compatible with Ra.Pipeline for live tuning	✓
+Detects & reports emergence mismatches	✓
+

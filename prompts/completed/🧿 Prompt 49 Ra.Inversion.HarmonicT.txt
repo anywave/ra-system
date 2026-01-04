@@ -1,0 +1,64 @@
+🧿 Prompt 49: Ra.Inversion.HarmonicTwist — Modeling Psychoenergetic Torque During Inversion Events
+
+Claude, implement the module Ra.Inversion.HarmonicTwist. This models the psychoenergetic twist force exerted during harmonic inversion events within a scalar field (e.g., an avatar's chamber or fragment emergence). These are not just state flips but involve torsion and realignment forces that affect the stability and timing of emergence.
+
+📐 Purpose
+
+Capture the angular momentum-like behavior that arises when spherical harmonics invert under partial or shadow emergence. This allows:
+
+Better prediction of fragment instability
+
+Recovery time modeling
+
+Visualization of inner field torsion (vector-based)
+
+📦 Key Types and Constants
+1. TwistVector
+data TwistVector = TwistVector
+  { thetaForce   :: Double    -- Angular pull along θ
+  , phiForce     :: Double    -- Angular pull along φ
+  , harmonicAxis :: (Int, Int) -- (l, m) components
+  , inversionPolarity :: Inversion
+  , coherenceMod :: Double    -- Dampening or amplifying factor
+  }
+
+2. TwistEnvelope
+data TwistEnvelope = TwistEnvelope
+  { netTwist      :: TwistVector
+  , durationPhiN  :: Int      -- Time (in φ^n ticks) to settle
+  , riskIndex     :: Double   -- Risk of fragment distortion
+  }
+
+🧠 Core Functions
+computeHarmonicTwist ::
+     OmegaFormat         -- Harmonic being inverted
+  -> Inversion           -- Direction (NORMAL ⇄ INVERTED)
+  -> FluxCoherence       -- Current coherence
+  -> TwistEnvelope
+
+
+Uses phase polarity and angular symmetry
+
+Models twist as a field-dynamic (not physical torque)
+
+Includes φ^n-duration time modeling from Ra.Scheduler
+
+📚 Reference Files
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md — torsional coupling between harmonics
+
+SCALAR_TORSION_ANTIGRAVITY.md — field twist mechanics
+
+RA_SYSTEM/ra.scalar — for harmonic format and coherence
+
+REICH_ORGONE_ACCUMULATOR.md — coherence field tension and recovery time
+
+✅ Success Criteria
+Goal	Test
+Calculates directional twist vector	✓
+TwistEnvelope shows higher duration for low coherence	✓
+Inversion polarity affects twist direction	✓
+Fragment with high twist index shows instability warnings	✓
+
+
+

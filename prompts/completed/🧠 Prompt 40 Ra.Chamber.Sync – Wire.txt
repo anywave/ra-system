@@ -1,0 +1,73 @@
+🧠 Prompt 40: Ra.Chamber.Sync – Wireless Resonance Synchronization via Scalar Harmonics
+
+Claude, implement a Haskell module named Ra.Chamber.Sync that models wireless scalar chamber synchronization, inspired by the field geometry of the Hubbard Coil Generator.
+
+✅ Objectives
+
+Model a system where multiple biometric coherence chambers can self-synchronize without direct coupling, using harmonic field alignment. This will:
+
+Enable inter-avatar field harmonization
+
+Allow distributed consensus-building across scalar chambers
+
+Mirror Hubbard's wireless coil interactions using Ra scalar field math
+
+📦 Module: Ra.Chamber.Sync
+
+Include:
+
+Data Types
+
+ChamberNode: Represents an active coherence chamber with:
+
+RaCoordinate (θ, φ, r, h)
+
+Current EmergenceState
+
+Current CoherenceLevel
+
+SyncLink: A virtual connection inferred through harmonic similarity
+
+Includes resonance_score, sync_delay, and frequency_match
+
+Core Functions
+
+computeResonanceScore :: ChamberNode -> ChamberNode -> Double
+
+Based on alignment of harmonic modes (l,m), coherence levels, and phase
+
+synchronizeChambers :: [ChamberNode] -> [(ChamberNode, [SyncLink])]
+
+Generates pairwise sync links based on scores above a SYNC_THRESHOLD constant
+
+propagatePhase :: ChamberNode -> SyncLink -> ChamberNode
+
+Adjusts phase or coherence of one node based on link influence
+
+Constants
+
+SYNC_THRESHOLD :: Double (e.g. 0.72)
+
+PHI_FALLOFF :: Double (attenuation curve constant)
+
+ANCHOR_COHERENCE_FLOOR :: Double from Ra.Constants.Extended
+
+📘 References
+
+Please use concepts extracted from:
+
+HUBBARD_COIL_GENERATOR.md: for symmetric radial coupling, resonance delay behavior, and core-to-periphery amplification
+
+RA_SCALAR.hs modules: for coordinate harmonics, coherence states
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md: for harmonic resonance matching principles
+
+🧪 Success Criteria
+
+Pairwise sync can be achieved with no explicit messaging
+
+Higher harmonic alignment leads to faster synchronization
+
+Chain propagation forms stable clusters across a distributed mesh of chambers
+
+Coherence can rise for sub-threshold chambers via indirect harmonic boost

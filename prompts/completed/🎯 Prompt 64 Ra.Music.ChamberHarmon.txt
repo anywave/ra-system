@@ -1,0 +1,97 @@
+🎯 Prompt 64: Ra.Music.ChamberHarmonics — Auditory Feedback from Scalar Field HUD + Coherence
+
+Claude, implement a Haskell module:
+
+Ra.Music.ChamberHarmonics
+
+
+Its role is to convert scalar coherence data (from HUD overlays and avatar field states) into auditory feedback — tuned harmonic loops, overtone sweeps, and interval transitions — that provide live chamber resonance matching internal emergence states.
+
+This module is the sonic mirror of Ra.Visualizer.ShellHUD.
+
+🔧 Core Objectives
+
+Accept real-time inputs from Ra.Visualizer.AvatarField, ShellHUD, and Consent.GateEffect
+
+Map coherence envelopes and aura bands to frequency shifts, envelope shape, harmonic structure
+
+Produce sound via:
+
+Data stream to DSP/synth clients (e.g., via OSC or JSON)
+
+Internal harmonic simulation output (for debugging)
+
+🧱 Module Interface
+module Ra.Music.ChamberHarmonics (
+  HarmonyMode(..),
+  HarmonicFrame(..),
+  generateHarmonicFrame,
+  harmonicStreamForHUD
+) where
+
+🎼 1. HarmonyMode
+
+Defines the intent of the audio feedback:
+
+data HarmonyMode
+  = CoherenceChime      -- Chimes triggered by coherence spikes
+  = AuraSweep           -- Continuous overtone wave based on aura
+  = GatedPulse          -- Audio pulse modulated by consent state
+  | FieldSymphony       -- Complex multi-band harmonic chordscape
+
+🎶 2. HarmonicFrame
+
+Output representation of one frame of sound:
+
+data HarmonicFrame = HarmonicFrame {
+  rootFreq      :: Double,       -- e.g., 528.0 Hz
+  overtoneBands :: [Double],     -- e.g., [2x, 3x, 5x roots]
+  modulationAmt :: Double,       -- how much to morph per phase window
+  amplitude     :: Double,       -- output volume
+  coherenceTag  :: Maybe Double  -- optional coherence α
+}
+
+⚙️ 3. generateHarmonicFrame
+
+Builds a HarmonicFrame from HUD + Field coherence data:
+
+generateHarmonicFrame ::
+  HUDPacket ->       -- Real-time shell HUD info
+  AuraPattern ->     -- Aura resonance color bands
+  GateEffect ->      -- Current consent gating effect
+  HarmonyMode ->     -- Mode selection
+  HarmonicFrame
+
+🔊 4. harmonicStreamForHUD
+
+Provides a continuous stream of harmonic frames for rendering:
+
+harmonicStreamForHUD ::
+  (MonadIO m) =>
+  HUDMode ->
+  TChan HUDPacket ->       -- Streaming input from shell HUD
+  TChan HarmonicFrame ->   -- Streaming output to audio renderer
+  m ()
+
+🧬 Sound Mapping Concepts
+Scalar Parameter	Audio Mapping
+Aura hue band (e.g. blue)	Major 3rd overtone swell
+High coherence (α > 0.85)	Add octave shimmer, amplitude ↑
+Consent gate “opening”	Sweep in chord root from low to high
+Fragment glow anchor spike	Trigger melodic motif or note burst
+Ankh Δ surge	Introduce dissonance or minor inversion
+Vector appendage “touch”	Tremolo or vibrato modulation
+📚 Reference Material
+File	Usage
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md	Harmonic structuring, tuning ratios
+RIFE_LAKHOVSKY_SPECIFICATIONS.md	Coherence frequency selection
+REICH_ORGONE_ACCUMULATOR.md	Aura layer energy modeling
+SCALAR_TORSION_ANTIGRAVITY.md	Phase-stacked field modulation
+TESLA_TECHNOLOGY.md	Low-frequency oscillatory coupling
+✅ Success Criteria
+Feature	Test
+HUDPacket → sound frame mapping	Snapshot to verify harmonic output
+Aura resonance → overtone blend	Controlled aura input = expected bands
+Consent gate modulates sound	Gate transition alters waveform clearly
+Vector appendage input causes FX	Simulated touch = tremolo envelope
+Dissonance tied to Δ(ankh)	Sound discomfort mirrors field imbalance

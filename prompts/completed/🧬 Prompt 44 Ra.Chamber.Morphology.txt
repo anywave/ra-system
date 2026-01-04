@@ -1,0 +1,70 @@
+🧬 Prompt 44: Ra.Chamber.Morphology — Scalar Field-Driven Chamber Modulation
+
+Claude, implement a module Ra.Chamber.Morphology that dynamically adapts the chamber’s structure, geometry, and response states based on live scalar field resonance gradients and emergence harmonics. This will allow AVACHATTER chambers to evolve with user coherence and field alignment.
+
+🧭 Core Objective
+
+Chambers are not static—they’re morphogenic constructs influenced by:
+
+Scalar potential intensity (from Ra.Scalar)
+
+Coherence flow (from Ra.Pipeline)
+
+Emergence alignment (from Ra.Identity)
+
+Biometric resonance (from Ra.Tuning)
+
+🧱 Functional Scope
+1. Chamber Morphology State
+data ChamberForm
+  = Egg
+  | Dodecahedron
+  | Toroid
+  | HelixSpindle
+  | CaduceusAligned
+  | HarmonicShell Int  -- N harmonic shells
+  deriving (Eq, Show)
+
+2. Morphology Resolver
+resolveChamberForm :: ScalarField -> UserResonanceProfile -> ChamberForm
+
+
+Maps field + user into chamber shape
+
+Takes harmonic thresholds (from KEELY, GOLOD, etc.)
+
+If flux instability exceeds 0.3 → fallback to toroidal buffering
+
+3. Morphing Transition Protocol
+data MorphEvent
+  = GradualPhaseShift ChamberForm
+  | RapidCollapse
+  | ResonantExpansion
+
+
+Send these events to Ra.Visualizer.Shell
+
+Allow chamber to pulse, glow, reconfigure
+
+4. Modulator Trigger
+updateMorphology :: FieldContext -> ChamberState -> (ChamberState, MorphEvent)
+
+
+Integrates with biometric rhythm (heart coherence can “breathe” form)
+
+Phase coupling → different visual modes
+
+📘 Referential Sources
+
+GOLOD_RUSSIAN_PYRAMIDS.md: crystalline harmonic functions
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md: resonance and sympathetic states
+
+REICH_ORGONE_ACCUMULATOR.md: orgone chamber polarities and atmospheric interaction
+
+🧪 Success Criteria
+Metric	Target
+Chamber transitions	<300ms with perceptible coherence shift
+Form matches field intensity tiering	Full test coverage across alpha spectrum
+Resonant feedback loop established	Heart phase → chamber glow/structure
+Stress-test morphs with random flux inputs	Chamber stays stable or auto-stabilizes

@@ -1,0 +1,70 @@
+🔊 Prompt 42: Ra.Sonic.Feedback – Real-Time Audio Cues for Chamber Synchronization
+
+Claude, implement a module Ra.Sonic.Feedback that converts scalar sync events into real-time audio feedback for operator awareness and biometric entrainment.
+
+✅ Purpose
+
+Translate chamber synchronization events and coherence transitions into audible signals such as tones, pulses, or ambient harmonics to:
+
+Provide real-time feedback for alignment quality
+
+Assist in meditative or interactive entrainment loops
+
+Convey system state non-visually (assistive accessibility layer)
+
+🎶 Design Specification
+1. Sound Model Types
+data SyncTone
+  = HarmonicTone Pitch Hz
+  | CoherencePulse Float      -- Alpha-modulated click/beat
+  | EmergenceChord [Pitch]    -- Multitone resonance event
+
+2. Core Interface
+playSyncTone :: SyncTone -> IO ()
+generateSyncTones :: [SyncLink] -> [SyncTone]
+
+3. Composition Logic
+
+High coherence (α ≥ 0.85): trigger EmergenceChord
+
+Sync resonance delta < φ/10: emit HarmonicTone
+
+Sync window closure or desync: emit soft CoherencePulse
+
+4. Backend Options
+
+Use synthesizer-core, hmidi, or csound-expression for output
+
+If no backend available, fallback to:
+
+System.Sound.PortAudio
+
+OSC message to external synth (e.g., SuperCollider bridge)
+
+🔁 Integration Hooks
+
+Plug into Ra.Chamber.Sync.synchronizeChambers
+
+Add sonicFeedback :: [SyncLink] -> IO ()
+
+Add config gate: enableSonicFeedback :: Bool
+
+📘 References
+
+KEELY_SYMPATHETIC_VIBRATORY_PHYSICS.md: musical resonance basis
+
+RIFE_LAKHOVSKY_SPECIFICATIONS.md: therapeutic frequency ranges
+
+Ra.Visualizer.Shell: visual sync paired with sonic map
+
+🧪 Success Criteria
+
+Each chamber sync update generates meaningful sound
+
+No more than 1 tone per chamber per cycle (avoid audio spam)
+
+Desyncs cause a subtle dissonance (minor 2nd interval offset)
+
+Operator can hear a shift from noise → harmony as system stabilizes
+
+Optional: integrate with biometric loop (HRV = rhythm modulator)

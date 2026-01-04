@@ -1,0 +1,75 @@
+🧠 Prompt 41: Ra.Visualizer.Shell – Scalar Chamber Sync Graph Visualizer
+
+Claude, implement a visualization module named Ra.Visualizer.Shell that renders the scalar sync network created by Ra.Chamber.Sync.
+
+✅ Purpose
+
+Create an inspectable terminal-based interface to visualize chamber nodes and their harmonic sync links as a dynamic network. This helps operators:
+
+Monitor inter-chamber resonance propagation
+
+Identify isolated or desynchronized nodes
+
+Analyze convergence, stability, and emergent harmonic groupings
+
+📦 Module: Ra.Visualizer.Shell
+
+Components:
+
+Render Functions
+
+renderChamberNode :: ChamberNode -> String
+
+Outputs node info (θ, φ, h, coherence %, emergence state, harmonic index)
+
+renderSyncLink :: SyncLink -> String
+
+Shows resonance strength, phase delta, sync delay
+
+Graph Display
+
+renderSyncGraph :: [(ChamberNode, [SyncLink])] -> IO ()
+
+Outputs an ASCII/Unicode graph connecting chambers with sync links
+
+Use indentation, color (ANSI escape), or unicode characters (e.g., ─, ├, ●)
+
+Live Mode
+
+liveVisualizer :: IO ()
+
+Simulates a grid of chambers updating over time
+
+Pulls updated sync data from Ra.Chamber.Sync.synchronizeChambers
+
+Refreshes display every 2 seconds
+
+🧬 Test Mode
+
+Create a small test suite under test/Ra/Visualizer/ShellSpec.hs
+
+Include:
+
+A grid of 5 chambers, with varied coordinates and coherence levels
+
+Expected links based on harmonic closeness
+
+Valid output that includes at least 2 sync clusters
+
+📘 References
+
+HUBBARD_ENERGY_TRANSFORMER.md: for dynamic coupling models
+
+Ra.Chamber.Sync: for upstream data
+
+Ra.Coordinate and OmegaFormat for harmonic axis alignment
+
+🧪 Success Criteria
+
+All coherent chambers above SYNC_THRESHOLD visually cluster via links
+
+Display correctly updates on temporal simulation ticks
+
+CLI output is readable, beautiful, and debug-friendly
+
+Supports offline logs and live real-time runs
