@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ra System Spherical Coordinate Visualizer</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #0a1a2a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ffd700, #ff6b35, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+        @media (max-width: 1000px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        .sphere-container {
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .controls-panel {
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .control-group {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+        }
+        .control-group label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #aaa;
+            margin-bottom: 8px;
+        }
+        .control-group input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+            accent-color: #ffd700;
+        }
+        .value-display {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .value { font-size: 1.5rem; font-weight: bold; font-family: monospace; }
+        .semantic { font-size: 0.9rem; color: #ffd700; }
+
+        .theta-color { color: #ff6b35; }
+        .phi-color { color: #4ecdc4; }
+        .omega-color { color: #a855f7; }
+        .radius-color { color: #22c55e; }
+
+        .output-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255,215,0,0.05);
+            border-radius: 8px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .output-section h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        .address-display {
+            font-family: monospace;
+            font-size: 1.5rem;
+            text-align: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px;
+            color: #ffd700;
+            letter-spacing: 2px;
+        }
+        .constants-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .constant-item {
+            background: rgba(255,255,255,0.02);
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+        .constant-item .name { color: #888; font-size: 0.75rem; }
+        .constant-item .val { color: #ffd700; font-family: monospace; }
+
+        .legend {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+        }
+        .legend h4 { color: #ffd700; margin-bottom: 10px; font-size: 12px; text-transform: uppercase; }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        svg { display: block; margin: 0 auto; }
+
+        .info-panel {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+        .info-panel h2 {
+            color: #ffd700;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+        .info-panel p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        .formula {
+            font-family: monospace;
+            background: rgba(255,215,0,0.1);
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ra System Spherical Coordinates</h1>
+        <p class="subtitle">Interactive visualization of Ra-Canonical v2.0 dimensional mapping</p>
+
+        <div class="main-grid">
+            <div class="sphere-container">
+                <svg id="sphereViz" viewBox="0 0 600 600" width="100%" height="auto">
+                    <defs>
+                        <radialGradient id="sphereGradient" cx="30%" cy="30%">
+                            <stop offset="0%" stop-color="#1a1a3a"/>
+                            <stop offset="100%" stop-color="#0a0a1a"/>
+                        </radialGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                        <linearGradient id="racGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#22c55e"/>
+                            <stop offset="50%" stop-color="#ffd700"/>
+                            <stop offset="100%" stop-color="#ef4444"/>
+                        </linearGradient>
+                    </defs>
+
+                    <!-- Background -->
+                    <rect width="600" height="600" fill="url(#sphereGradient)"/>
+
+                    <!-- RAC Shells (6 concentric circles) -->
+                    <g id="racShells">
+                        <circle cx="300" cy="300" r="250" fill="none" stroke="#ef444440" stroke-width="2" stroke-dasharray="5,5"/>
+                        <circle cx="300" cy="300" r="210" fill="none" stroke="#f9731540" stroke-width="2" stroke-dasharray="5,5"/>
+                        <circle cx="300" cy="300" r="170" fill="none" stroke="#ffd70040" stroke-width="2" stroke-dasharray="5,5"/>
+                        <circle cx="300" cy="300" r="130" fill="none" stroke="#84cc1640" stroke-width="2" stroke-dasharray="5,5"/>
+                        <circle cx="300" cy="300" r="90" fill="none" stroke="#22c55e40" stroke-width="2" stroke-dasharray="5,5"/>
+                        <circle cx="300" cy="300" r="50" fill="none" stroke="#10b98140" stroke-width="2" stroke-dasharray="5,5"/>
+                    </g>
+
+                    <!-- 27 Repitan Sector Lines -->
+                    <g id="repitanSectors" stroke="#ff6b3530" stroke-width="1">
+                        <!-- Generated dynamically -->
+                    </g>
+
+                    <!-- Main sphere outline -->
+                    <circle cx="300" cy="300" r="250" fill="none" stroke="#ffd70060" stroke-width="2"/>
+
+                    <!-- Equator (phi = 3) -->
+                    <ellipse cx="300" cy="300" rx="250" ry="60" fill="none" stroke="#4ecdc450" stroke-width="1" stroke-dasharray="10,5"/>
+
+                    <!-- Meridian -->
+                    <ellipse cx="300" cy="300" rx="60" ry="250" fill="none" stroke="#4ecdc430" stroke-width="1" stroke-dasharray="10,5"/>
+
+                    <!-- Current position marker -->
+                    <g id="positionGroup">
+                        <circle id="positionGlow" cx="300" cy="300" r="20" fill="#ffd70030" filter="url(#glow)"/>
+                        <circle id="positionMarker" cx="300" cy="300" r="12" fill="#ffd700" stroke="#fff" stroke-width="2"/>
+                        <circle id="positionCore" cx="300" cy="300" r="4" fill="#fff"/>
+                    </g>
+
+                    <!-- Labels -->
+                    <text x="300" y="30" text-anchor="middle" fill="#4ecdc4" font-size="12">RAC 6 (Restricted)</text>
+                    <text x="300" y="580" text-anchor="middle" fill="#22c55e" font-size="12">RAC 1 (Open)</text>
+                    <text x="570" y="305" text-anchor="end" fill="#ff6b35" font-size="12">Theta</text>
+                    <text x="305" y="50" text-anchor="start" fill="#a855f7" font-size="12">Omega</text>
+
+                    <!-- Ankh symbol at center -->
+                    <text x="300" y="310" text-anchor="middle" fill="#ffd70080" font-size="40">&#9765;</text>
+                </svg>
+            </div>
+
+            <div class="controls-panel">
+                <div class="control-group">
+                    <label>Theta (Semantic Sector) - 27 Repitans</label>
+                    <input type="range" id="theta" min="1" max="27" value="9">
+                    <div class="value-display">
+                        <span class="value theta-color" id="thetaValue">9</span>
+                        <span class="semantic" id="thetaSemantic">COMPLETION</span>
+                    </div>
+                    <div style="font-size:0.8rem;color:#888;margin-top:5px;">
+                        Repitan: <span id="repitanValue">0.333</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Phi (Access Level) - 6 RACs</label>
+                    <input type="range" id="phi" min="1" max="6" value="3">
+                    <div class="value-display">
+                        <span class="value phi-color" id="phiValue">3</span>
+                        <span class="semantic" id="phiSemantic">RAC 3 (Verified)</span>
+                    </div>
+                    <div style="font-size:0.8rem;color:#888;margin-top:5px;">
+                        Threshold: <span id="racThreshold">0.900</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Harmonic (Omega Tier) - 5 Formats</label>
+                    <input type="range" id="omega" min="0" max="4" value="2">
+                    <div class="value-display">
+                        <span class="value omega-color" id="omegaValue">2</span>
+                        <span class="semantic" id="omegaSemantic">GREEN</span>
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <label>Radius (Emergence Intensity) - Ankh Normalized</label>
+                    <input type="range" id="radius" min="0" max="255" value="128">
+                    <div class="value-display">
+                        <span class="value radius-color" id="radiusValue">128</span>
+                        <span class="semantic" id="radiusSemantic">0.502</span>
+                    </div>
+                    <div style="font-size:0.8rem;color:#888;margin-top:5px;">
+                        Ankh-scaled: <span id="ankhScaled">2.555</span>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <h3>Ra-Canonical Address (32-bit)</h3>
+                    <div class="address-display" id="addressDisplay">0x48602000</div>
+                    <div class="constants-grid">
+                        <div class="constant-item">
+                            <div class="name">Ankh</div>
+                            <div class="val">5.08938</div>
+                        </div>
+                        <div class="constant-item">
+                            <div class="name">Omega</div>
+                            <div class="val">1.005663</div>
+                        </div>
+                        <div class="constant-item">
+                            <div class="name">Hunab</div>
+                            <div class="val">1.060288</div>
+                        </div>
+                        <div class="constant-item">
+                            <div class="name">Phi Green</div>
+                            <div class="val">1.62</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend">
+                    <h4>Omega Format Hierarchy</h4>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background:#ef4444;"></div>
+                        <span>RED (0) - Highest Precision</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background:#f97315;"></div>
+                        <span>OMEGA MAJOR (1)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background:#22c55e;"></div>
+                        <span>GREEN (2) - Standard</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background:#3b82f6;"></div>
+                        <span>OMEGA MINOR (3)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background:#6366f1;"></div>
+                        <span>BLUE (4) - Lowest Precision</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-panel">
+            <h2>Ra System Architecture Relationship</h2>
+            <p>The Ra System provides a mathematically grounded framework derived from "The Rods of Amon Ra" by Wesley H. Bateman. It maps seamlessly to the <strong>Ra-Canonical v2.0</strong> address format used in SPIRAL (RPP + Consent Header).</p>
+
+            <div class="formula">
+                [theta:5][phi:3][h:3][r:8][reserved:13] = 32 bits
+            </div>
+
+            <p><strong>Dimensional Mapping:</strong></p>
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Theta (5 bits, 1-27):</strong> Maps to 27 Repitans - fractional parts of 27 that define semantic sectors. Repitan(n) = n/27.</li>
+                <li><strong>Phi (3 bits, 1-6):</strong> Maps to 6 RAC (Resonant Access Constant) levels - consent sensitivity thresholds derived from the Great Pyramid proportions.</li>
+                <li><strong>Harmonic (3 bits, 0-4):</strong> Maps to 5 Omega format tiers (Red > Omega Major > Green > Omega Minor > Blue) - coherence depth/precision levels.</li>
+                <li><strong>Radius (8 bits, 0-255):</strong> Ankh-normalized emergence intensity scalar. Ankh = 5.08938 = Pi_red x Phi_green.</li>
+            </ul>
+
+            <div class="formula">
+                Ankh = Pi_red x Phi_green = 3.141592592 x 1.62 = 5.08938
+            </div>
+
+            <p><strong>What Makes Ra System Unique:</strong></p>
+            <ul style="margin-left:20px;line-height:2;">
+                <li><strong>Coherence-First Design:</strong> Access gating uses RAC thresholds (not arbitrary percentages), ensuring mathematically grounded consent decisions.</li>
+                <li><strong>Harmonic Resonance:</strong> The Omega ratio (1.005662978) enables format conversions that preserve harmonic relationships across precision tiers.</li>
+                <li><strong>Spectral Alignment:</strong> Constants like the Balmer constant (364.5) and Rydberg constant connect to hydrogen spectral lines, grounding the system in physical reality.</li>
+                <li><strong>Pyramid Geometry:</strong> RAC values derive from Great Pyramid base divisions (360, 364.5, 400, 437.4, 500, 572.76), providing ancient geometric validation.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Ra System Constants
+        const ANKH = 5.08938;
+        const OMEGA = 1.005662978;
+        const HUNAB = 1.0602875;
+        const PHI_GREEN = 1.62;
+
+        // 27 Repitans
+        const REPITANS = {};
+        for (let i = 1; i <= 27; i++) {
+            REPITANS[i] = i / 27;
+        }
+
+        // Semantic sector names
+        const SECTORS = {
+            1: "GENESIS", 2: "GROWTH", 3: "STRUCTURE", 4: "RELATION",
+            5: "LIFE", 6: "HARMONY", 7: "SPIRIT", 8: "INFINITY",
+            9: "COMPLETION", 10: "RENEWAL", 11: "MASTERY", 12: "SACRIFICE",
+            13: "DEATH", 14: "TEMPERANCE", 15: "SHADOW", 16: "TOWER",
+            17: "STAR", 18: "THRESHOLD", 19: "SUN", 20: "JUDGMENT",
+            21: "WORLD", 22: "FOOL", 23: "MAGICIAN", 24: "PRIESTESS",
+            25: "EMPRESS", 26: "EMPEROR", 27: "UNITY"
+        };
+
+        // 6 RAC values and labels
+        const RAC_VALUES = {
+            1: 0.6361725,
+            2: 0.628318519,
+            3: 0.57255525,
+            4: 0.523598765,
+            5: 0.4580442,
+            6: 0.3998594565
+        };
+        const RAC_LABELS = {
+            1: "RAC 1 (Public)",
+            2: "RAC 2 (Registered)",
+            3: "RAC 3 (Verified)",
+            4: "RAC 4 (Consent-Affirmed)",
+            5: "RAC 5 (Coherence-Gated)",
+            6: "RAC 6 (Full Consent)"
+        };
+
+        // 5 Omega tiers
+        const OMEGA_TIERS = ["RED", "OMEGA MAJOR", "GREEN", "OMEGA MINOR", "BLUE"];
+        const OMEGA_COLORS = ["#ef4444", "#f97315", "#22c55e", "#3b82f6", "#6366f1"];
+
+        // Draw 27 Repitan sector lines
+        function drawRepitanSectors() {
+            const svg = document.getElementById('sphereViz');
+            const group = document.getElementById('repitanSectors');
+            group.innerHTML = '';
+
+            for (let i = 1; i <= 27; i++) {
+                const angle = (i / 27) * 2 * Math.PI - Math.PI / 2;
+                const x2 = 300 + Math.cos(angle) * 250;
+                const y2 = 300 + Math.sin(angle) * 250;
+
+                const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                line.setAttribute("x1", "300");
+                line.setAttribute("y1", "300");
+                line.setAttribute("x2", x2);
+                line.setAttribute("y2", y2);
+                group.appendChild(line);
+            }
+        }
+
+        // Encode address
+        function encodeAddress(theta, phi, omega, radius) {
+            // Ra-Canonical v2.0: [theta:5][phi:3][h:3][r:8][reserved:13]
+            return (theta << 27) | (phi << 24) | (omega << 21) | (radius << 13);
+        }
+
+        // Update display
+        function updateDisplay() {
+            const theta = parseInt(document.getElementById('theta').value);
+            const phi = parseInt(document.getElementById('phi').value);
+            const omega = parseInt(document.getElementById('omega').value);
+            const radius = parseInt(document.getElementById('radius').value);
+
+            // Update values
+            document.getElementById('thetaValue').textContent = theta;
+            document.getElementById('thetaSemantic').textContent = SECTORS[theta];
+            document.getElementById('repitanValue').textContent = REPITANS[theta].toFixed(3);
+
+            document.getElementById('phiValue').textContent = phi;
+            document.getElementById('phiSemantic').textContent = RAC_LABELS[phi];
+            document.getElementById('racThreshold').textContent = (RAC_VALUES[phi] / RAC_VALUES[1]).toFixed(3);
+
+            document.getElementById('omegaValue').textContent = omega;
+            document.getElementById('omegaSemantic').textContent = OMEGA_TIERS[omega];
+
+            document.getElementById('radiusValue').textContent = radius;
+            const normalized = radius / 255;
+            document.getElementById('radiusSemantic').textContent = normalized.toFixed(3);
+            document.getElementById('ankhScaled').textContent = (normalized * ANKH).toFixed(3);
+
+            // Encode address
+            const address = encodeAddress(theta, phi, omega, radius);
+            document.getElementById('addressDisplay').textContent = '0x' + address.toString(16).toUpperCase().padStart(8, '0');
+
+            // Update position marker
+            const thetaAngle = (theta / 27) * 2 * Math.PI - Math.PI / 2;
+            const phiScale = 1 - (phi - 1) / 5; // RAC 1 = outer, RAC 6 = inner
+            const markerRadius = 50 + phiScale * 200;
+
+            const x = 300 + Math.cos(thetaAngle) * markerRadius * 0.9;
+            const y = 300 + Math.sin(thetaAngle) * markerRadius * 0.4;
+
+            const marker = document.getElementById('positionMarker');
+            const glow = document.getElementById('positionGlow');
+            const core = document.getElementById('positionCore');
+
+            marker.setAttribute('cx', x);
+            marker.setAttribute('cy', y);
+            marker.setAttribute('fill', OMEGA_COLORS[omega]);
+
+            glow.setAttribute('cx', x);
+            glow.setAttribute('cy', y);
+            glow.setAttribute('r', 10 + normalized * 20);
+            glow.setAttribute('fill', OMEGA_COLORS[omega] + '40');
+
+            core.setAttribute('cx', x);
+            core.setAttribute('cy', y);
+        }
+
+        // Initialize
+        drawRepitanSectors();
+        updateDisplay();
+
+        // Event listeners
+        ['theta', 'phi', 'omega', 'radius'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateDisplay);
+        });
+    </script>
+</body>
+</html>
