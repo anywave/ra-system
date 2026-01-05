@@ -347,6 +347,7 @@
             margin-left: 8px;
         }
     </style>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -708,7 +709,7 @@
         // RPP TOKEN STREAM - WebSocket Connection and Rendering
         // =================================================================
 
-        const SPIRAL_WS_URL = 'ws://localhost:5000/ws';
+        const SPIRAL_WS_URL = 'http://localhost:5000';
         let ws = null;
         let tokenCount = 0;
         const MAX_TOKENS = 50;
@@ -892,8 +893,9 @@
         }
 
         function toggleConnection() {
-            if (ws && ws.readyState === WebSocket.OPEN) {
-                ws.close();
+            if (ws && ws.connected) {
+                ws.disconnect();
+                ws = null;
             } else {
                 connect();
             }
@@ -907,39 +909,42 @@
             statusText.textContent = 'Connecting...';
 
             try {
-                ws = new WebSocket(SPIRAL_WS_URL);
+                // Use Socket.IO client
+                ws = io(SPIRAL_WS_URL, {
+                    transports: ['websocket', 'polling'],
+                    reconnection: true,
+                    reconnectionAttempts: 5
+                });
 
-                ws.onopen = function() {
+                ws.on('connect', function() {
                     statusDot.classList.add('connected');
                     statusText.textContent = 'Connected';
                     btnConnect.textContent = 'Disconnect';
                     console.log('[TokenStream] Connected to SPIRAL service');
-                };
+                });
 
-                ws.onmessage = function(event) {
-                    try {
-                        const data = JSON.parse(event.data);
-                        if (data.type === 'token' || data.event_type) {
-                            addToken(data);
-                        }
-                    } catch (e) {
-                        console.warn('[TokenStream] Failed to parse message:', e);
-                    }
-                };
+                ws.on('token', function(data) {
+                    console.log('[TokenStream] Received token:', data);
+                    addToken(data);
+                });
 
-                ws.onclose = function() {
+                ws.on('connected', function(data) {
+                    console.log('[TokenStream] Server confirmed connection:', data);
+                });
+
+                ws.on('disconnect', function() {
                     statusDot.classList.remove('connected');
                     statusText.textContent = 'Disconnected';
                     btnConnect.textContent = 'Connect';
                     console.log('[TokenStream] Disconnected from SPIRAL service');
-                };
+                });
 
-                ws.onerror = function(error) {
+                ws.on('connect_error', function(error) {
                     statusDot.classList.remove('connected');
                     statusText.textContent = 'Error';
                     btnConnect.textContent = 'Connect';
-                    console.error('[TokenStream] WebSocket error:', error);
-                };
+                    console.error('[TokenStream] Connection error:', error);
+                });
             } catch (e) {
                 statusText.textContent = 'Failed';
                 console.error('[TokenStream] Connection failed:', e);
