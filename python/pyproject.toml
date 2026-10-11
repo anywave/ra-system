@@ -5,9 +5,10 @@ build-backend = "hatchling.build"
 [project]
 name = "ra-system"
 version = "0.1.0"
-description = "Ra System mathematical constants - Python bindings"
+description = "Ra System constants and coherence-gating helpers (exploratory modelling framework) - Python bindings"
 readme = "README.md"
 license = "Apache-2.0"
+license-files = ["LICENSE"]
 requires-python = ">=3.10"
 authors = [
     { name = "Anywave", email = "info@anywavecreations.com" }
@@ -37,7 +38,9 @@ dev = [
 
 [project.urls]
 Homepage = "https://github.com/anywave/ra-system"
-Repository = "https://github.com/anywave/ra-system.git"
+Repository = "https://github.com/anywave/ra-system"
+Issues = "https://github.com/anywave/ra-system/issues"
+Documentation = "https://github.com/anywave/ra-system#readme"
 
 [tool.hatch.build.targets.wheel]
 packages = ["ra_system"]

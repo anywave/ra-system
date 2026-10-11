@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "Ra System"
+abstract: "Portable constants and bindings (Python, TypeScript, Rust, Haskell) for an exploratory modelling framework based on W. H. Bateman's numerical system."
+type: software
+authors:
+  - name: "Anywave Creations"
+license: Apache-2.0
+repository-code: "https://github.com/anywave/ra-system"
+version: "0.1.0"
+references:
+  - type: book
+    title: "The Rods of Amon Ra"
+    authors:
+      - family-names: Bateman
+        given-names: "Wesley H."

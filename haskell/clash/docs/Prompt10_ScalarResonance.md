@@ -1,5 +1,7 @@
 # Prompt 10: Scalar Resonance Biofeedback Loop for Healing
 
+> **Status:** speculative design simulation. "Healing" and "therapeutic" name design concepts, not measured effects; this is not a medical device or a medical or therapeutic claim.
+
 ## Overview
 
 This module implements a closed-loop biofeedback system that processes real-time physiological signals, calculates coherence states, and generates adaptive healing harmonics. The system bridges Reichian orgone dynamics (Prompt 9) with sympathetic resonance matching (Prompt 8) to create a complete therapeutic feedback loop.

@@ -2,6 +2,10 @@
 
 This directory contains Clash-compatible modules for FPGA synthesis of Ra System components.
 
+> **Status:** these modules are speculative simulations. Terms such as biofield, healing, orgone, scalar and
+> therapeutic name design concepts, not measured effects. Nothing here is validated experimentally, and none of it is
+> a medical device or a medical or therapeutic claim.
+
 ## Requirements
 
 - [Clash Compiler](https://clash-lang.org/) (clash-ghc)
