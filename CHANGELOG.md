@@ -86,7 +86,7 @@ on PyPI yet; PyPI has 0.1.0.
 ### Open (needs a ruling)
 
 - Green Phi: volume_1 p.0027 and the vol2a p.0010 master table call 1.62 the Green Phi; the supplement erratum puts
-  1.62 in the Omega Major window and prints Green Phi 1.629174025. This release follows the erratum (TR-312: "the
+  1.62 in the Omega Major window and prints Green Phi 1.629174025. This release follows the erratum, ruled to keep by TR-596 (the vol1 override is TR's inference; the erratum names only Red Phi on the Vol 2/3 forms) (TR-312: "the
   erratum that supersedes"). Revert `GREEN_PHI` to 1.62 if RADIX rules the other way; nothing else depends on it.
 - Rydberg window: volume_1 p.0126 calls 800/729 the Green Rydberg (TR-320); the vol2a KEY NUMBERS sheet carries
   729/800 in its Omega Major column (TR-304). Recorded, not resolved.

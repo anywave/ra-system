@@ -85,7 +85,11 @@ RED_PHI: Final[float] = 1.6286016
 """Red Phi = 1.6286016 = 1.62 x 84823/84375 (supplement p.0002 erratum; TR-312, TR-316)."""
 
 GREEN_PHI: Final[float] = 1.629174025
-"""Green Phi = 1.629174025 (supplement p.0002 erratum; TR-312). Red Phi x r at print width."""
+"""Green Phi = 1.629174025 (supplement p.0002 erratum; TR-312). Red Phi x r at print width.
+
+The erratum names only Red Phi on the Vol 2/3 forms; overriding vol1 p.0027 (which calls 1.62 the
+Green Phi) is TR's inference (TR-596): the withdrawn Red 1.62/r assumed 1.62 was Green, and the
+correction 1.62 x 84823/84375 places 1.62 at Omega Major. Ruled to keep (TR-596)."""
 
 BLUE_PHI: Final[float] = 1.629746650
 """Blue Phi = 1.629746650 (supplement p.0002 erratum; TR-312). Green Phi x r at print width."""
