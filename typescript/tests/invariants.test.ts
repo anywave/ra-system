@@ -10,8 +10,8 @@ import {
   RED_PI,
   GREEN_PI,
   BLUE_PI,
-  GREEN_PHI,
-  HUNAB,
+  OMEGA_MAJOR_PHI,
+  GREEN_HUNAB,
   OMEGA,
   H_BAR,
   FINE_STRUCTURE,
@@ -67,9 +67,9 @@ import {
 // =============================================================================
 
 describe('Constant Invariants (I1-I6)', () => {
-  it('I1: Ankh = π_red × φ_green', () => {
-    const computed = RED_PI * GREEN_PHI;
-    expect(Math.abs(ANKH - computed)).toBeLessThan(0.0001);
+  it('I1: Ankh = π_red × 1.62 (Omega Major Phi)', () => {
+    const computed = RED_PI * OMEGA_MAJOR_PHI;
+    expect(Math.abs(ANKH - computed)).toBeLessThan(1e-12);
     expect(verifyAnkhInvariant()).toBe(true);
   });
 
@@ -79,9 +79,9 @@ describe('Constant Invariants (I1-I6)', () => {
     expect(verifyRac1Derivation()).toBe(true);
   });
 
-  it('I3: H-Bar = Hunab / Ω', () => {
-    const computed = HUNAB / OMEGA;
-    expect(Math.abs(H_BAR - computed)).toBeLessThan(0.0001);
+  it('I3: H-Bar = Green Hunab / Ω', () => {
+    const computed = GREEN_HUNAB / OMEGA;
+    expect(Math.abs(H_BAR - computed)).toBeLessThan(1e-12);
     expect(verifyHBarInvariant()).toBe(true);
   });
 

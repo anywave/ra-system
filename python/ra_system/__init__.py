@@ -31,14 +31,20 @@ Invariants:
 
 from ra_system.constants import (
     ANKH,
+    BALMER_CONSTANT,
     BLUE_PHI,
     BLUE_PI,
+    COLOUR_RATIO,
     FINE_STRUCTURE,
+    GREEN_HUNAB,
     GREEN_PHI,
     GREEN_PI,
     H_BAR,
     HUNAB,
     OMEGA,
+    OMEGA_MAJOR_PHI,
+    OMEGA_OVER_R,
+    RA_RYDBERG,
     RED_PHI,
     RED_PI,
     AnkhValue,
@@ -100,9 +106,15 @@ __all__ = [
     # Constants
     "ANKH",
     "HUNAB",
+    "GREEN_HUNAB",
     "H_BAR",
     "OMEGA",
+    "OMEGA_OVER_R",
+    "COLOUR_RATIO",
     "FINE_STRUCTURE",
+    "RA_RYDBERG",
+    "BALMER_CONSTANT",
+    "OMEGA_MAJOR_PHI",
     "RED_PI",
     "GREEN_PI",
     "BLUE_PI",
@@ -162,4 +174,4 @@ __all__ = [
     "repitan_ton_ratio",
 ]
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"

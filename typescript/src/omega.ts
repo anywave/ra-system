@@ -1,13 +1,16 @@
 /**
  * OmegaFormat enum with conversion functions.
  *
- * Five-level Omega format system for frequency/precision tiers.
- * Hierarchy: Red > Omega Major > Green > Omega Minor > Blue
+ * Bateman's five "windows" for one quantity (vol2a prologue; TR-302, TR-312).
+ * In magnitude a value runs Omega Major < Red < Green < Blue < Omega Minor, with
+ * steps Omega/r (= 84823/84375), r, r, Omega/r (TR-300, TR-304, TR-312). The enum
+ * order follows the printed column layout, not the magnitude - do not sort on it.
  *
- * Conversions use the Omega Ratio (Q-Ratio): Ω = 1.005662978
+ * Each factor applies to the power d, the number of lengths in play: 1 for a
+ * length, 2 for an area, 3 for a volume (volume_1 p.0117; TR-294, TR-301, TR-309).
  */
 
-// OMEGA constant (1.005662978) is used to derive the conversion matrix values
+import { COLOUR_RATIO, OMEGA, OMEGA_OVER_R } from './constants.js';
 
 /**
  * The five Omega format levels (coherence depth tiers)
@@ -51,50 +54,22 @@ export function harmonicFromOmega(fmt: OmegaFormat): number {
   return fmt;
 }
 
-/** Conversion factors between formats */
-const CONVERSION_FACTORS: Record<OmegaFormat, Record<OmegaFormat, number>> = {
-  [OmegaFormat.Red]: {
-    [OmegaFormat.Red]: 1.0,
-    [OmegaFormat.OmegaMajor]: 0.994718414,
-    [OmegaFormat.Green]: 1.000351482,
-    [OmegaFormat.OmegaMinor]: 1.006016451,
-    [OmegaFormat.Blue]: 1.000703088,
-  },
-  [OmegaFormat.OmegaMajor]: {
-    [OmegaFormat.Red]: 1.005309630,
-    [OmegaFormat.OmegaMajor]: 1.0,
-    [OmegaFormat.Green]: 1.005662978,     // Ω
-    [OmegaFormat.OmegaMinor]: 1.011358026,
-    [OmegaFormat.Blue]: 1.006016451,
-  },
-  [OmegaFormat.Green]: {
-    [OmegaFormat.Red]: 0.999648641,
-    [OmegaFormat.OmegaMajor]: 0.994368911,     // 1/Ω
-    [OmegaFormat.Green]: 1.0,
-    [OmegaFormat.OmegaMinor]: 1.005662978,     // Ω
-    [OmegaFormat.Blue]: 1.000351482,
-  },
-  [OmegaFormat.OmegaMinor]: {
-    [OmegaFormat.Red]: 0.994019530,
-    [OmegaFormat.OmegaMajor]: 0.988769530,
-    [OmegaFormat.Green]: 0.994368911,     // 1/Ω
-    [OmegaFormat.OmegaMinor]: 1.0,
-    [OmegaFormat.Blue]: 0.994718414,
-  },
-  [OmegaFormat.Blue]: {
-    [OmegaFormat.Red]: 0.999297406,
-    [OmegaFormat.OmegaMajor]: 0.994019530,
-    [OmegaFormat.Green]: 0.999648641,
-    [OmegaFormat.OmegaMinor]: 1.005309630,
-    [OmegaFormat.Blue]: 1.0,
-  },
+/** Position of each window on the ladder, relative to Omega Major (TR-312) */
+const LADDER_POSITION: Record<OmegaFormat, number> = {
+  [OmegaFormat.OmegaMajor]: 1.0,
+  [OmegaFormat.Red]: OMEGA_OVER_R,
+  [OmegaFormat.Green]: OMEGA,
+  [OmegaFormat.Blue]: OMEGA * COLOUR_RATIO,
+  [OmegaFormat.OmegaMinor]: OMEGA * OMEGA,
 };
 
 /**
- * Convert a value between two Omega formats
+ * Convert a value between two Omega formats.
+ *
+ * @param degree number of lengths in play: 1 length, 2 area, 3 volume, 0 none (TR-294, TR-301)
  */
-export function convertOmega(from: OmegaFormat, to: OmegaFormat, x: number): number {
-  return x * CONVERSION_FACTORS[from][to];
+export function convertOmega(from: OmegaFormat, to: OmegaFormat, x: number, degree = 1): number {
+  return x * (LADDER_POSITION[to] / LADDER_POSITION[from]) ** degree;
 }
 
 /** Green to Omega Major: x / Ω */
@@ -127,8 +102,8 @@ export function blueToRed(x: number): number {
   return convertOmega(OmegaFormat.Blue, OmegaFormat.Red, x);
 }
 
-/** Tolerance for roundtrip conversion verification (accounts for matrix approximations) */
-export const ROUNDTRIP_TOLERANCE = 1e-6;
+/** Tolerance for roundtrip conversion verification (the ladder is exact up to float error) */
+export const ROUNDTRIP_TOLERANCE = 1e-9;
 
 /**
  * Verify Invariant C1: roundtrip conversions preserve value

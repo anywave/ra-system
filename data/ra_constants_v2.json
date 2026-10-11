@@ -3,7 +3,8 @@
     "source": "The Rods of Amon Ra - Wesley H. Bateman (1992-1997)",
     "extracted": "2025-12-29",
     "version": "2.0",
-    "notes": "Comprehensive extraction from OCR text of original manuscript. All decimal values preserved exactly as stated in source."
+    "notes": "Comprehensive extraction from OCR text of original manuscript. Values are Bateman's as printed, not physics claims. Where page-level verification by the lattice's TR node (2026-08/09) found a printed or extracted value damaged, 'value' holds the corrected figure, 'printed_value' keeps what was printed or extracted, and 'verified_by' names the TR post.",
+    "verification": "TR-280, TR-281, TR-286, TR-288, TR-298, TR-304, TR-312, TR-320, TR-323, TR-331 (lattice trellis-channel). Spectral values are authorial and must not be normalised toward reference data (TR-283)."
   },
   "fundamental_constants": [
     {
@@ -56,6 +57,8 @@
       "value": 1.62,
       "units": "unitless",
       "symbolic_equivalence": "Golden ratio approximation (truncated)",
+      "conflict": "Volume 1 p.0027 and the vol2a p.0010 master table call 1.62 the Green Phi. The Supplement erratum sheet (g00857_src03_p0002) prints 1.62 as the OMEGA MAJOR Phi and Green Phi = 1.629174025. The erratum supersedes (TR-312); 1.62 is also the Ankh wheel diameter (volume_1 p.0168, TR-298).",
+      "verified_by": "FP-1399, TR-312, TR-316",
       "function": "Threshold harmonic - shapes of plant/animal life",
       "used_for": ["access gating", "partial emergence tuning", "biometric thresholds"],
       "notes": "Relates to shapes and proportion of plant and animal life. Core component of Ankh.",
@@ -63,9 +66,12 @@
     },
     {
       "name": "Phi (full precision)",
-      "value": 1.619430799,
+      "value": 1.6286016,
+      "printed_value": 1.619430799,
       "units": "unitless",
-      "symbolic_equivalence": "Red format golden ratio",
+      "symbolic_equivalence": "Red Phi = 1.62 × 84823/84375 (Omega Major Phi × Omega/r)",
+      "correction": "Bateman's own erratum (supplement g00857_src03_p0002): 'On each and every data form found in Volume 2 (books A and B) and Volume 3 the value erroneously used for Red Phi was 1.619430799 (1.62 / 1.000351482).' Corrected Red Phi = 1.6286016.",
+      "verified_by": "FP-1399, TR-312, TR-316",
       "function": "Precise Phi value in Ra System",
       "used_for": ["pyramid ratio calculations", "coherence thresholds"],
       "source_page": "vol2a_page_194"
@@ -95,8 +101,9 @@
       "name": "H-Bar (Omega Major)",
       "value": 1.0546875,
       "units": "unitless",
-      "symbolic_equivalence": "Hunab / Omega Ratio = 1.0602875 / 1.005662978",
-      "function": "Reduced Planck constant in Ra System - Quantum physics foundation",
+      "symbolic_equivalence": "Green Hunab / Omega Ratio = 1.060660172 / 1.005662978 = 135/128 (the Omega Major window of the Hunab row)",
+      "function": "Bateman's H-Bar - named after the reduced Planck constant; not the physical value",
+      "verified_by": "TR-304 (vol2a g00194_src01_p0010 KEY NUMBERS), TR-312",
       "used_for": ["quantum calculations", "spectral line analysis", "wave mechanics"],
       "notes": "Universal Constant of Action in quantumized atom. Trac Mate of alpha brainwave frequency (10.602875 Hz).",
       "source_page": "vol2a_page_193"
@@ -112,10 +119,13 @@
     },
     {
       "name": "Fine Structure Constant (Ra)",
-      "value": 0.0001371742,
+      "value": 0.0013717421124829,
+      "printed_value": 0.0001371742,
       "units": "unitless",
-      "symbolic_equivalence": "0.037² = 0.0013717421 / 10",
-      "function": "Electromagnetic coupling constant for hydrogen",
+      "symbolic_equivalence": "1/729 = (1/27)² (printed '.037²'; .037 is 1/27 truncated)",
+      "function": "Bateman's f.s.Δ unit (1/729 of a degree, volume_1 folio 165). Not the physical fine-structure constant α = 0.0072973526.",
+      "correction": "Printed 10x small in the Supplement (lost decimal, BAT-002) and as .0013742113 on volume_1 p.0105 (dropped digit pair). Witness: 8 × (1/729) = 0.0109739369 reproduces his printed Rydberg.",
+      "verified_by": "TR-281, TR-323, TR-331",
       "used_for": ["spectral line calculations", "hydrogen atom structure", "Repitan-T.O.N. link"],
       "notes": "First Repitan squared. Links 27 Repitans to 37 numbers in Table of Nines.",
       "source_page": "vol1_page_79"
@@ -168,7 +178,7 @@
       "value": 0.628318519,
       "value_meters": 0.631695473,
       "units": "Red Rams",
-      "symbolic_equivalence": "2π/10 approximation",
+      "symbolic_equivalence": "Red Pi / 5 (TR-298)",
       "function": "Resonant Access Constant 2 - Sacred Cubit range",
       "used_for": ["pyramid base division (364.5 units = Balmer)", "hydrogen resonance", "Lyman-alpha transitions"],
       "notes": "Pyramid base / RAC2 = 364.5 (Balmer Constant). RAC1/RAC2 = 1.0125",
@@ -179,7 +189,7 @@
       "value": 0.57255525,
       "value_meters": 0.5756325,
       "units": "Red Rams",
-      "symbolic_equivalence": "1.62 × 1.0602875 × 0.333333",
+      "symbolic_equivalence": "Red Pi × 3⁶/4000 = 1.62 × 1.0602875 / 3 (TR-298)",
       "function": "Resonant Access Constant 3 - Pyk Belady range",
       "used_for": ["pyramid base division (400 units)", "harmonic scaling"],
       "notes": "Close to Pyk Belady cubit (0.5773m). Pyramid base / RAC3 = 400",
@@ -190,10 +200,10 @@
       "value": 0.523598765,
       "value_meters": 0.526412894,
       "units": "Red Rams",
-      "symbolic_equivalence": "π/6 approximation",
+      "symbolic_equivalence": "Red Pi / 6 (TR-298)",
       "function": "Resonant Access Constant 4 - Royal Cubit of Memphis range",
-      "used_for": ["pyramid base division (437.4 = 27 × 1.62)", "coherence thresholds"],
-      "notes": "Most consistent RAC in pyramid dimensions. Close to Royal Cubit (0.525m). 437.4 = 27 × Phi",
+      "used_for": ["pyramid base division (437.4 = 72.9 × 6)", "coherence thresholds"],
+      "notes": "Most consistent RAC in pyramid dimensions. Close to Royal Cubit (0.525m). Pyramid base / RAC4 = 437.4 = 72.9 × 6",
       "source_page": "vol1_page_156"
     },
     {
@@ -212,10 +222,10 @@
       "value": 0.3998594565,
       "value_meters": 0.4020085371,
       "units": "Red Rams",
-      "symbolic_equivalence": "Part of RAC lattice structure",
+      "symbolic_equivalence": "Red Pi × 0.09 × √2 (TR-298)",
       "function": "Resonant Access Constant 6",
-      "used_for": ["pyramid base division (572.756493 = 1.125 × Green Ankh)", "spectral mapping"],
-      "notes": "Pyramid base / RAC6 = 572.756493 (1.125 × Green Ankh). Links to circle degrees.",
+      "used_for": ["pyramid base division (572.756493 = 810 / √2)", "spectral mapping"],
+      "notes": "Pyramid base / RAC6 = 572.756493 = 72.9 / (0.09 √2). Links to circle degrees.",
       "source_page": "vol1_page_157"
     }
   ],
@@ -242,8 +252,12 @@
       "source_page": "supplement_page_858"
     },
     "rydberg_constant": {
-      "ra_value": 1.0973690,
+      "ra_value": 1.0973936899862826,
+      "printed_value": 1.097369,
       "omega_major_value": 0.91125,
+      "exact": "800/729; reciprocal 729/800 = .91125",
+      "correction": "Extraction dropped two digits; Bateman prints 1.09739369 (labelled Rydberg Constant) and 109,739.369 units per Green Ra centimeter (volume_1 p.0126). Volume_1 calls it the GREEN Rydberg; the vol2a KEY NUMBERS sheet puts 729/800 in the Omega Major column - window still open. Not CODATA R_inf; the ~545 ppm offset of his tables from measured lines is authorial (TR-283).",
+      "verified_by": "TR-288, TR-304, TR-320, TR-322, TR-329",
       "units": "unitless",
       "symbolic_equivalence": "Fine Structure × 8 = 0.0013717421 × 8",
       "function": "Hydrogen spectral constant - wave number formula",
@@ -276,6 +290,12 @@
       "M4": {
         "wavelength_omega_major_angstroms": 972,
         "notes": "Ra note 'F' first octave = 97.2 degrees of Red Pi circle"
+      },
+      "M6": {
+        "wavelength_omega_major_angstroms": 937.2857142857143,
+        "exact": "6561/7",
+        "notes": "volume_1 p.0100 (ILLUSTRATION 13) prints 93.72857142 (x10). The Supplement's 932.7857142 is a transposition; the page proves itself: 1093.5 / 93.72857142 = 35/3.",
+        "verified_by": "TR-280 s7, TR-286"
       }
     },
     "balmer_series": {
@@ -427,7 +447,7 @@
       "omega_minor_to_red": 0.994019530,
       "green_to_blue": 1.000351482,
       "blue_to_green": 0.999648641,
-      "green_to_omega_minor": 1.00562978,
+      "green_to_omega_minor": 1.005662978,
       "omega_minor_to_green": 0.99436891,
       "blue_to_omega_minor": 1.005309630,
       "omega_minor_to_blue": 0.994718414
@@ -521,7 +541,10 @@
       "notes": "ELF waves bracket Alpha brain-wave frequency range (7 to 13.5 Hz). 10.6 Hz most common."
     },
     "lyman_m2_connection": {
-      "value": 1.062875,
+      "value": 1.0602875,
+      "printed_value": 1.062875,
+      "correction": "Dropped '0' (BAT-028); the Ra 'A' octave chain requires 1.0602875 (BAT-CONTRA-007).",
+      "verified_by": "TR-288",
       "units": "Hz per n.s.t.",
       "notes": "121.5 degrees of Red Pi circle. Most intense H spectral line relates to alpha brainwave."
     }
@@ -562,6 +585,7 @@
       "notes": "H-Bar = Omega Major value"
     },
     "phi": {
+      "erratum": "This row is the vol2a p.0010 master table as printed. Bateman's supplement erratum (g00857_src03_p0002) withdraws Red Phi 1.619430799 and prints OMEGA MAJOR 1.62 / RED 1.6286016 / GREEN 1.629174025 / BLUE 1.629746650 (FP-1399, TR-312).",
       "red": 1.619430799,
       "omega_major": 1.610877636,
       "green": 1.62,

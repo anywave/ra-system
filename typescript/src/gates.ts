@@ -10,17 +10,17 @@
  * AccessLevel(user_coherence, fragment_rac) → {FullAccess, PartialAccess(α), Blocked}
  *
  * threshold(R_f) = RAC(R_f) / RAC₁
- * C_floor = φ_green / Ankh ≈ 0.3183
+ * C_floor = 1.62 / Ankh = 1 / Red Pi ≈ 0.3183 (1.62 = Omega Major Phi, the Ankh wheel diameter)
  * C_ceiling = 1.0
  * ```
  */
 
-import { ANKH, GREEN_PHI } from './constants.js';
+import { ANKH, OMEGA_MAJOR_PHI } from './constants.js';
 import { RacLevel, racValueNormalized } from './rac.js';
 import { Repitan } from './repitans.js';
 
-/** Coherence floor: φ_green / Ankh ≈ 0.3183 */
-export const COHERENCE_FLOOR = GREEN_PHI / ANKH;
+/** Coherence floor: 1.62 / Ankh = 1 / Red Pi ≈ 0.3183 (a modelling parameter) */
+export const COHERENCE_FLOOR = OMEGA_MAJOR_PHI / ANKH;
 
 /** Coherence ceiling: 1.0 */
 export const COHERENCE_CEILING = 1.0;
@@ -175,8 +175,8 @@ export function verifyCoherenceBounds(): boolean {
 }
 
 /**
- * Verify coherence floor calculation: φ_green / Ankh
+ * Verify coherence floor calculation: 1.62 / Ankh
  */
 export function verifyCoherenceFloor(): boolean {
-  return Math.abs(COHERENCE_FLOOR - GREEN_PHI / ANKH) < 1e-10;
+  return Math.abs(COHERENCE_FLOOR - OMEGA_MAJOR_PHI / ANKH) < 1e-10;
 }

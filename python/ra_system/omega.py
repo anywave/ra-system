@@ -1,14 +1,24 @@
 """
 OmegaFormat enum with conversion functions.
 
-Five-level Omega format system for frequency/precision tiers.
-Hierarchy: Red > Omega Major > Green > Omega Minor > Blue
+Bateman's five "windows" for one quantity (vol2a prologue; TR-302, TR-312).
+In magnitude, a value runs
 
-Conversions use the Omega Ratio (Q-Ratio): Ω = 1.005662978
+    Omega Major < Red < Green < Blue < Omega Minor
+
+with steps Omega/r (= 84823/84375), r, r, Omega/r, where r = 60000 sqrt2 / 84823
+and Omega = 32 sqrt2 / 45 (TR-300, TR-304, TR-312). The enum order below follows
+the printed column layout RED | OMEGA MAJOR | GREEN | OMEGA MINOR | BLUE, which is
+not the magnitude order - do not sort on it (TR-302).
+
+Each factor applies to the power d, the number of lengths in play: d=1 for lengths,
+d=2 for areas, d=3 for volumes (volume_1 p.0117, printed 109; TR-294, TR-301, TR-309).
 """
 
 from enum import IntEnum
 from typing import Final
+
+from ra_system.constants import COLOUR_RATIO, OMEGA, OMEGA_OVER_R
 
 
 class OmegaFormat(IntEnum):
@@ -39,49 +49,33 @@ def harmonic_from_omega(fmt: OmegaFormat) -> int:
     return int(fmt)
 
 
-# Conversion factors matrix
+# Position of each window on the ladder, relative to Omega Major (TR-312).
+_LADDER_POSITION: Final[dict[OmegaFormat, float]] = {
+    OmegaFormat.OMEGA_MAJOR: 1.0,
+    OmegaFormat.RED: OMEGA_OVER_R,
+    OmegaFormat.GREEN: OMEGA,
+    OmegaFormat.BLUE: OMEGA * COLOUR_RATIO,
+    OmegaFormat.OMEGA_MINOR: OMEGA * OMEGA,
+}
+
+# Conversion factors matrix, built from the exact ladder. It reproduces the printed
+# conversion table (data/ra_constants_v2.json, omega_format_conversions) to its print width.
 _CONVERSION_FACTORS: Final[dict[OmegaFormat, dict[OmegaFormat, float]]] = {
-    OmegaFormat.RED: {
-        OmegaFormat.RED: 1.0,
-        OmegaFormat.OMEGA_MAJOR: 0.994718414,
-        OmegaFormat.GREEN: 1.000351482,
-        OmegaFormat.OMEGA_MINOR: 1.006016451,
-        OmegaFormat.BLUE: 1.000703088,
-    },
-    OmegaFormat.OMEGA_MAJOR: {
-        OmegaFormat.RED: 1.005309630,
-        OmegaFormat.OMEGA_MAJOR: 1.0,
-        OmegaFormat.GREEN: 1.005662978,     # Ω
-        OmegaFormat.OMEGA_MINOR: 1.011358026,
-        OmegaFormat.BLUE: 1.006016451,
-    },
-    OmegaFormat.GREEN: {
-        OmegaFormat.RED: 0.999648641,
-        OmegaFormat.OMEGA_MAJOR: 0.994368911,     # 1/Ω
-        OmegaFormat.GREEN: 1.0,
-        OmegaFormat.OMEGA_MINOR: 1.005662978,     # Ω
-        OmegaFormat.BLUE: 1.000351482,
-    },
-    OmegaFormat.OMEGA_MINOR: {
-        OmegaFormat.RED: 0.994019530,
-        OmegaFormat.OMEGA_MAJOR: 0.988769530,
-        OmegaFormat.GREEN: 0.994368911,     # 1/Ω
-        OmegaFormat.OMEGA_MINOR: 1.0,
-        OmegaFormat.BLUE: 0.994718414,
-    },
-    OmegaFormat.BLUE: {
-        OmegaFormat.RED: 0.999297406,
-        OmegaFormat.OMEGA_MAJOR: 0.994019530,
-        OmegaFormat.GREEN: 0.999648641,
-        OmegaFormat.OMEGA_MINOR: 1.005309630,
-        OmegaFormat.BLUE: 1.0,
-    },
+    a: {b: _LADDER_POSITION[b] / _LADDER_POSITION[a] for b in OmegaFormat} for a in OmegaFormat
 }
 
 
-def convert_omega(from_fmt: OmegaFormat, to_fmt: OmegaFormat, x: float) -> float:
-    """Convert a value between two Omega formats."""
-    return x * _CONVERSION_FACTORS[from_fmt][to_fmt]
+def convert_omega(from_fmt: OmegaFormat, to_fmt: OmegaFormat, x: float, degree: int = 1) -> float:
+    """Convert a value between two Omega formats.
+
+    Args:
+        from_fmt: window the value is expressed in
+        to_fmt: window to express it in
+        x: the value
+        degree: number of lengths in play - 1 for a length, 2 for an area, 3 for a
+            volume, 0 for no conversion (TR-294, TR-301)
+    """
+    return x * _CONVERSION_FACTORS[from_fmt][to_fmt] ** degree
 
 
 def green_to_omega_major(x: float) -> float:
@@ -114,8 +108,8 @@ def blue_to_red(x: float) -> float:
     return convert_omega(OmegaFormat.BLUE, OmegaFormat.RED, x)
 
 
-ROUNDTRIP_TOLERANCE: Final[float] = 1e-6
-"""Tolerance for roundtrip conversion verification (accounts for matrix approximations)."""
+ROUNDTRIP_TOLERANCE: Final[float] = 1e-9
+"""Tolerance for roundtrip conversion verification (the matrix is exact up to float error)."""
 
 
 def verify_omega_roundtrip(from_fmt: OmegaFormat, to_fmt: OmegaFormat, x: float) -> bool:

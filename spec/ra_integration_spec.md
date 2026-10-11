@@ -73,13 +73,13 @@ rac_level = ⌈φ × 6 / 256⌉,  for φ ∈ [0, 255]
 
 The harmonic dimension represents coherence depth through 5 format tiers.
 
-**Omega Format Hierarchy** (descending precision):
+**Omega Format Hierarchy** (index = printed column layout; in magnitude Omega Major < Red < Green < Blue < Omega Minor):
 
 | Index | Format | Example Constant |
 |-------|--------|------------------|
 | 0 | Red | π_red = 3.141592592 |
 | 1 | Omega Major | H-Bar = 1.0546875 |
-| 2 | Green | φ_green = 1.62 |
+| 2 | Green | φ_green = 1.629174025 (supplement erratum; 1.62 is the Omega Major Phi) |
 | 3 | Omega Minor | Spectral Repitans |
 | 4 | Blue | π_blue = 3.143801408 |
 
@@ -102,7 +102,8 @@ The radius represents emergence intensity, normalized to the Ankh constant.
 
 **Ankh Constant**:
 ```
-Ankh = 5.08938 = π_red × φ_green = 3.141592592 × 1.62
+Ankh = 5.08938 = π_red × 1.62 = 3.141592592 × 1.62
+(1.62 = Omega Major Phi = the Ankh wheel diameter; TR-298, TR-312)
 ```
 
 **Normalization**:
@@ -119,13 +120,17 @@ r_normalized = r_raw / Ankh,  r_normalized ∈ [0, 1]
 ```
 Ankh         = 5.08938
 π_red        = 3.141592592
-π_green      = 3.142696806 = √9.876543210
-π_blue       = 3.143801408 = 1/0.318086250
-φ_green      = 1.62
-φ_red        = 1.619430799
-Hunab        = 1.0602875
-H-Bar        = 1.0546875 = Hunab / Ω
-Ω (Omega)    = 1.005662978
+π_green      = 3.142696806 = √9.876543210 = (20/9)√2
+π_blue       = 3.143801408 = 1/0.318086250 = π_green × r
+φ_omegaMajor = 1.62
+φ_red        = 1.6286016     (supplement erratum; 1.619430799 withdrawn by the author)
+φ_green      = 1.629174025   (supplement erratum)
+φ_blue       = 1.629746650   (supplement erratum)
+Hunab        = 1.0602875 = 84823/80000   (Red Hunab)
+Green Hunab  = 1.060660172 = (3/4)√2
+H-Bar        = 1.0546875 = 135/128 = Green Hunab / Ω
+Ω (Omega)    = 1.005662978 = 32√2/45
+r            = 1.000351482 = 60000√2/84823
 ```
 
 ### 3.2 Repitan-T.O.N. Relationship
@@ -144,7 +149,8 @@ Repitan(n) / T.O.N.(n) = 1.371742112  (Fine Structure related)
 ```
 α_Ra = Repitan(1)² = (1/27)² = 0.037037...² = 0.0013717421
 
-Fine Structure (scaled) = α_Ra / 10 = 0.0001371742
+This is Bateman's f.s.Δ unit (1/729), not the physical fine-structure constant (0.0072973526).
+The Supplement prints it 10× small (0.0001371742); that is a lost decimal, not a scaling (TR-281, TR-323).
 ```
 
 ### 3.4 RAC Derivations
@@ -154,7 +160,7 @@ RAC₁ = Ankh / 8 = 5.08938 / 8 = 0.6361725
 
 Pyramid_Base / RAC₁ = 360  (circle degrees)
 Pyramid_Base / RAC₂ = 364.5  (Balmer constant)
-Pyramid_Base / RAC₄ = 437.4 = 27 × φ_green
+Pyramid_Base / RAC₄ = 437.4 = 72.9 × 6     (Pyramid_Base = 72.9 × π_red; TR-331)
 ```
 
 ### 3.5 Spectral Constants
@@ -181,7 +187,7 @@ AccessLevel(user_coherence, fragment_rac) → {FullAccess, PartialAccess(α), Bl
 ```
 Let C_u = user_coherence (normalized to [0, 1])
 Let R_f = fragment_rac_level ∈ {1, 2, 3, 4, 5, 6}
-Let C_floor = φ_green / Ankh = 1.62 / 5.08938 ≈ 0.3183
+Let C_floor = 1.62 / Ankh = 1.62 / 5.08938 = 1/π_red ≈ 0.3183
 Let C_ceiling = 1.0
 
 threshold(R_f) = RAC(R_f) / RAC₁  -- normalized to RAC₁
@@ -209,7 +215,7 @@ Else:
 ### 4.3 Coherence Bounds
 
 ```
-Coherence_Floor   = φ_green / Ankh = 0.3183098...
+Coherence_Floor   = 1.62 / Ankh = 0.3183098...
 Coherence_Ceiling = Ankh / Ankh = 1.0
 ```
 
@@ -289,9 +295,9 @@ The following mathematical relationships must hold:
 ### 6.1 Constant Invariants
 
 ```
-I1: Ankh = π_red × φ_green = 3.141592592 × 1.62 = 5.08938
+I1: Ankh = π_red × 1.62 = 3.141592592 × 1.62 = 5.08938
 I2: RAC₁ = Ankh / 8 = 0.6361725
-I3: H-Bar = Hunab / Ω = 1.0602875 / 1.005662978 = 1.0546875
+I3: H-Bar = Green Hunab / Ω = 1.060660172 / 1.005662978 = 1.0546875 = 135/128
 I4: Repitan(n) = n / 27  for all n ∈ [1, 27]
 I5: T.O.N.(m) = m × 0.027  for all m ∈ [0, 36]
 I6: Fine_Structure = Repitan(1)² = 0.0013717421
@@ -368,7 +374,7 @@ ResonanceScore = {
 |----------|-------|-----|
 | Ankh | 5.08938 | Master harmonic |
 | π_red | 3.141592592 | Circle calculations |
-| φ_green | 1.62 | Threshold harmonic |
+| 1.62 (Omega Major Phi) | 1.62 | Threshold harmonic; Ankh wheel diameter |
 | Hunab | 1.0602875 | Scalar unit |
 | Ω | 1.005662978 | Format conversion |
 | Balmer | 364.5 | Spectral reference |
