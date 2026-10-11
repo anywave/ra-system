@@ -141,8 +141,8 @@ def repitan_ton_ratio() -> float:
     """
     Calculate the Repitan to T.O.N. ratio.
 
-    This relates to the Fine Structure constant:
+    This relates to Bateman's f.s.Delta unit:
         Repitan(1) / T.O.N.(1) = (1/27) / 0.027 = 1.371742112...
-        Fine Structure ≈ Repitan(1)² = 0.001371742
+        Repitan(1)² = 1/729 = 0.001371742 (not the physical alpha; TR-323)
     """
     return (1 / 27) / TON_COEFFICIENT

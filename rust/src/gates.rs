@@ -9,7 +9,7 @@
 //! AccessLevel(user_coherence, fragment_rac) → {FullAccess, PartialAccess(α), Blocked}
 //!
 //! threshold(R_f) = RAC(R_f) / RAC₁
-//! C_floor = φ_green / Ankh ≈ 0.3183
+//! C_floor = 1.62 / Ankh = 1 / Red Pi ≈ 0.3183 (1.62 = Omega Major Phi, the Ankh wheel diameter)
 //! C_ceiling = 1.0
 //!
 //! If C_u ≥ threshold(R_f):
@@ -22,12 +22,12 @@
 //! ```
 
 use serde::{Deserialize, Serialize};
-use crate::constants::{ANKH, GREEN_PHI};
+use crate::constants::{ANKH, OMEGA_MAJOR_PHI};
 use crate::rac::{RacLevel, rac_value_normalized};
 use crate::repitans::Repitan;
 
-/// Coherence floor: φ_green / Ankh ≈ 0.3183
-pub const COHERENCE_FLOOR: f64 = GREEN_PHI / ANKH;
+/// Coherence floor: 1.62 / Ankh = 1 / Red Pi ≈ 0.3183 (a modelling parameter)
+pub const COHERENCE_FLOOR: f64 = OMEGA_MAJOR_PHI / ANKH;
 
 /// Coherence ceiling: 1.0
 pub const COHERENCE_CEILING: f64 = 1.0;
@@ -154,9 +154,9 @@ pub fn verify_coherence_bounds() -> bool {
     COHERENCE_FLOOR >= 0.0 && COHERENCE_FLOOR < 1.0 && COHERENCE_CEILING == 1.0
 }
 
-/// Verify coherence floor calculation: φ_green / Ankh
+/// Verify coherence floor calculation: 1.62 / Ankh
 pub fn verify_coherence_floor() -> bool {
-    (COHERENCE_FLOOR - GREEN_PHI / ANKH).abs() < 1e-10
+    (COHERENCE_FLOOR - OMEGA_MAJOR_PHI / ANKH).abs() < 1e-10
 }
 
 #[cfg(test)]

@@ -39,11 +39,19 @@ The source of truth for all language bindings.
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| Ankh | 5.08938 | Master harmonic (π_red × φ_green) |
-| π_red | 3.141592592 | Red Trac Pi |
-| φ_green | 1.62 | Green Phi (threshold harmonic) |
-| Ω | 1.005662978 | Omega ratio (format conversion) |
-| Hunab | 1.0602875 | Harmonic scalar unit |
+| Ankh | 5.08938 | π_red × 1.62 = 3 × 84823/50000 (the Ankh wheel: circumference 5.08938, diameter 1.62) |
+| π_red | 3.141592592 | Red Pi = 84823/27000 (π rounded at a base-27 scale; not π) |
+| π_green | 3.142696805 | Green Pi = (20/9)√2 |
+| φ (Omega Major) | 1.62 | Bateman's 1.62; his erratum places it in the Omega Major window |
+| φ_green | 1.629174025 | Green Phi per Bateman's supplement erratum |
+| Ω | 1.005662978 | Omega ratio = 32√2/45 (format conversion) |
+| r | 1.000351482 | Colour ratio = 60000√2/84823 (Red → Green → Blue) |
+| Hunab | 1.0602875 | Red Hunab = 84823/80000 |
+| H-Bar | 1.0546875 | 135/128 = Green Hunab / Ω |
+
+Values are Bateman's, as printed in *The Rods of Amon Ra* and verified page by page by the lattice's TR node
+(2026-08/09); see [CHANGELOG.md](CHANGELOG.md). Names such as H-Bar, Rydberg and fine structure are his; the values
+are not the physical constants.
 
 ## Dimensional Mapping
 
@@ -59,19 +67,26 @@ The source of truth for all language bindings.
 | Level | Value | Derivation |
 |-------|-------|------------|
 | RAC₁ | 0.6361725 | Ankh / 8 |
-| RAC₂ | 0.628318519 | 2π/10 |
-| RAC₃ | 0.57255525 | φ × Hunab × ⅓ |
-| RAC₄ | 0.523598765 | π/6 |
-| RAC₅ | 0.4580442 | Ankh × 9/100 |
-| RAC₆ | 0.3998594565 | RAC lattice |
+| RAC₂ | 0.628318519 | π_red / 5 |
+| RAC₃ | 0.57255525 | π_red × 3⁶/4000 = 1.62 × Hunab / 3 |
+| RAC₄ | 0.523598765 | π_red / 6 |
+| RAC₅ | 0.4580442 | Ankh × 9/100 = π_red × 3⁶/5000 |
+| RAC₆ | 0.3998594565 | π_red × 0.09√2 |
+
+In Bateman's corpus every Rac is an arc of Red Pi, a turn of a measuring wheel; the access-level reading is this
+framework's modelling layer.
 
 ## Omega Format Hierarchy
 
+In magnitude (the enum index follows the printed column layout, not this order):
+
 ```
-Red → Omega Major → Green → Omega Minor → Blue
-         ↑                      ↑
-      ÷ Ω                    × Ω
+Omega Major --(Ω/r)-- Red --(r)-- Green --(r)-- Blue --(Ω/r)-- Omega Minor
+     = Green ÷ Ω                                         = Green × Ω
 ```
+
+Each step applies as a power of the number of lengths in play: once for a length, squared for an area, cubed for a
+volume.
 
 ## References
 

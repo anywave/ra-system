@@ -4,14 +4,19 @@ RacLevel enum (RAC1..RAC6) with validation.
 Resonant Access Constants (RACs) represent access sensitivity levels.
 RAC1 is the highest (least restrictive), RAC6 is the lowest (most restrictive).
 
+The access-level reading is this framework's modelling layer. In Bateman's corpus a
+Rac is an arc of Red Pi, a turn of a measuring wheel (TR-298); the values below are
+his, the access semantics are not.
+
 Invariant O1: RAC1 > RAC2 > RAC3 > RAC4 > RAC5 > RAC6 > 0
 """
 
+import math
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import Final
 
-from ra_system.constants import ANKH
+from ra_system.constants import ANKH, RED_PI
 
 
 class RacLevel(IntEnum):
@@ -25,14 +30,28 @@ class RacLevel(IntEnum):
     RAC6 = 6
 
 
-# RAC values in Red Rams
+# Rac units as fractions of Red Pi (TR-298; vol2b g00585_src09_p0038, printed 418).
+# Every Rac is an ARC of Red Pi: a turn of a wheel, not a free-standing length.
+# Degrees depend on the circle the arc is laid on: on the Ankh measuring wheel
+# (circumference 5.08938, diameter 1.62; volume_1 p.0168) RAC 1 is a 45-degree turn.
+RAC_UNITS_OF_RED_PI: Final[dict[str, float]] = {
+    "RAC 1": 81 / 400,  # 3^4/400 = 1.62/8
+    "RAC 2": 1 / 5,
+    "RAC 3": 729 / 4000,  # 3^6/4000
+    "RAC 4": 1 / 6,
+    "RAC 5": 729 / 5000,  # 3^6/5000
+    "RAC 6": 0.09 * math.sqrt(2),
+    "RAC 7": math.sqrt(2) / 8.64,
+    # MIR Rac: the printed divisor .6981131687 is a digit permutation of .6981316871 (TR-298 s5)
+    "MIR Rac": 2 / 9,
+    "Block Rac 1": 27 / 125,  # 3^3/125
+    "Block Rac 2": 8 / 45,
+}
+
+# RAC values in Red Rams = Red Pi x fraction (TR-298). Printed values agree to their
+# last digit: .6361725, .628318519, .57255525, .523598765, .4580442, .3998594565.
 _RAC_VALUES: Final[dict[RacLevel, float]] = {
-    RacLevel.RAC1: 0.6361725,      # Ankh / 8
-    RacLevel.RAC2: 0.628318519,    # 2π/10 approximation
-    RacLevel.RAC3: 0.57255525,     # φ × Hunab × 1/3
-    RacLevel.RAC4: 0.523598765,    # π/6 approximation
-    RacLevel.RAC5: 0.4580442,      # Ankh × 9 / 100
-    RacLevel.RAC6: 0.3998594565,   # RAC lattice terminus
+    level: RED_PI * RAC_UNITS_OF_RED_PI[f"RAC {int(level)}"] for level in RacLevel
 }
 
 # RAC values in meters
@@ -45,14 +64,15 @@ _RAC_VALUES_METERS: Final[dict[RacLevel, float]] = {
     RacLevel.RAC6: 0.4020085371,
 }
 
-# Pyramid divisions
+# Pyramid divisions: base / RAC, with the base side = (729/10) x Red Pi Red Rams
+# (TR-331). So base / RAC 2 = 729/2 = 364.5, the Balmer constant, is forced.
 _PYRAMID_DIVISIONS: Final[dict[RacLevel, float]] = {
-    RacLevel.RAC1: 360.0,      # Circle degrees
-    RacLevel.RAC2: 364.5,      # Balmer constant
-    RacLevel.RAC3: 400.0,
-    RacLevel.RAC4: 437.4,      # 27 × φ_green
-    RacLevel.RAC5: 500.0,
-    RacLevel.RAC6: 572.756493, # 1.125 × Green Ankh
+    RacLevel.RAC1: 360.0,       # 72.9 / (81/400)
+    RacLevel.RAC2: 364.5,       # 72.9 x 5 = 729/2, the Balmer constant
+    RacLevel.RAC3: 400.0,       # 72.9 / (729/4000)
+    RacLevel.RAC4: 437.4,       # 72.9 x 6
+    RacLevel.RAC5: 500.0,       # 72.9 / (729/5000)
+    RacLevel.RAC6: 572.756493,  # 72.9 / (0.09 sqrt2) = 810 / sqrt2
 }
 
 

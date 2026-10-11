@@ -9,7 +9,7 @@ From Section 4 of ra_integration_spec.md:
     AccessLevel(user_coherence, fragment_rac) → {FullAccess, PartialAccess(α), Blocked}
 
     threshold(R_f) = RAC(R_f) / RAC₁
-    C_floor = φ_green / Ankh ≈ 0.3183
+    C_floor = 1.62 / Ankh = 1 / Red Pi ≈ 0.3183  (1.62 = Omega Major Phi, the Ankh wheel diameter)
     C_ceiling = 1.0
 """
 
@@ -17,12 +17,12 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import Final
 
-from ra_system.constants import ANKH, GREEN_PHI
+from ra_system.constants import ANKH, OMEGA_MAJOR_PHI
 from ra_system.rac import RacLevel, rac_value_normalized
 from ra_system.repitans import Repitan
 
-COHERENCE_FLOOR: Final[float] = GREEN_PHI / ANKH
-"""Coherence floor: φ_green / Ankh ≈ 0.3183"""
+COHERENCE_FLOOR: Final[float] = OMEGA_MAJOR_PHI / ANKH
+"""Coherence floor: 1.62 / Ankh = 1 / Red Pi ≈ 0.3183 (a modelling parameter)."""
 
 COHERENCE_CEILING: Final[float] = 1.0
 """Coherence ceiling: 1.0"""
@@ -164,5 +164,5 @@ def verify_coherence_bounds() -> bool:
 
 
 def verify_coherence_floor() -> bool:
-    """Verify coherence floor calculation: φ_green / Ankh."""
-    return abs(COHERENCE_FLOOR - GREEN_PHI / ANKH) < 1e-10
+    """Verify coherence floor calculation: 1.62 / Ankh."""
+    return abs(COHERENCE_FLOOR - OMEGA_MAJOR_PHI / ANKH) < 1e-10

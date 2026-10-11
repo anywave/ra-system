@@ -14,11 +14,11 @@ use ra_core::gates::*;
 // =============================================================================
 
 #[test]
-fn test_i1_ankh_equals_red_pi_times_green_phi() {
-    let computed = RED_PI * GREEN_PHI;
+fn test_i1_ankh_equals_red_pi_times_wheel_diameter() {
+    let computed = RED_PI * OMEGA_MAJOR_PHI;
     assert!(
-        (ANKH - computed).abs() < 0.0001,
-        "I1: Ankh = π_red × φ_green. Expected {}, got {}",
+        (ANKH - computed).abs() < 1e-12,
+        "I1: Ankh = π_red × 1.62. Expected {}, got {}",
         computed,
         ANKH
     );
@@ -37,11 +37,11 @@ fn test_i2_rac1_equals_ankh_div_8() {
 }
 
 #[test]
-fn test_i3_hbar_equals_hunab_div_omega() {
-    let computed = HUNAB / OMEGA;
+fn test_i3_hbar_equals_green_hunab_div_omega() {
+    let computed = GREEN_HUNAB / OMEGA;
     assert!(
-        (H_BAR - computed).abs() < 0.0001,
-        "I3: H-Bar = Hunab / Ω. Expected {}, got {}",
+        (H_BAR - computed).abs() < 1e-12,
+        "I3: H-Bar = Green Hunab / Ω. Expected {}, got {}",
         computed,
         H_BAR
     );

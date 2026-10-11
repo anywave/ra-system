@@ -8,11 +8,11 @@ from ra_system.constants import (
     ANKH,
     BLUE_PI,
     FINE_STRUCTURE,
-    GREEN_PHI,
+    GREEN_HUNAB,
     GREEN_PI,
     H_BAR,
-    HUNAB,
     OMEGA,
+    OMEGA_MAJOR_PHI,
     RED_PI,
     verify_ankh_invariant,
     verify_fine_structure_invariant,
@@ -70,10 +70,10 @@ from ra_system.ton import (
 class TestConstantInvariants:
     """Tests for constant invariants I1-I6."""
 
-    def test_i1_ankh_equals_red_pi_times_green_phi(self) -> None:
-        """I1: Ankh = π_red × φ_green."""
-        computed = RED_PI * GREEN_PHI
-        assert abs(ANKH - computed) < 0.0001
+    def test_i1_ankh_equals_red_pi_times_wheel_diameter(self) -> None:
+        """I1: Ankh = π_red × 1.62 (Ankh wheel diameter = Omega Major Phi; TR-298, TR-312)."""
+        computed = RED_PI * OMEGA_MAJOR_PHI
+        assert abs(ANKH - computed) < 1e-12
         assert verify_ankh_invariant()
 
     def test_i2_rac1_equals_ankh_div_8(self) -> None:
@@ -82,10 +82,10 @@ class TestConstantInvariants:
         assert abs(rac_value(RacLevel.RAC1) - computed) < 0.0001
         assert verify_rac1_derivation()
 
-    def test_i3_hbar_equals_hunab_div_omega(self) -> None:
-        """I3: H-Bar = Hunab / Ω."""
-        computed = HUNAB / OMEGA
-        assert abs(H_BAR - computed) < 0.0001
+    def test_i3_hbar_equals_green_hunab_div_omega(self) -> None:
+        """I3: H-Bar = Green Hunab / Ω = 135/128 (TR-304)."""
+        computed = GREEN_HUNAB / OMEGA
+        assert abs(H_BAR - computed) < 1e-12
         assert verify_hbar_invariant()
 
     def test_i4_repitan_equals_n_div_27(self) -> None:
