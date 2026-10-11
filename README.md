@@ -4,6 +4,14 @@ Mathematical framework derived from "The Rods of Amon Ra" by Wesley H. Bateman (
 
 Portable, language-agnostic specification with generated bindings for Python, TypeScript, Rust, and Haskell.
 
+## Status and scope
+
+This is an exploratory modelling framework. The constants are taken from Bateman's numerical system and are used here as
+design parameters; their harmonic names describe a method, not a measured physical effect. Modules under `haskell/`
+and `haskell/clash/` that use words such as biofield, healing, orgone, scalar, radionics or propulsion are speculative
+simulations. Nothing in this repository has been validated experimentally, and none of it is a medical device or a
+medical, therapeutic or health claim.
+
 ## Architecture
 
 ```
@@ -65,6 +73,24 @@ Red → Omega Major → Green → Omega Minor → Blue
       ÷ Ω                    × Ω
 ```
 
+## References
+
+Third-party papers used as background are linked rather than redistributed:
+
+- Chen, X. and Sun, L. "Bayesian Temporal Factorization for Multidimensional Time Series Prediction." arXiv:1910.06366. https://arxiv.org/abs/1910.06366
+- Amirzadeh, R., Thiruvady, D., Nazari, A. and Ee, M. S. "Dynamic Bayesian Networks for Predicting Cryptocurrency Price Directions: Uncovering Causal Relationships." arXiv:2306.08157. https://arxiv.org/abs/2306.08157
+- Wyant, J. C. "Zernike Polynomials." University of Arizona, College of Optical Sciences (2003).
+- Anonymous. *The Book of Aquarius* (2011), bookofaquarius.forgottenbooks.org.
+- Bateman, W. H. *The Rods of Amon Ra* (1992-1997).
+
+## Citation
+
+See [CITATION.cff](CITATION.cff).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
+
 ## License
 
-Apache-2.0
+Apache-2.0. See [LICENSE](LICENSE).

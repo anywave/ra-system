@@ -3,7 +3,7 @@ Module      : Ra
 Description : Ra System mathematical framework
 Copyright   : (c) Anywave, 2025
 License     : Apache-2.0
-Maintainer  : alex@anywavecreations.com
+Maintainer  : info@anywavecreations.com
 Stability   : experimental
 
 Re-exports all Ra System modules for convenient access.

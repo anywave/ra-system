@@ -1,5 +1,7 @@
 # Prompt 12: Consent-Gated Shadow Harmonics (Patch 12B/12C)
 
+> **Status:** speculative design simulation. "Healing" and "therapeutic" name design concepts, not measured effects; this is not a medical device or a medical or therapeutic claim.
+
 ## Overview
 
 This module implements consent-gated access to shadow fragment harmonics, ensuring that sensitive psychodynamic patterns are only processed when proper therapeutic consent, licensed operator presence, and coherence thresholds are met. It generates therapeutic feedback to guide safe shadow integration work.

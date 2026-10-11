@@ -2,6 +2,9 @@
 
 Type-safe Python bindings for the Ra System mathematical constants from "The Rods of Amon Ra" by Wesley H. Bateman.
 
+> **Status:** exploratory modelling framework. The constants are design parameters; their harmonic names describe a
+> method, not a measured physical effect. Nothing here is a medical or therapeutic claim.
+
 ## Installation
 
 ```bash
@@ -34,4 +37,4 @@ print(r.value)  # 0.333...
 
 ## License
 
-Apache-2.0
+Apache-2.0. Source, issues and security reporting: https://github.com/anywave/ra-system

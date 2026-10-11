@@ -52,7 +52,7 @@ inversion_probability *= (1 + dor_level - or_level)
 **Chamber Geometry Modifiers:**
 | Geometry | OR Boost | DOR Shield | Notes |
 |----------|----------|------------|-------|
-| Pyramidal | +0.15 (38) | -0.10 (26) | Proven resonance enhancer |
+| Pyramidal | +0.15 (38) | -0.10 (26) | Hypothesised resonance enhancer (not measured) |
 | Dome | +0.10 (26) | -0.05 (13) | Smooth energy flow |
 | Rectangular | 0 | 0 | Neutral or noise-prone |
 | Spherical | +0.12 (31) | -0.08 (20) | Experimental |

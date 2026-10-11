@@ -15,7 +15,7 @@ description:        Type-safe Haskell bindings for the Ra System mathematical co
 license:            Apache-2.0
 license-file:       LICENSE
 author:             Anywave
-maintainer:         alex@anywavecreations.com
+maintainer:         info@anywavecreations.com
 category:           Math
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
